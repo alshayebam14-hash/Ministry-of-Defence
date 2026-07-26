@@ -232,12 +232,8 @@
             <div class="card">
                 <div class="table-responsive">
                     <table>
-                        <thead id="tableHead">
-                            <!-- سيتم تعبئته ديناميكياً -->
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- بيانات الجدول -->
-                        </tbody>
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -289,15 +285,13 @@
                 <h3 style="color: var(--accent-gold); margin-bottom: 10px;"><i class="fa-solid fa-crown"></i> المرشحين الأبرز لعسكري الأسبوع</h3>
                 <p style="color: var(--text-muted); font-size: 0.9rem;">يتم احتساب النقاط تلقائياً بناءً على مجموع السجلات والعمليات المرفقة لكل عسكري.</p>
             </div>
-            <div class="sotw-grid" id="sotwCandidatesGrid">
-                <!-- كروت المرشحين -->
-            </div>
+            <div class="sotw-grid" id="sotwCandidatesGrid"></div>
         </div>
 
         <!-- قسم الدورات -->
         <div id="coursesSection" class="section-panel">
             <div class="card">
-                <h3 style="color: var(--accent-gold); margin-bottom: 15px;">متابعة الدورات العسكرية</h3>
+                <h3 style="color: var(--accent-gold); margin-bottom: 15px;">متابعة الدورات العسكرية والترقيات</h3>
                 <div class="search-bar">
                     <input type="text" id="idSearchInput" placeholder="بحث سريع بالأيدي أو الاسم..." oninput="filterSoldiersDropdown()">
                     <select id="soldierSelect" onchange="renderSoldierCoursesDetails()">
@@ -312,12 +306,10 @@
     </div>
 
     <script>
-        // متغيرات البيانات العامة
         let rawSheetData = [];
         let attachedRecords = [];
         let attachedOperations = [];
 
-        // التنقل بين الأقسام
         function switchTab(tabName, btnElement) {
             document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -338,25 +330,27 @@
                 renderSOTWCandidates();
             } else if (tabName === 'courses') {
                 document.getElementById('coursesSection').classList.add('active');
+                populateSoldiersDropdown();
             }
         }
 
-        // دالة جلب البيانات الوهمية أو المربوطة بالشيت
         async function fetchAllData() {
-            // بيانات تجريبية للتأكد من عمل العرض (يمكنك استبدالها برابط جلب الشيت الفعلي الخاص بك)
+            // بيانات تجريبية شاملة ومترابطة لضمان عمل عسكري الأسبوع والدورات بشكل صحيح
             rawSheetData = [
-                { rank: 'لواء', name: 'سلطان القحطاني', idCard: '101', code: 'A-1', title: 'قائد القطاع', logs: '45', ads: '12', notes: 'لا يوجد', warnings: '0', lastPromotion: '2026/01/01', vacation: 'FALSE' },
-                { rank: 'عميد', name: 'فهد العتيبي', idCard: '102', code: 'A-2', title: 'نائب القائد', logs: '38', ads: '10', notes: 'ممتاز', warnings: '0', lastPromotion: '2026/02/10', vacation: 'FALSE' },
-                { rank: 'ملازم أول', name: 'محمد الشمري', idCard: '103', code: 'O-5', title: 'قائد SRT', logs: '50', ads: '15', notes: 'نشط جداً', warnings: '0', lastPromotion: '2026/05/12', vacation: 'TRUE' }
+                { rank: 'لواء', name: 'سلطان القحطاني', idCard: '101', code: 'A-1', title: 'قائد القطاع', logs: '45', ads: '12', notes: 'لا يوجد', warnings: '0', lastPromotion: '2026/01/01', vacation: 'FALSE', courses: ['دورة القيادة المتقدمة', 'دورة التأمين الميداني'] },
+                { rank: 'عميد', name: 'فهد العتيبي', idCard: '102', code: 'A-2', title: 'نائب القائد', logs: '38', ads: '10', notes: 'ممتاز', warnings: '0', lastPromotion: '2026/02/10', vacation: 'FALSE', courses: ['دورة إدارة الأزمات'] },
+                { rank: 'ملازم أول', name: 'محمد الشمري', idCard: '103', code: 'O-5', title: 'قائد SRT', logs: '50', ads: '15', notes: 'نشط جداً', warnings: '0', lastPromotion: '2026/05/12', vacation: 'TRUE', courses: ['دورة الاقتحام السريع SRT', 'دورة القناصة التكتيكية'] }
             ];
 
             attachedRecords = [
                 { week: 'الأسبوع الأول', id: '101', name: 'سلطان القحطاني', rank: 'لواء', code: 'A-1', logs: '45', ads: '12' },
-                { week: 'الأسبوع الأول', id: '103', name: 'محمد الشمري', rank: 'ملازم أول', code: 'O-5', logs: '50', ads: '15' }
+                { week: 'الأسبوع الأول', id: '103', name: 'محمد الشمري', rank: 'ملازم أول', code: 'O-5', logs: '50', ads: '15' },
+                { week: 'الأسبوع الأول', id: '102', name: 'فهد العتيبي', rank: 'عميد', code: 'A-2', logs: '38', ads: '10' }
             ];
 
             attachedOperations = [
-                { week: 'الأسبوع الأول', id: '103', name: 'محمد الشمري', rank: 'ملازم أول', code: 'O-5', logs: '80' }
+                { week: 'الأسبوع الأول', id: '103', name: 'محمد الشمري', rank: 'ملازم أول', code: 'O-5', logs: '80' },
+                { week: 'الأسبوع الأول', id: '101', name: 'سلطان القحطاني', rank: 'لواء', code: 'A-1', logs: '60' }
             ];
 
             document.getElementById('lastUpdateIndicator').innerText = 'تم التحديث بنجاح';
@@ -532,11 +526,22 @@
             const grid = document.getElementById('sotwCandidatesGrid');
             let scores = {};
             
+            // حساب نقاط السجلات (السجلات + الإعلانات)
             attachedRecords.forEach(r => {
-                if (!scores[r.id]) scores[r.id] = { id: r.id, name: r.name, rank: r.rank, code: r.code, total: 0 };
+                if (!scores[r.id]) {
+                    const sol = rawSheetData.find(s => s.idCard === r.id);
+                    scores[r.id] = { 
+                        id: r.id, 
+                        name: sol ? sol.name : r.name, 
+                        rank: sol ? sol.rank : r.rank, 
+                        code: sol ? sol.code : r.code, 
+                        total: 0 
+                    };
+                }
                 scores[r.id].total += (parseInt(r.logs) || 0) + (parseInt(r.ads) || 0);
             });
 
+            // حساب نقاط العمليات (Pont)
             attachedOperations.forEach(o => {
                 if (!scores[o.id]) {
                     const sol = rawSheetData.find(s => s.idCard === o.id);
@@ -573,7 +578,7 @@
                         <p style="color: var(--accent-gold); font-size: 0.85rem; font-weight: 700;">${cand.rank} - ${cand.code}</p>
                         <span class="badge badge-code">ID: ${cand.id}</span>
                         <div style="margin-top: 10px; width: 100%; background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">مجموع الإنجازات:</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">مجموع الإنجازات والنقاط:</span>
                             <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-gold);">${cand.total} نقطة</div>
                         </div>
                     </div>
@@ -630,14 +635,43 @@
             }
 
             const soldier = rawSheetData.find(s => s.idCard === soldierId);
+            if (!soldier) {
+                container.innerHTML = '<p style="color: var(--danger); text-align: center;">لم يتم العثور على بيانات هذا العسكري.</p>';
+                return;
+            }
+
+            let coursesListHtml = '';
+            if (soldier.courses && soldier.courses.length > 0) {
+                soldier.courses.forEach(c => {
+                    coursesListHtml += `<li style="margin-bottom: 5px; color: var(--success);"><i class="fa-solid fa-circle-check"></i> ${c}</li>`;
+                });
+            } else {
+                coursesListHtml = '<li style="color: var(--text-muted);">لا توجد دورات مسجلة حالياً.</li>';
+            }
+
             container.innerHTML = `
                 <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-subtle);">
                     <h4 style="color: var(--accent-gold); margin-bottom: 5px;">${soldier.name} (${soldier.rank})</h4>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">رقم الأيدي: ${soldier.idCard} | الكود: ${soldier.code}</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px;">رقم الأيدي: ${soldier.idCard} | الكود: ${soldier.code} | آخر ترقية: ${soldier.lastPromotion}</p>
                     <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 10px 0;">
-                    <p style="color: var(--success); font-size: 0.9rem;"><i class="fa-solid fa-circle-check"></i> اجتاز دورة التأمين الميداني والدورات الأساسية بنجاح.</p>
+                    <h5 style="color: #fff; margin-bottom: 8px;">الدورات المجتازة:</h5>
+                    <ul style="list-style: none; padding-right: 0;">
+                        ${coursesListHtml}
+                    </ul>
                 </div>
             `;
+        }
+
+        function deleteRecordItem(week, id) {
+            attachedRecords = attachedRecords.filter(item => !(item.week === week && item.id === id));
+            renderRecordsTable();
+            renderSOTWCandidates();
+        }
+
+        function deleteOperationItem(week, id) {
+            attachedOperations = attachedOperations.filter(item => !(item.week === week && item.id === id));
+            renderOperationsTable();
+            renderSOTWCandidates();
         }
 
         window.onload = function() {
