@@ -10,7 +10,6 @@
             --bg-main: #070a12;
             --bg-sidebar: #0b0f19;
             --bg-card: #0e1422;
-            --bg-card-hover: #151d30;
             --accent-gold: #d4af37;
             --accent-gold-hover: #f1c40f;
             --text-main: #f8fafc;
@@ -406,7 +405,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم تحديث الجرد وفصل الأقسام وعسكري الأسبوع ليحسب تلقائياً حسب الأسابيع المرفقة.</p>
+                <p style="color: var(--text-muted);">تم تصفية منسوبي القطاعات لإظهار المسجلين فقط وتحديث حالات الإجازات وتحسين الأداء.</p>
             </div>
         </div>
 
@@ -431,7 +430,7 @@
             </div>
         </div>
 
-        <!-- منسوبي القطاعات (الأشخاص فقط بدون تكرار الجدول القديم) -->
+        <!-- منسوبي القطاعات (الأشخاص المسجلين فقط بدون الأماكن الشاغرة) -->
         <div id="members" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منسوبي القطاعات</h2>
             
@@ -478,7 +477,7 @@
                                 <th>التحذيرات</th>
                                 <th>تاريخ آخر ترقية</th>
                                 <th>ملاحظات يدوية</th>
-                                <th>إجازة</th>
+                                <th>حالة الإجازة</th>
                             </tr>
                         </thead>
                         <tbody id="membersTableBody">
@@ -548,7 +547,7 @@
             </div>
         </div>
 
-        <!-- صفحة الجرد الأسبوعي (فصل الأقسام تماماً) -->
+        <!-- صفحة الجرد الأسبوعي -->
         <div id="inventory" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">صفحة الجرد الأسبوعي</h2>
             <div class="card">
@@ -652,7 +651,7 @@
             </div>
         </div>
 
-        <!-- عسكري الأسبوع (تلقائي حسب السجلات المرفقة وتحديد الأسبوع التلقائي) -->
+        <!-- عسكري الأسبوع -->
         <div id="soldier_week" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
             <div class="card">
@@ -717,14 +716,26 @@
             for(let i = 1; i < rows.length; i++) {
                 let r = rows[i];
                 if(r.length >= 3) {
+                    let nameVal = r[4] ? r[4].trim() : "";
+                    let idVal = r[5] ? r[5].trim() : "";
+                    
+                    // استبعاد الصفوف الفارغة أو التي لا تحتوي على اسم أو آيدي حقيقي (الأماكن الشاغرة)
+                    if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
+
                     let codeVal = r[6] ? r[6].trim() : (r[4] ? r[4].trim() : ""); 
                     let category = codeVal.charAt(0).toUpperCase();
+
+                    // معالجة حالة الإجازة: إذا كانت True أو صح يكتب "في إجازة"، وإلا "على رأس العمل"
+                    let rawVacation = r[14] ? r[14].trim().toLowerCase() : "";
+                    let vacationStatus = (rawVacation === 'true' || rawVacation === '1' || rawVacation === 'صح' || rawVacation === 'yes') 
+                        ? '<span style="color:var(--danger); font-weight:bold;">في إجازة</span>' 
+                        : '<span style="color:var(--success);">على رأس العمل</span>';
 
                     let memberObj = {
                         rank: r[2] ? r[2].trim() : "",
                         discord: r[3] ? r[3].trim() : "",
-                        name: r[4] ? r[4].trim() : "",
-                        id: r[5] ? r[5].trim() : "",
+                        name: nameVal,
+                        id: idVal,
                         code: codeVal,
                         title: r[7] ? r[7].trim() : "",
                         logs: r[8] ? r[8].trim() : "0",
@@ -733,7 +744,7 @@
                         warnings: r[11] ? r[11].trim() : "",
                         lastPromo: r[12] ? r[12].trim() : "",
                         manualNotes: r[13] ? r[13].trim() : "",
-                        vacation: r[14] ? r[14].trim() : "",
+                        vacation: vacationStatus,
                         category: category
                     };
                     csvData.push(memberObj);
@@ -851,7 +862,7 @@
                         <td>${m.warnings || '---'}</td>
                         <td>${m.lastPromo || '---'}</td>
                         <td>${m.manualNotes || '---'}</td>
-                        <td>${m.vacation || '---'}</td>
+                        <td>${m.vacation}</td>
                     </tr>
                 `;
             });
@@ -1060,7 +1071,7 @@
 
             let html = `<h3 style="color:var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-trophy"></i> المرشحين الأعلى أداءً لـ (${selectedWeek}):</h3>`;
             if(top3.length === 0) {
-                html += '<p style="color:var->text-muted;>لا توجد سجلات مرفقة لهذا الأسبوع بعد</p>';
+                html += '<p style="color:var(--text-muted);">لا توجد سجلات مرفقة لهذا الأسبوع بعد</p>';
             } else {
                 html += '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
                 top3.forEach((s, i) => {
