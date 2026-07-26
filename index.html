@@ -547,6 +547,20 @@
         <div id="inventory" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">صفحة الجرد الأسبوعي</h2>
 
+            <!-- لوحة إدارة الأسابيع المتاحة في الجرد -->
+            <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
+                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                    <input type="text" id="newWeekInputInv" class="login-input" placeholder="اسم الأسبوع الجديد (مثال: أسبوع الحسم)..." style="margin:0; flex:1; min-width: 200px;">
+                    <button class="btn" onclick="addNewWeekFrom('Inv')">إضافة أسبوع جديد</button>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <label style="color: var(--text-muted); font-size: 0.85rem;">حذف أسبوع:</label>
+                    <select id="deleteWeekSelectInv" class="login-input" style="margin:0; max-width: 250px;"></select>
+                    <button class="btn btn-danger" onclick="deleteSelectedWeekFrom('Inv')">حذف الأسبوع المحدد</button>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="inventory-tabs">
                     <button class="inv-tab-btn active" onclick="switchInvTab('logs_ads', this)">جرد السجلات والإعلانات</button>
@@ -639,17 +653,17 @@
         <div id="soldier_week" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
             
-            <!-- لوحة إدارة الأسابيع (إضافة / حذف الأسبوع) -->
+            <!-- لوحة إدارة الأسابيع المتاحة في عسكري الأسبوع -->
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
                 <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
-                    <input type="text" id="newWeekInput" class="login-input" placeholder="اسم الأسبوع الجديد (مثال: أسبوع الحسم)..." style="margin:0; flex:1; min-width: 200px;">
-                    <button class="btn" onclick="addNewWeek()">إضافة أسبوع جديد</button>
+                    <input type="text" id="newWeekInputSoldier" class="login-input" placeholder="اسم الأسبوع الجديد (مثال: أسبوع الحسم)..." style="margin:0; flex:1; min-width: 200px;">
+                    <button class="btn" onclick="addNewWeekFrom('Soldier')">إضافة أسبوع جديد</button>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <label style="color: var(--text-muted); font-size: 0.85rem;">حذف أسبوع:</label>
-                    <select id="deleteWeekSelect" class="login-input" style="margin:0; max-width: 250px;"></select>
-                    <button class="btn btn-danger" onclick="deleteSelectedWeek()">حذف الأسبوع المحدد</button>
+                    <select id="deleteWeekSelectSoldier" class="login-input" style="margin:0; max-width: 250px;"></select>
+                    <button class="btn btn-danger" onclick="deleteSelectedWeekFrom('Soldier')">حذف الأسبوع المحدد</button>
                 </div>
             </div>
 
@@ -722,7 +736,7 @@
         }
 
         function updateWeekDropdowns() {
-            const dropdownIds = ['autoWeekLogsAds', 'autoWeekOps', 'autoWeekAcceptance', 'selectWeekSoldier', 'deleteWeekSelect'];
+            const dropdownIds = ['autoWeekLogsAds', 'autoWeekOps', 'autoWeekAcceptance', 'selectWeekSoldier', 'deleteWeekSelectInv', 'deleteWeekSelectSoldier'];
             
             dropdownIds.forEach(id => {
                 let select = document.getElementById(id);
@@ -744,8 +758,9 @@
             renderSoldierOfWeek();
         }
 
-        function addNewWeek() {
-            let input = document.getElementById('newWeekInput');
+        function addNewWeekFrom(source) {
+            let inputId = source === 'Inv' ? 'newWeekInputInv' : 'newWeekInputSoldier';
+            let input = document.getElementById(inputId);
             let weekName = input.value.trim();
             
             if(!weekName) {
@@ -760,12 +775,15 @@
             customWeeks.push(weekName);
             saveToLocalStorage();
             input.value = "";
+            document.getElementById('newWeekInputInv').value = "";
+            document.getElementById('newWeekInputSoldier').value = "";
             updateWeekDropdowns();
             alert("تم إضافة الأسبوع بنجاح!");
         }
 
-        function deleteSelectedWeek() {
-            let select = document.getElementById('deleteWeekSelect');
+        function deleteSelectedWeekFrom(source) {
+            let selectId = source === 'Inv' ? 'deleteWeekSelectInv' : 'deleteWeekSelectSoldier';
+            let select = document.getElementById(selectId);
             let weekName = select.value;
             
             if(customWeeks.length <= 1) {
@@ -1155,11 +1173,9 @@
             let topContainer = document.getElementById('topSoldiersList');
             let approvedContainer = document.getElementById('currentApprovedSoldier');
 
-            // جلب وترتيب أعلى العساكر بناءً على السجلات والإعلانات المرفقة في هذا الأسبوع
             let weekLogs = inventoryLogsAds.filter(i => i.week === week);
             
             if(weekLogs.length > 0) {
-                // ترتيب تنازلي حسب السجلات
                 weekLogs.sort((a, b) => b.logs - a.logs);
                 
                 let html = `<div class="table-responsive"><table><thead><tr><th>المركز</th><th>ID</th><th>الاسم</th><th>الرتبة</th><th>السجلات</th><th>الإعلانات</th><th>اختيار</th></tr></thead><tbody>`;
@@ -1181,7 +1197,6 @@
                 topContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات سجلات مرفقة لهذا الأسبوع حتى الآن.</p>`;
             }
 
-            // عرض العسكري المعتمد للأسبوع
             let approvedData = soldierOfWeekData[week];
             if(approvedData) {
                 approvedContainer.innerHTML = `<div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--accent-gold);"><h3 style="color: var(--accent-gold); font-size: 0.95rem;">العسكري المعتمد للأسبوع (${week}): ${approvedData.name} (${approvedData.id}) - ${approvedData.rank}</h3></div>`;
