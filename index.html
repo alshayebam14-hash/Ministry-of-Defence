@@ -404,7 +404,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم تفعيل البحث الفوري بالآيدي وتصحيح رصد الضباط والأفراد بنجاح.</p>
+                <p style="color: var(--text-muted);">تم ضبط التصنيف الآلي بدقة بناءً على المسميات (قادات القوات المسلحة، ضابط، وأفراد).</p>
             </div>
         </div>
 
@@ -452,7 +452,7 @@
                 </div>
             </div>
 
-            <!-- أزرار الفلترة + خانة البحث بالآيدي -->
+            <!-- أزرار الفلترة + خانة البحث بالآيدي أو الاسم -->
             <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" onclick="filterMembers('ALL')">الكل</button>
@@ -726,14 +726,13 @@
                     if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
 
                     let rankVal = r[2] ? r[2].trim() : "";
-                    let codeVal = r[6] ? r[6].trim() : ""; 
+                    let titleVal = r[7] ? r[7].trim() : ""; // العمود السابع: المسمى الوظيفي
                     
-                    // تصنيف تلقائي ذكي بناءً على رتبة العسكري أو كود التصنيف لتفادي الصفر
+                    // التصنيف بناءً على المسمى الوظيفي الدقيق
                     let category = 'R';
-                    let fullText = (rankVal + " " + codeVal).toLowerCase();
-                    if(fullText.includes('قائد') || fullText.includes('لواء') || fullText.includes('عميد') || fullText.includes('عقيد') || fullText.includes('مقدم') || codeVal.toUpperCase() === 'L') {
+                    if (titleVal.includes('قادات القوات المسلحة')) {
                         category = 'L';
-                    } else if(fullText.includes('رائد') || fullText.includes('نقيب') || fullText.includes('ملازم') || fullText.includes('ضابط') || codeVal.toUpperCase() === 'M') {
+                    } else if (titleVal.includes('ضابط وزارة الدفاع')) {
                         category = 'M';
                     } else {
                         category = 'R';
@@ -749,8 +748,8 @@
                         discord: r[3] ? r[3].trim() : "",
                         name: nameVal,
                         id: idVal,
-                        code: codeVal,
-                        title: r[7] ? r[7].trim() : "",
+                        code: r[6] ? r[6].trim() : "",
+                        title: titleVal,
                         logs: r[8] ? r[8].trim() : "0",
                         ads: r[9] ? r[9].trim() : "0",
                         notes: r[10] ? r[10].trim() : "",
