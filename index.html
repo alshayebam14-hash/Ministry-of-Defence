@@ -408,7 +408,6 @@
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
                 <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط فلتر القادات (L) ليعتمد على أكواد (L-) و (D-) بدقة.</p>
                 
-                <!-- زر تحديث البيانات المضاف -->
                 <button class="btn" onclick="fetchSheetData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
                 </button>
@@ -460,7 +459,6 @@
                 </div>
             </div>
 
-            <!-- أزرار الفلترة + خانة البحث بالآيدي أو الاسم -->
             <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" onclick="filterMembers('ALL')">الكل</button>
@@ -548,20 +546,6 @@
         <!-- صفحة الجرد الأسبوعي -->
         <div id="inventory" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">صفحة الجرد الأسبوعي</h2>
-            
-            <!-- لوحة إدارة الأسابيع (إضافة / حذف) -->
-            <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
-                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
-                    <input type="text" id="newWeekInput" class="login-input" placeholder="اسم الأسبوع الجديد (مثال: أسبوع الحسم)..." style="margin:0; flex:1; min-width: 200px;">
-                    <button class="btn" onclick="addNewWeek()">إضافة أسبوع جديد</button>
-                </div>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <label style="color: var(--text-muted); font-size: 0.85rem;">حذف أسبوع:</label>
-                    <select id="deleteWeekSelect" class="login-input" style="margin:0; max-width: 250px;"></select>
-                    <button class="btn btn-danger" onclick="deleteSelectedWeek()">حذف الأسبوع المحدد</button>
-                </div>
-            </div>
 
             <div class="card">
                 <div class="inventory-tabs">
@@ -654,6 +638,21 @@
         <!-- عسكري الأسبوع -->
         <div id="soldier_week" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
+            
+            <!-- لوحة إدارة الأسابيع (إضافة / حذف) -->
+            <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
+                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                    <input type="text" id="newWeekInput" class="login-input" placeholder="اسم الأسبوع الجديد (مثال: أسبوع الحسم)..." style="margin:0; flex:1; min-width: 200px;">
+                    <button class="btn" onclick="addNewWeek()">إضافة أسبوع جديد</button>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <label style="color: var(--text-muted); font-size: 0.85rem;">حذف أسبوع:</label>
+                    <select id="deleteWeekSelect" class="login-input" style="margin:0; max-width: 250px;"></select>
+                    <button class="btn btn-danger" onclick="deleteSelectedWeek()">حذف الأسبوع المحدد</button>
+                </div>
+            </div>
+
             <div class="card">
                 <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items:center; flex-wrap: wrap;">
                     <label style="color: var(--text-muted);">اختر الأسبوع لعرض العسكري:</label>
@@ -663,9 +662,10 @@
                 <div id="topSoldiersList" style="margin-bottom: 20px;"></div>
                 
                 <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اعتماد عسكري الأسبوع يدوياً (اختياري):</h3>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0; flex:1; min-width: 200px;">
                     <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
+                    <button class="btn btn-danger" onclick="removeSoldierOfWeek()">حذف عسكري الأسبوع</button>
                 </div>
             </div>
         </div>
@@ -684,7 +684,6 @@
         let currentUser = "Ahmed";
         let csvData = [];
         
-        // نظام الأسابيع الديناميكي
         let customWeeks = JSON.parse(localStorage.getItem('grave_customWeeks')) || ["الأسبوع الأول", "الأسبوع الثاني", "الأسبوع الثالث"];
 
         let inventoryLogsAds = JSON.parse(localStorage.getItem('grave_invLogsAds')) || [];
@@ -714,7 +713,6 @@
             localStorage.setItem('grave_memberCoursesState', JSON.stringify(memberCoursesState));
         }
 
-        // تحديث كل قوائم الأسابيع في الموقع تلقائياً
         function updateWeekDropdowns() {
             const dropdownIds = ['autoWeekLogsAds', 'autoWeekOps', 'autoWeekAcceptance', 'selectWeekSoldier', 'deleteWeekSelect'];
             
@@ -769,7 +767,6 @@
             
             if(confirm(`هل أنت متأكد من حذف (${weekName})؟`)) {
                 customWeeks = customWeeks.filter(w => w !== weekName);
-                // حذف البيانات المرتبطة بهذا الأسبوع إن وجدت
                 inventoryLogsAds = inventoryLogsAds.filter(i => i.week !== weekName);
                 inventoryOps = inventoryOps.filter(i => i.week !== weekName);
                 inventoryAcceptance = inventoryAcceptance.filter(i => i.week !== weekName);
@@ -1167,6 +1164,19 @@
                 document.getElementById('selectedSoldierInput').value = "";
             } else {
                 alert("لم يتم العثور على العسكري بهذا الآيدي!");
+            }
+        }
+
+        function removeSoldierOfWeek() {
+            let week = document.getElementById('selectWeekSoldier').value;
+            if(soldierOfWeekData[week]) {
+                if(confirm(`هل أنت متأكد من حذف عسكري الأسبوع المعتمد لـ (${week})؟`)) {
+                    delete soldierOfWeekData[week];
+                    saveToLocalStorage();
+                    renderSoldierOfWeek();
+                }
+            } else {
+                alert("لا يوجد عسكري معتمد أساساً في هذا الأسبوع.");
             }
         }
 
