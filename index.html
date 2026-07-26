@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة إدارة وزارة الدفاع</title>
+    <title>Grave - Military Police Judicial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-main: #0b0f19;
-            --bg-card: #131b2e;
-            --bg-card-hover: #1a2642;
+            --bg-main: #070a12;
+            --bg-sidebar: #0b0f19;
+            --bg-card: #0e1422;
+            --bg-card-hover: #151d30;
             --accent-gold: #d4af37;
             --accent-gold-hover: #f1c40f;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-subtle: rgba(212, 175, 55, 0.2);
+            --text-muted: #8a94a6;
+            --border-subtle: rgba(255, 255, 255, 0.06);
             --danger: #ef4444;
             --success: #22c55e;
             --warning: #f59e0b;
@@ -32,651 +33,404 @@
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            overflow-x: hidden;
         }
 
-        header {
+        /* القائمة الجانبية */
+        aside {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-left: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 15px;
+            height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-logo i {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .menu-item.active {
+            background-color: var(--accent-gold);
+            color: #070a12;
+            font-weight: 700;
+        }
+        .menu-item.active i {
+            color: #070a12;
+        }
+
+        .menu-item i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+
+        /* المحتوى الرئيسي */
+        main {
+            margin-right: 260px;
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            gap: 25px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* قائمة التقارير الجانبية (الأيمن داخل المحتوى) */
+        .reports-sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .reports-sidebar-header {
+            padding: 15px 20px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--accent-gold);
+            font-size: 1rem;
+        }
+
+        .reports-list {
+            overflow-y: auto;
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .report-item-card {
             background: var(--bg-card);
-            border-bottom: 2px solid var(--accent-gold);
-            padding: 15px 30px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: 0.2s;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        header h1 {
-            color: var(--accent-gold);
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .container {
-            padding: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            flex: 1;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: var(--bg-card);
-            color: var(--text-muted);
-            border: 1px solid var(--border-subtle);
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active, .tab-btn:hover {
-            background: var(--accent-gold);
-            color: #000;
+        .report-item-card:hover, .report-item-card.active {
             border-color: var(--accent-gold);
-        }
-
-        .section-panel {
-            display: none;
-        }
-
-        .section-panel.active {
-            display: block;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: 0.9rem;
-        }
-
-        th {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--accent-gold);
-            font-weight: 700;
-        }
-
-        tr:hover {
             background: var(--bg-card-hover);
         }
 
-        .badge {
-            padding: 5px 10px;
+        .report-item-card.active {
+            border-right: 3px solid var(--accent-gold);
+        }
+
+        /* تفاصيل التقرير الكبرى (اليسار) */
+        .report-details-container {
+            flex: 1;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .badge-row-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
             border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 700;
         }
 
-        .badge-success { background: rgba(34, 197, 94, 0.2); color: var(--success); }
-        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-        .badge-rank { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid var(--border-subtle); }
-        .badge-code { background: rgba(148, 163, 184, 0.1); color: var(--text-muted); }
+        .status-success { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-        .search-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .search-bar input, .search-bar select {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-main);
-            padding: 10px 15px;
-            border-radius: 8px;
-            outline: none;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .search-bar input:focus, .search-bar select:focus {
-            border-color: var(--accent-gold);
-        }
-
-        .btn-danger-sm {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
-        }
-
-        .btn-danger-sm:hover {
-            background: var(--danger);
-            color: #fff;
-        }
-
-        .sotw-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .sotw-candidate-card {
+        .ai-notes-box {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             padding: 20px;
-            text-align: center;
+            margin-top: 10px;
             position: relative;
-            transition: 0.3s;
         }
 
-        .sotw-candidate-card:hover {
-            border-color: var(--accent-gold);
-            transform: translateY(-3px);
+        .ai-title {
+            color: var(--accent-gold);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .soldier-info-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .soldier-info-text strong {
+            color: var(--text-main);
+        }
+
+        .ai-eval-text {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-subtle);
+            padding: 15px;
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .report-footer-meta {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1><i class="fa-solid fa-shield-halved"></i> لوحة إدارة وزارة الدفاع</h1>
-        <div style="font-size: 0.9rem; color: var(--text-muted);" id="lastUpdateIndicator">جاري مزامنة البيانات...</div>
-    </header>
-
-    <div class="container">
-        <!-- الأزرار التنقلية بين الأقسام -->
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('main', this)">الرئيسية (العام)</button>
-            <button class="tab-btn" onclick="switchTab('records', this)">السجلات المرفقة</button>
-            <button class="tab-btn" onclick="switchTab('operations', this)">العمليات (Pont)</button>
-            <button class="tab-btn" onclick="switchTab('sotw', this)">عسكري الأسبوع</button>
-            <button class="tab-btn" onclick="switchTab('courses', this)">الدورات والترقيات</button>
-        </div>
-
-        <!-- قسم الرئيسية -->
-        <div id="mainSection" class="section-panel active">
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="ابحث بالاسم، الأيدي، أو الكود..." oninput="filterTable()">
-                <select id="categoryFilter" onchange="applyCategoryFilter()">
-                    <option value="all">جميع الرتب والقطاعات</option>
-                    <option value="officers">الضباط والقادة</option>
-                    <option value="ncos">الأفراد والجنود</option>
-                </select>
-            </div>
-
-            <div class="card">
-                <div class="table-responsive">
-                    <table>
-                        <thead id="tableHead"></thead>
-                        <tbody id="tableBody"></tbody>
-                    </table>
+    <!-- القائمة الجانبية اليمنى -->
+    <aside>
+        <div>
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>GRAVE ADMIN PANEL</span>
                 </div>
             </div>
-        </div>
 
-        <!-- قسم السجلات -->
-        <div id="recordsSection" class="section-panel">
-            <div class="search-bar">
-                <input type="text" id="searchRecId" placeholder="ابحث برقم الأيدي أو الاسم..." oninput="renderRecordsTable()">
-                <select id="searchRecWeek" onchange="renderRecordsTable()">
-                    <option value="الكل">جميع الأسابيع</option>
-                    <option value="الأسبوع الأول">الأسبوع الأول</option>
-                    <option value="الأسبوع الثاني">الأسبوع الثاني</option>
-                    <option value="الأسبوع الثالث">الأسبوع الثالث</option>
-                    <option value="الأسبوع الرابع">الأسبوع الرابع</option>
-                </select>
-            </div>
-            <div class="card">
-                <div class="table-responsive">
-                    <table>
-                        <tbody id="tableBodyRecords"></tbody>
-                    </table>
-                </div>
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item"><i class="fa-solid fa-house"></i> الرئيسية</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-binoculars"></i> المباشرة الميدانية</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-clipboard-user"></i> التحضير الميداني</a>
+                <a href="#" class="menu-item active"><i class="fa-solid fa-file-lines"></i> التقارير الميدانية</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-users-gear"></i> منسوبي القطاعات</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-shield"></i> جرد القطاعات</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-id-badge"></i> الاكواد العسكرية</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-scale-balanced"></i> القضايا</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-triangle-exclamation"></i> الشكاوي</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-circle-plus"></i> إنشاء قضية</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-users"></i> المستخدمين</a>
             </div>
         </div>
 
-        <!-- قسم العمليات -->
-        <div id="operationsSection" class="section-panel">
-            <div class="search-bar">
-                <input type="text" id="searchOpId" placeholder="ابحث برقم الأيدي أو الاسم..." oninput="renderOperationsTable()">
-                <select id="searchOpWeek" onchange="renderOperationsTable()">
-                    <option value="الكل">جميع الأسابيع</option>
-                    <option value="الأسبوع الأول">الأسبوع الأول</option>
-                    <option value="الأسبوع الثاني">الأسبوع الثاني</option>
-                </select>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <span>BETA1 User</span>
+                <span style="color: var(--accent-gold); font-weight: 700;">BETA1</span>
             </div>
-            <div class="card">
-                <div class="table-responsive">
-                    <table>
-                        <tbody id="tableBodyOperations"></tbody>
-                    </table>
-                </div>
-            </div>
+            <a href="#" class="menu-item" style="color: var(--danger); justify-content: center; background: rgba(239,68,68,0.1);">
+                <i class="fa-solid fa-power-off"></i> تسجيل الخروج
+            </a>
         </div>
+    </aside>
 
-        <!-- قسم عسكري الأسبوع -->
-        <div id="sotwSection" class="section-panel">
-            <div class="card" style="margin-bottom: 20px;">
-                <h3 style="color: var(--accent-gold); margin-bottom: 10px;"><i class="fa-solid fa-crown"></i> المرشحين الأبرز لعسكري الأسبوع</h3>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">يتم احتساب النقاط تلقائياً بناءً على مجموع السجلات والعمليات المرفقة لكل عسكري.</p>
+    <!-- المحتوى الرئيسي للتقارير -->
+    <main>
+        <!-- قائمة التقارير المصغرة -->
+        <div class="reports-sidebar">
+            <div class="reports-sidebar-header">
+                <span>التقارير الميدانية</span>
+                <i class="fa-solid fa-list-check"></i>
             </div>
-            <div class="sotw-grid" id="sotwCandidatesGrid"></div>
-        </div>
-
-        <!-- قسم الدورات -->
-        <div id="coursesSection" class="section-panel">
-            <div class="card">
-                <h3 style="color: var(--accent-gold); margin-bottom: 15px;">متابعة الدورات العسكرية والترقيات</h3>
-                <div class="search-bar">
-                    <input type="text" id="idSearchInput" placeholder="بحث سريع بالأيدي أو الاسم..." oninput="filterSoldiersDropdown()">
-                    <select id="soldierSelect" onchange="renderSoldierCoursesDetails()">
-                        <option value="">-- اختر عسكرياً --</option>
-                    </select>
-                </div>
-                <div id="soldierCoursesContainer" style="margin-top: 20px;">
-                    <p style="color: var(--text-muted); text-align: center;">الرجاء اختيار عسكري لعرض تفاصيل دوراته وسجله التدريبي.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let rawSheetData = [];
-        let attachedRecords = [];
-        let attachedOperations = [];
-
-        function switchTab(tabName, btnElement) {
-            document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-            btnElement.classList.add('active');
-
-            if (tabName === 'main') {
-                document.getElementById('mainSection').classList.add('active');
-                applyCategoryFilter();
-            } else if (tabName === 'records') {
-                document.getElementById('recordsSection').classList.add('active');
-                renderRecordsTable();
-            } else if (tabName === 'operations') {
-                document.getElementById('operationsSection').classList.add('active');
-                renderOperationsTable();
-            } else if (tabName === 'sotw') {
-                document.getElementById('sotwSection').classList.add('active');
-                renderSOTWCandidates();
-            } else if (tabName === 'courses') {
-                document.getElementById('coursesSection').classList.add('active');
-                populateSoldiersDropdown();
-            }
-        }
-
-        async function fetchAllData() {
-            // بيانات تجريبية شاملة ومترابطة لضمان عمل عسكري الأسبوع والدورات بشكل صحيح
-            rawSheetData = [
-                { rank: 'لواء', name: 'سلطان القحطاني', idCard: '101', code: 'A-1', title: 'قائد القطاع', logs: '45', ads: '12', notes: 'لا يوجد', warnings: '0', lastPromotion: '2026/01/01', vacation: 'FALSE', courses: ['دورة القيادة المتقدمة', 'دورة التأمين الميداني'] },
-                { rank: 'عميد', name: 'فهد العتيبي', idCard: '102', code: 'A-2', title: 'نائب القائد', logs: '38', ads: '10', notes: 'ممتاز', warnings: '0', lastPromotion: '2026/02/10', vacation: 'FALSE', courses: ['دورة إدارة الأزمات'] },
-                { rank: 'ملازم أول', name: 'محمد الشمري', idCard: '103', code: 'O-5', title: 'قائد SRT', logs: '50', ads: '15', notes: 'نشط جداً', warnings: '0', lastPromotion: '2026/05/12', vacation: 'TRUE', courses: ['دورة الاقتحام السريع SRT', 'دورة القناصة التكتيكية'] }
-            ];
-
-            attachedRecords = [
-                { week: 'الأسبوع الأول', id: '101', name: 'سلطان القحطاني', rank: 'لواء', code: 'A-1', logs: '45', ads: '12' },
-                { week: 'الأسبوع الأول', id: '103', name: 'محمد الشمري', rank: 'ملازم أول', code: 'O-5', logs: '50', ads: '15' },
-                { week: 'الأسبوع الأول', id: '102', name: 'فهد العتيبي', rank: 'عميد', code: 'A-2', logs: '38', ads: '10' }
-            ];
-
-            attachedOperations = [
-                { week: 'الأسبوع الأول', id: '103', name: 'محمد الشمري', rank: 'ملازم أول', code: 'O-5', logs: '80' },
-                { week: 'الأسبوع الأول', id: '101', name: 'سلطان القحطاني', rank: 'لواء', code: 'A-1', logs: '60' }
-            ];
-
-            document.getElementById('lastUpdateIndicator').innerText = 'تم التحديث بنجاح';
-            applyCategoryFilter();
-            populateSoldiersDropdown();
-        }
-
-        function applyCategoryFilter() {
-            const category = document.getElementById('categoryFilter').value;
-            let filtered = rawSheetData;
-            
-            if (category === 'officers') {
-                filtered = rawSheetData.filter(item => ['لواء', 'عميد', 'عقيد', 'مقدم', 'رائد', 'نقيب', 'ملازم أول', 'ملازم'].includes(item.rank));
-            } else if (category === 'ncos') {
-                filtered = rawSheetData.filter(item => !['لواء', 'عميد', 'عقيد', 'مقدم', 'رائد', 'نقيب', 'ملازم أول', 'ملازم'].includes(item.rank));
-            }
-            renderMainTable(filtered);
-        }
-
-        function renderMainTable(data) {
-            const head = document.getElementById('tableHead');
-            head.innerHTML = `
-                <tr>
-                    <th>الرتبة</th>
-                    <th>الاسم</th>
-                    <th>الأيدي ID</th>
-                    <th>الكود</th>
-                    <th>المسمى الوظيفي</th>
-                    <th>السجلات</th>
-                    <th>الإعلانات</th>
-                    <th>الملاحظات</th>
-                    <th>التحذيرات</th>
-                    <th>آخر ترقية</th>
-                    <th>إجازة</th>
-                </tr>
-            `;
-
-            const body = document.getElementById('tableBody');
-            if (data.length === 0) {
-                body.innerHTML = '<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">لا توجد بيانات مطابقة للبحث</td></tr>';
-                return;
-            }
-
-            let html = '';
-            data.forEach(item => {
-                let badgeClass = 'badge-success';
-                let vacationText = 'على رأس العمل';
-                if (item.vacation && item.vacation.toUpperCase() === 'TRUE') {
-                    vacationText = 'في إجازة';
-                    badgeClass = 'badge-danger';
-                }
-
-                html += `
-                    <tr>
-                        <td><span class="badge badge-rank">${item.rank}</span></td>
-                        <td style="font-weight: 700;">${item.name}</td>
-                        <td><span class="badge badge-code">${item.idCard}</span></td>
-                        <td><span class="badge badge-code">${item.code}</span></td>
-                        <td>${item.title}</td>
-                        <td style="font-weight: 800; color: var(--accent-gold);">${item.logs}</td>
-                        <td style="font-weight: 800;">${item.ads}</td>
-                        <td>${item.notes}</td>
-                        <td style="color: var(--warning);">${item.warnings}</td>
-                        <td>${item.lastPromotion}</td>
-                        <td><span class="badge ${badgeClass}">${vacationText}</span></td>
-                    </tr>
-                `;
-            });
-            body.innerHTML = html;
-        }
-
-        function renderRecordsTable() {
-            const body = document.getElementById('tableBodyRecords');
-            const weekFilter = document.getElementById('searchRecWeek').value;
-            const textFilter = document.getElementById('searchRecId').value.toLowerCase();
-
-            let filtered = attachedRecords;
-            if (weekFilter !== 'الكل') {
-                filtered = filtered.filter(item => item.week === weekFilter);
-            }
-            if (textFilter) {
-                filtered = filtered.filter(item => item.id.toLowerCase().includes(textFilter) || item.name.toLowerCase().includes(textFilter));
-            }
-
-            if (filtered.length === 0) {
-                body.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">لا توجد سجلات مرفقة مطابقة للبحث</td></tr>';
-                return;
-            }
-
-            let html = `
-                <tr>
-                    <th>الأسبوع</th>
-                    <th>رقم الأيدي ID</th>
-                    <th>الاسم</th>
-                    <th>الرتبة</th>
-                    <th>الكود</th>
-                    <th>السجلات</th>
-                    <th>الإعلانات</th>
-                    <th>إجراء</th>
-                </tr>
-            `;
-            filtered.forEach(item => {
-                html += `
-                    <tr>
-                        <td><span class="badge badge-rank">${item.week}</span></td>
-                        <td><span class="badge badge-code">${item.id}</span></td>
-                        <td style="font-weight: 700;">${item.name}</td>
-                        <td>${item.rank}</td>
-                        <td><span class="badge badge-code">${item.code}</span></td>
-                        <td style="font-weight: 800; color: var(--accent-gold);">${item.logs}</td>
-                        <td>${item.ads}</td>
-                        <td>
-                            <button class="btn-danger-sm" onclick="deleteRecordItem('${item.week}', '${item.id}')">
-                                <i class="fa-solid fa-trash"></i> حذف
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            body.innerHTML = html;
-        }
-
-        function renderOperationsTable() {
-            const body = document.getElementById('tableBodyOperations');
-            const weekFilter = document.getElementById('searchOpWeek').value;
-            const textFilter = document.getElementById('searchOpId').value.toLowerCase();
-
-            let filtered = attachedOperations;
-            if (weekFilter !== 'الكل') {
-                filtered = filtered.filter(item => item.week === weekFilter);
-            }
-            if (textFilter) {
-                filtered = filtered.filter(item => item.id.toLowerCase().includes(textFilter) || item.name.toLowerCase().includes(textFilter));
-            }
-
-            if (filtered.length === 0) {
-                body.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">لا توجد عمليات مرفقة مطابقة للبحث</td></tr>';
-                return;
-            }
-
-            let html = `
-                <tr>
-                    <th>الأسبوع</th>
-                    <th>رقم الأيدي ID</th>
-                    <th>الاسم</th>
-                    <th>الرتبة</th>
-                    <th>الكود</th>
-                    <th>نقاط العمليات (Pont)</th>
-                    <th>إجراء</th>
-                </tr>
-            `;
-            filtered.forEach(item => {
-                html += `
-                    <tr>
-                        <td><span class="badge badge-rank">${item.week}</span></td>
-                        <td><span class="badge badge-code">${item.id}</span></td>
-                        <td style="font-weight: 700;">${item.name}</td>
-                        <td>${item.rank}</td>
-                        <td><span class="badge badge-code">${item.code}</span></td>
-                        <td style="font-weight: 800; color: var(--accent-gold);">${item.logs}</td>
-                        <td>
-                            <button class="btn-danger-sm" onclick="deleteOperationItem('${item.week}', '${item.id}')">
-                                <i class="fa-solid fa-trash"></i> حذف
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            body.innerHTML = html;
-        }
-
-        function renderSOTWCandidates() {
-            const grid = document.getElementById('sotwCandidatesGrid');
-            let scores = {};
-            
-            // حساب نقاط السجلات (السجلات + الإعلانات)
-            attachedRecords.forEach(r => {
-                if (!scores[r.id]) {
-                    const sol = rawSheetData.find(s => s.idCard === r.id);
-                    scores[r.id] = { 
-                        id: r.id, 
-                        name: sol ? sol.name : r.name, 
-                        rank: sol ? sol.rank : r.rank, 
-                        code: sol ? sol.code : r.code, 
-                        total: 0 
-                    };
-                }
-                scores[r.id].total += (parseInt(r.logs) || 0) + (parseInt(r.ads) || 0);
-            });
-
-            // حساب نقاط العمليات (Pont)
-            attachedOperations.forEach(o => {
-                if (!scores[o.id]) {
-                    const sol = rawSheetData.find(s => s.idCard === o.id);
-                    scores[o.id] = { 
-                        id: o.id, 
-                        name: sol ? sol.name : o.name, 
-                        rank: sol ? sol.rank : o.rank, 
-                        code: sol ? sol.code : o.code, 
-                        total: 0 
-                    };
-                }
-                scores[o.id].total += (parseInt(o.logs) || 0);
-            });
-
-            let sorted = Object.values(scores).sort((a, b) => b.total - a.total).slice(0, 3);
-
-            if (sorted.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">لا توجد بيانات كافية لاحتساب المرشحين لعسكري الأسبوع.</div>';
-                return;
-            }
-
-            let html = '';
-            sorted.forEach((cand, index) => {
-                let crownColor = index === 0 ? 'var(--accent-gold)' : index === 1 ? '#c0c0c0' : '#cd7f32';
-                html += `
-                    <div class="sotw-candidate-card">
-                        <div style="position: absolute; top: 15px; left: 15px; font-size: 1.5rem; color: ${crownColor};">
-                            <i class="fa-solid fa-crown"></i>
-                        </div>
-                        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(212,175,55,0.1); display: flex; align-items: center; justify-content: center; color: var(--accent-gold); font-size: 1.5rem; border: 2px solid var(--accent-gold); margin: 0 auto 10px auto;">
-                            <i class="fa-solid fa-user-shield"></i>
-                        </div>
-                        <h4 style="color: #fff; font-size: 1.1rem; font-weight: 800;">${cand.name}</h4>
-                        <p style="color: var(--accent-gold); font-size: 0.85rem; font-weight: 700;">${cand.rank} - ${cand.code}</p>
-                        <span class="badge badge-code">ID: ${cand.id}</span>
-                        <div style="margin-top: 10px; width: 100%; background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">مجموع الإنجازات والنقاط:</span>
-                            <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-gold);">${cand.total} نقطة</div>
-                        </div>
+            <div class="reports-list">
+                <div class="report-item-card active">
+                    <div>
+                        <div style="font-weight: 700; color: #fff;">W-34</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA2 User</div>
                     </div>
-                `;
-            });
-            grid.innerHTML = html;
-        }
-
-        function filterTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            if (!query) {
-                applyCategoryFilter();
-                return;
-            }
-
-            let filtered = rawSheetData.filter(item => 
-                item.name.toLowerCase().includes(query) || 
-                item.idCard.toLowerCase().includes(query) || 
-                item.code.toLowerCase().includes(query)
-            );
-            renderMainTable(filtered);
-        }
-
-        function populateSoldiersDropdown() {
-            const select = document.getElementById('soldierSelect');
-            if (!select) return;
-            
-            let html = '<option value="">-- اختر عسكرياً للاطلاع على دوراته --</option>';
-            rawSheetData.forEach(s => {
-                html += `<option value="${s.idCard}">${s.rank} / ${s.name} (ID: ${s.idCard})</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        function filterSoldiersDropdown() {
-            const query = document.getElementById('idSearchInput').value.toLowerCase();
-            const select = document.getElementById('soldierSelect');
-            if (!select) return;
-
-            let filtered = rawSheetData.filter(s => s.idCard.includes(query) || s.name.toLowerCase().includes(query));
-            let html = '<option value="">-- اختر عسكرياً --</option>';
-            filtered.forEach(s => {
-                html += `<option value="${s.idCard}">${s.rank} / ${s.name} (ID: ${s.idCard})</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        function renderSoldierCoursesDetails() {
-            const soldierId = document.getElementById('soldierSelect').value;
-            const container = document.getElementById('soldierCoursesContainer');
-            if (!soldierId) {
-                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">الرجاء اختيار عسكري لعرض تفاصيل دوراته وسجله التدريبي.</p>';
-                return;
-            }
-
-            const soldier = rawSheetData.find(s => s.idCard === soldierId);
-            if (!soldier) {
-                container.innerHTML = '<p style="color: var(--danger); text-align: center;">لم يتم العثور على بيانات هذا العسكري.</p>';
-                return;
-            }
-
-            let coursesListHtml = '';
-            if (soldier.courses && soldier.courses.length > 0) {
-                soldier.courses.forEach(c => {
-                    coursesListHtml += `<li style="margin-bottom: 5px; color: var(--success);"><i class="fa-solid fa-circle-check"></i> ${c}</li>`;
-                });
-            } else {
-                coursesListHtml = '<li style="color: var(--text-muted);">لا توجد دورات مسجلة حالياً.</li>';
-            }
-
-            container.innerHTML = `
-                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                    <h4 style="color: var(--accent-gold); margin-bottom: 5px;">${soldier.name} (${soldier.rank})</h4>
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px;">رقم الأيدي: ${soldier.idCard} | الكود: ${soldier.code} | آخر ترقية: ${soldier.lastPromotion}</p>
-                    <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 10px 0;">
-                    <h5 style="color: #fff; margin-bottom: 8px;">الدورات المجتازة:</h5>
-                    <ul style="list-style: none; padding-right: 0;">
-                        ${coursesListHtml}
-                    </ul>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
                 </div>
-            `;
-        }
+                <div class="report-item-card">
+                    <div>
+                        <div style="font-weight: 700; color: #fff;">C-14</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA2 User</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
+                </div>
+                <div class="report-item-card">
+                    <div>
+                        <div style="font-weight: 700; color: #fff;">I-42</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA6 User</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
+                </div>
+                <div class="report-item-card">
+                    <div>
+                        <div style="font-weight: 700; color: #fff;">B-6</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA6 User</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
+                </div>
+                <div class="report-item-card">
+                    <div>
+                        <div style="font-weight: 700; color: #fff;">I-5</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA6 User</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
+                </div>
+            </div>
+        </div>
 
-        function deleteRecordItem(week, id) {
-            attachedRecords = attachedRecords.filter(item => !(item.week === week && item.id === id));
-            renderRecordsTable();
-            renderSOTWCandidates();
-        }
+        <!-- تفاصيل التقرير المحدد -->
+        <div class="report-details-container">
+            <div class="badges-grid">
+                <div class="badge-row-box">
+                    <span>الانضباط العسكري</span>
+                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> منضبط</span>
+                </div>
+                <div class="badge-row-box">
+                    <span>الالتزام بالبروتوكولات</span>
+                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> ملتزم</span>
+                </div>
+                <div class="badge-row-box">
+                    <span>تمرير البلاغ بالراديو</span>
+                    <span class="status-badge status-danger"><i class="fa-solid fa-xmark"></i> لم يتأخر</span>
+                </div>
+                <div class="badge-row-box">
+                    <span>التأخير في تنفيذ الأوامر</span>
+                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> صحيح</span>
+                </div>
+                <div class="badge-row-box">
+                    <span>مواجهة تحديات بالمهام</span>
+                    <span class="status-badge status-danger"><i class="fa-solid fa-xmark"></i> ملازم</span>
+                </div>
+                <div class="badge-row-box">
+                    <span>مخالفة أوامر الشرطة العسكرية</span>
+                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> نعم</span>
+                </div>
+            </div>
 
-        function deleteOperationItem(week, id) {
-            attachedOperations = attachedOperations.filter(item => !(item.week === week && item.id === id));
-            renderOperationsTable();
-            renderSOTWCandidates();
-        }
+            <!-- الملاحظات الفصاعة (مدعوم بالذكاء الاصطناعي) -->
+            <div class="ai-notes-box">
+                <div class="ai-title">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>الملاحظات الفصاعة (مدعوم بالذكاء الاصطناعي)</span>
+                </div>
+                <div class="ai-content-grid">
+                    <div class="soldier-info-text">
+                        بيانات الضابط:<br>
+                        الرقم العسكري: <strong>W-34</strong><br>
+                        الاسم: <strong>Nwg4</strong><br>
+                        الرتبة: <strong>نقيب</strong>
+                    </div>
+                    <div class="ai-eval-text">
+                        شخصية قيادية فذة، تتسم بالقدرة على قيادة الأفراد والضباط وتقديم التوجيه الاستراتيجي والميداني المنضبط بأسلوب مهني واحترافي متكامل.
+                    </div>
+                </div>
+            </div>
 
-        window.onload = function() {
-            fetchAllData();
-        };
-    </script>
+            <div class="report-footer-meta">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>معتمد من قبل: <strong>BETA2 User</strong></span>
+            </div>
+        </div>
+    </main>
+
 </body>
 </html>
