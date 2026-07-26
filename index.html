@@ -404,7 +404,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم تفعيل الحفظ التلقائي للبيانات وحذف عسكري الأسبوع بنجاح.</p>
+                <p style="color: var(--text-muted);">تم تحديث الجدول الجديد وتفعيل الحفظ التلقائي بنجاح.</p>
             </div>
         </div>
 
@@ -671,7 +671,6 @@
         let currentUser = "Ahmed";
         let csvData = [];
         
-        // جلب البيانات المخزنة محلياً إذا وجدت لضمان عدم حذفها عند التحديث
         let inventoryLogsAds = JSON.parse(localStorage.getItem('grave_invLogsAds')) || [];
         let inventoryOps = JSON.parse(localStorage.getItem('grave_invOps')) || [];
         let inventoryAcceptance = JSON.parse(localStorage.getItem('grave_invAcceptance')) || [];
@@ -699,7 +698,7 @@
         }
 
         async function fetchSheetData() {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=1490249519&single=true&output=csv";
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2081140975&single=true&output=csv";
             try {
                 const response = await fetch(url);
                 const data = await response.text();
