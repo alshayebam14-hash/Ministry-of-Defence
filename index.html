@@ -404,7 +404,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم ضبط التصنيف الآلي بدقة بناءً على المسميات (قادات القوات المسلحة، ضابط، وأفراد).</p>
+                <p style="color: var(--text-muted);">تم ضبط فلتر القادات (L) ليعتمد على أكواد (L-) بدقة.</p>
             </div>
         </div>
 
@@ -474,6 +474,7 @@
                                 <th>الديسكورد</th>
                                 <th>الاسم</th>
                                 <th>رقم الهوية ID</th>
+                                <th>الكود</th>
                                 <th>المسمى الوظيفي</th>
                                 <th>السجلات</th>
                                 <th>الإعلانات</th>
@@ -485,7 +486,7 @@
                             </tr>
                         </thead>
                         <tbody id="membersTableBody">
-                            <tr><td colspan="12" style="text-align: center;">جاري تحميل البيانات...</td></tr>
+                            <tr><td colspan="13" style="text-align: center;">جاري تحميل البيانات...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -726,13 +727,14 @@
                     if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
 
                     let rankVal = r[2] ? r[2].trim() : "";
+                    let codeVal = r[6] ? r[6].trim().toUpperCase() : ""; // العمود السادس: الكود
                     let titleVal = r[7] ? r[7].trim() : ""; // العمود السابع: المسمى الوظيفي
                     
-                    // التصنيف بناءً على المسمى الوظيفي الدقيق
+                    // التصنيف بناءً على الكود (إذا كان الكود يحتوي على حرف L مثل L-1, L-2 يعتبر قائد L)
                     let category = 'R';
-                    if (titleVal.includes('قادات القوات المسلحة')) {
+                    if (codeVal.includes('L')) {
                         category = 'L';
-                    } else if (titleVal.includes('ضابط وزارة الدفاع')) {
+                    } else if (titleVal.includes('ضابط وزارة الدفاع') || codeVal.includes('M')) {
                         category = 'M';
                     } else {
                         category = 'R';
@@ -869,7 +871,7 @@
             const tbody = document.getElementById('membersTableBody');
             if(!tbody) return;
             if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center;">لا توجد بيانات تطابق البحث</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center;">لا توجد بيانات تطابق البحث</td></tr>';
                 return;
             }
             tbody.innerHTML = '';
@@ -880,6 +882,7 @@
                         <td>${m.discord || '---'}</td>
                         <td>${m.name || '---'}</td>
                         <td>${m.id || '---'}</td>
+                        <td>${m.code || '---'}</td>
                         <td>${m.title || '---'}</td>
                         <td>${m.logs || '0'}</td>
                         <td>${m.ads || '0'}</td>
