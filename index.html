@@ -259,7 +259,7 @@
     <div id="loginOverlay">
         <div class="login-box">
             <h2>تسجيل الدخول العسكري</h2>
-            <input type="text" id="usernameInput" class="login-input" placeholder="اسم المستخدم (مثال: Owner)">
+            <input type="text" id="usernameInput" class="login-input" placeholder="اسم المستخدم">
             <input type="password" id="passwordInput" class="login-input" placeholder="كلمة المرور">
             <button class="login-btn" onclick="handleLogin()">دخول للوحة</button>
             <p id="loginError" style="color: var(--danger); margin-top: 10px; font-size: 0.85rem; display: none;">اسم المستخدم أو كلمة المرور غير صحيحة</p>
@@ -305,27 +305,26 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم ربط النظام بالجدول بنجاح وجاهز لإدارة القطاع العسكري.</p>
+                <p style="color: var(--text-muted);">تم ربط النظام بالجدول الحقيقي بنجاح وجاهز بالكامل.</p>
             </div>
         </div>
 
         <!-- تسجيل الدخول ومتابعة الجلسات -->
         <div id="login_tracker" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">إدارة وحالة تسجيل الدخول للمجلس</h2>
+            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">إدارة وحالة تسجيل الدخول لأعضاء المجلس و L1</h2>
             <div class="card">
                 <table>
                     <thead>
                         <tr>
-                            <th>الحساب / الرتبة</th>
+                            <th>اسم المستخدم</th>
+                            <th>الرتبة / الصلاحية</th>
                             <th>الحالة</th>
                             <th>مدة الجلسة الحالية</th>
                             <th>آخر تسجيل خروج</th>
                             <th>الإجراء (Owner فقط)</th>
                         </tr>
                     </thead>
-                    <tbody id="sessionsTableBody">
-                        <!-- تعبئة تلقائية -->
-                    </tbody>
+                    <tbody id="sessionsTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -343,14 +342,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>الآيدي / العسكري</th>
+                            <th>الآيدي</th>
                             <th>الاسم</th>
                             <th>الرتبة</th>
-                            <th>القطاع</th>
                         </tr>
                     </thead>
                     <tbody id="membersTableBody">
-                        <tr><td colspan="4" style="text-align: center;">جاري تحميل البيانات من الجدول...</td></tr>
+                        <tr><td colspan="3" style="text-align: center;">جاري تحميل البيانات من الجدول...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -361,7 +359,7 @@
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">سجل ملاحظات المنسوبين</h2>
             <div class="card">
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="noteIdInput" class="login-input" placeholder="أدخل الآيدي (مثال: R300)" style="margin:0;">
+                    <input type="text" id="noteIdInput" class="login-input" placeholder="أدخل الآيدي للبحث أو الإضافة" style="margin:0;">
                     <input type="text" id="noteTextInput" class="login-input" placeholder="اكتب الملاحظة اليدوية هنا..." style="margin:0; flex:2;">
                     <button class="btn" onclick="addNote()">إضافة ملاحظة</button>
                 </div>
@@ -395,14 +393,14 @@
 
         <!-- دورات القطاع -->
         <div id="courses" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">دورات القطاع والمتطلبات</h2>
+            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">دورات القطاع والمتطلبات حسب الرتبة</h2>
             <div class="card">
                 <table>
                     <thead>
                         <tr>
                             <th>العسكري / الآيدي</th>
                             <th>الرتبة</th>
-                            <th>الدورات الحاصل عليها</th>
+                            <th>الدورات المتاحة/الحاصل عليها</th>
                             <th>الدورات الناقصة</th>
                         </tr>
                     </thead>
@@ -417,19 +415,18 @@
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                 <select id="weekSelect" class="login-input" style="margin:0; width: 200px;" onchange="loadInventoryWeek()">
                     <option value="week_1">الأسبوع الأول</option>
-                    <option value="week_2">الأسبوع الثاني</option>
                 </select>
                 <button class="btn" onclick="addNewWeek()">إضافة أسبوع جديد</button>
             </div>
             <div class="card">
-                <h3 style="color: var(--accent-gold); margin-bottom: 10px;">جرد السجلات والاعلانات (id, سجلات, اعلانات)</h3>
+                <h3 style="color: var(--accent-gold); margin-bottom: 10px;">جرد السجلات والاعلانات</h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" id="inv1_id" class="login-input" placeholder="الآيدي" style="margin:0;">
-                    <input type="number" id="inv1_rec" class="login-input" placeholder="السجلات" style="margin:0;">
-                    <input type="number" id="inv1_ads" class="login-input" placeholder="الاعلانات" style="margin:0;">
-                    <button class="btn" onclick="saveInventory('rec_ads')">إرفاق البيانات</button>
+                    <input type="text" id="inv_id" class="login-input" placeholder="الآيدي" style="margin:0;">
+                    <input type="number" id="inv_rec" class="login-input" placeholder="السجلات" style="margin:0;">
+                    <input type="number" id="inv_ads" class="login-input" placeholder="الاعلانات" style="margin:0;">
+                    <button class="btn" onclick="saveInventory()">إرفاق البيانات</button>
                 </div>
-                <table id="inv1Table"></table>
+                <table id="invTable"></table>
             </div>
         </div>
 
@@ -438,30 +435,44 @@
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
             <div class="card">
                 <div id="topSoldiersList" style="margin-bottom: 20px;"></div>
-                <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اختيار عسكري الأسبوع يدوياً للأسبوع الحالي:</h3>
+                <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اعتماد عسكري الأسبوع:</h3>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي عسكري الأسبوع" style="margin:0;">
-                    <button class="btn" onclick="saveSoldierOfWeek()">اعتماد عسكري الأسبوع</button>
+                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0;">
+                    <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // بيانات الحسابات وصلاحيات المجلس
+        // حسابات المستخدمين الجديدة التي طلبتها
         let accounts = {
-            "Owner": { pass: "1234", role: "Owner", loggedIn: true, loginTime: Date.now(), lastLogout: "---" },
-            "L1_Leader": { pass: "1111", role: "L1", loggedIn: false, loginTime: null, lastLogout: "منذ ساعة" },
-            "D0_Admin": { pass: "2222", role: "D-0", loggedIn: false, loginTime: null, lastLogout: "أمس" }
+            "Ahmed": { pass: "Owner2010629", role: "Owner", loggedIn: true, loginTime: Date.now(), lastLogout: "---" },
+            "Nawaf": { pass: "m43d65f65", role: "D-0", loggedIn: false, loginTime: null, lastLogout: "---" },
+            "Da": { pass: "m34d54f65", role: "D-1", loggedIn: false, loginTime: null, lastLogout: "---" },
+            "Abu Majed": { pass: "m54d23f74", role: "D-2", loggedIn: false, loginTime: null, lastLogout: "---" },
+            "Ahmed_D3": { pass: "mdf", role: "D-3", loggedIn: false, loginTime: null, lastLogout: "---" },
+            "Nerf": { pass: "m14d27f99", role: "L-1", loggedIn: false, loginTime: null, lastLogout: "---" }
         };
 
-        let currentUser = "Owner";
+        let currentUser = "Ahmed";
         let csvData = [];
         let notesList = [];
-        let inventoryData = { "week_1": [], "week_2": [] };
+        let inventoryData = { "week_1": [] };
         let soldierOfWeekData = { "week_1": "" };
 
-        // جلب البيانات من الجدول المعتمد
+        // شروط الدورات حسب الرتبة
+        const courseRules = {
+            "فرد أساس": ["جندي", "جندي اول", "عريف", "وكيل رقيب"],
+            "العمليات": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء"],
+            "الإسعافات الأولية": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم"],
+            "تأهيل الضباط": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم"],
+            "المظلات المشتركة": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم", "ملازم اول"],
+            "الصاعقة أو الضفادع البشرية": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم", "نقيب", "رائد"],
+            "الصقور الجوية": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم", "نقيب", "رائد", "مقدم"]
+        };
+
+        // جلب البيانات من الجدول
         async function fetchSheetData() {
             const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=1490249519&single=true&output=csv";
             try {
@@ -469,13 +480,7 @@
                 const data = await response.text();
                 parseCSV(data);
             } catch (e) {
-                console.log("خطأ في جلب الجدول، جاري استخدام بيانات تجريبية للتأكد من العرض");
-                csvData = [
-                    {id: "R300", name: "محمد العتيبي", rank: "جندي", type: "R"},
-                    {id: "M10", name: "فهد الحربي", rank: "ملازم", type: "M"},
-                    {id: "L1", name: "سلطان القائد", rank: "قائد", type: "L"}
-                ];
-                renderAllPages();
+                console.log("خطأ في جلب الجدول");
             }
         }
 
@@ -484,11 +489,12 @@
             csvData = [];
             for(let i=1; i<rows.length; i++) {
                 if(rows[i].length >= 2 && rows[i][0].trim() !== "") {
+                    let idVal = rows[i][0].trim();
                     csvData.push({
-                        id: rows[i][0].trim(),
+                        id: idVal,
                         name: rows[i][1] ? rows[i][1].trim() : "غير محدد",
                         rank: rows[i][2] ? rows[i][2].trim() : "جندي",
-                        type: rows[i][0].trim().charAt(0).toUpperCase()
+                        type: idVal.charAt(0).toUpperCase()
                     });
                 }
             }
@@ -498,12 +504,16 @@
         function handleLogin() {
             const u = document.getElementById('usernameInput').value;
             const p = document.getElementById('passwordInput').value;
-            if(accounts[u] && accounts[u].pass === p) {
-                currentUser = u;
-                accounts[u].loggedIn = true;
-                accounts[u].loginTime = Date.now();
+            // معالجة تشابه اسم Ahmed بين Owner و D-3
+            let matchedKey = u;
+            if(u === "Ahmed" && p === "mdf") matchedKey = "Ahmed_D3";
+
+            if(accounts[matchedKey] && accounts[matchedKey].pass === p) {
+                currentUser = matchedKey;
+                accounts[matchedKey].loggedIn = true;
+                accounts[matchedKey].loginTime = Date.now();
                 document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('currentRoleDisplay').innerText = u;
+                document.getElementById('currentRoleDisplay').innerText = matchedKey + " (" + accounts[matchedKey].role + ")";
                 renderSessionsTable();
             } else {
                 document.getElementById('loginError').style.display = 'block';
@@ -530,6 +540,7 @@
             tbody.innerHTML = '';
             Object.keys(accounts).forEach(acc => {
                 const data = accounts[acc];
+                let displayName = acc === "Ahmed_D3" ? "Ahmed (D-3)" : acc;
                 let duration = "غير مسجل";
                 if(data.loggedIn && data.loginTime) {
                     const mins = Math.floor((Date.now() - data.loginTime) / 60000);
@@ -537,11 +548,12 @@
                 }
                 tbody.innerHTML += `
                     <tr>
-                        <td>${acc} (${data.role})</td>
+                        <td>${displayName}</td>
+                        <td>${data.role}</td>
                         <td>${data.loggedIn ? '<span style="color:var(--success)">متصل</span>' : '<span style="color:var(--danger)">غير متصل</span>'}</td>
                         <td>${duration}</td>
                         <td>${data.lastLogout}</td>
-                        <td>${currentUser === 'Owner' && data.loggedIn && acc !== 'Owner' ? `<button class="btn btn-danger" onclick="forceLogout('${acc}')">إجبار خروج</button>` : '---'}</td>
+                        <td>${currentUser === 'Ahmed' && data.loggedIn && acc !== 'Ahmed' ? `<button class="btn btn-danger" onclick="forceLogout('${acc}')">إجبار خروج</button>` : '---'}</td>
                     </tr>
                 `;
             });
@@ -558,7 +570,7 @@
             tbody.innerHTML = '';
             const filtered = type === 'ALL' ? csvData : csvData.filter(m => m.type === type);
             filtered.forEach(m => {
-                tbody.innerHTML += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.rank}</td><td>القطاع العسكري</td></tr>`;
+                tbody.innerHTML += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.rank}</td></tr>`;
             });
         }
 
@@ -585,17 +597,17 @@
             const tbody = document.getElementById('codesTableBody');
             tbody.innerHTML = '<tr><th>الكود</th><th>الحالة</th><th>معلومات العسكري</th></tr>';
             const usedIds = csvData.map(m => m.id);
-            
             if(type === 'used') {
                 csvData.forEach(m => {
                     tbody.innerHTML += `<tr><td>${m.id}</td><td style="color:var(--success)">مستعمل</td><td>${m.name} (${m.rank})</td></tr>`;
                 });
             } else {
-                ['D0', 'D1', 'D2', 'R300', 'R301', 'R302'].forEach(code => {
+                for(let i=0; i<50; i++) {
+                    let code = "R" + (300 + i);
                     if(!usedIds.includes(code)) {
-                        tbody.innerHTML += `<tr><td>${code}</td><td style="color:var(--warning)">شاغر (فارغ)</td><td>---</td></tr>`;
+                        tbody.innerHTML += `<tr><td>${code}</td><td style="color:var(--warning)">شاغر</td><td>---</td></tr>`;
                     }
-                });
+                }
             }
         }
 
@@ -603,22 +615,28 @@
             const tbody = document.getElementById('coursesTableBody');
             tbody.innerHTML = '';
             csvData.forEach(m => {
+                let eligible = [];
+                let missing = [];
+                Object.keys(courseRules).forEach(course => {
+                    if(courseRules[course].includes(m.rank)) eligible.push(course);
+                    else missing.push(course);
+                });
                 tbody.innerHTML += `
                     <tr>
                         <td>${m.id} - ${m.name}</td>
                         <td>${m.rank}</td>
-                        <td>فرد أساس، عمليات</td>
-                        <td style="color:var(--warning)">إسعافات أولية، مظلات</td>
+                        <td>${eligible.join(', ')}</td>
+                        <td style="color:var(--warning)">${missing.join(', ')}</td>
                     </tr>
                 `;
             });
         }
 
-        function saveInventory(type) {
+        function saveInventory() {
             const week = document.getElementById('weekSelect').value;
-            const id = document.getElementById('inv1_id').value;
-            const rec = document.getElementById('inv1_rec').value;
-            const ads = document.getElementById('inv1_ads').value;
+            const id = document.getElementById('inv_id').value;
+            const rec = document.getElementById('inv_rec').value;
+            const ads = document.getElementById('inv_ads').value;
             if(!inventoryData[week]) inventoryData[week] = [];
             inventoryData[week].push({ id, rec, ads });
             loadInventoryWeek();
@@ -626,7 +644,7 @@
 
         function loadInventoryWeek() {
             const week = document.getElementById('weekSelect').value;
-            const table = document.getElementById('inv1Table');
+            const table = document.getElementById('invTable');
             table.innerHTML = '<tr><th>الآيدي</th><th>السجلات</th><th>الاعلانات</th><th>إجراء</th></tr>';
             if(inventoryData[week]) {
                 inventoryData[week].forEach((item, idx) => {
@@ -639,7 +657,7 @@
             const newWeekName = "week_" + (Object.keys(inventoryData).length + 1);
             inventoryData[newWeekName] = [];
             const select = document.getElementById('weekSelect');
-            select.innerHTML += `<option value="${newWeekName}">الأسبوع ${Object.keys(inventoryData).length}</option>`;
+            select.innerHTML += `<option value="${newWeekName}">الأسبوع ${Object.keys(inventoryData).length + 1}</option>`;
             select.value = newWeekName;
             loadInventoryWeek();
         }
@@ -653,7 +671,7 @@
         function renderSoldierOfWeek() {
             document.getElementById('topSoldiersList').innerHTML = `
                 <div style="background: rgba(212,175,55,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--accent-gold);">
-                    <strong>عسكري الأسبوع الحالي المعتمد:</strong> ${soldierOfWeekData["week_1"] || 'لم يتم الاختيار بعد'}
+                    <strong>عسكري الأسبوع المعتمد:</strong> ${soldierOfWeekData["week_1"] || 'لم يتم الاختيار بعد'}
                 </div>
             `;
         }
@@ -668,7 +686,6 @@
             renderSoldierOfWeek();
         }
 
-        // تشغيل الجلب عند فتح الصفحة
         fetchSheetData();
     </script>
 </body>
