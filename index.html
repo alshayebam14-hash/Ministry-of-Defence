@@ -383,7 +383,6 @@
                 <div class="menu-item active" onclick="switchPage('home', this)"><i class="fa-solid fa-house"></i> الرئيسية</div>
                 <div class="menu-item" onclick="switchPage('login_tracker', this)"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول (متابعة)</div>
                 <div class="menu-item" onclick="switchPage('members', this)"><i class="fa-solid fa-users-gear"></i> منسوبي القطاعات</div>
-                <div class="menu-item" onclick="switchPage('codes', this)"><i class="fa-solid fa-id-badge"></i> الاكواد العسكرية</div>
                 <div class="menu-item" onclick="switchPage('courses', this)"><i class="fa-solid fa-graduation-cap"></i> دورات القطاع</div>
                 <div class="menu-item" onclick="switchPage('inventory', this)"><i class="fa-solid fa-boxes-stacked"></i> صفحة الجرد</div>
                 <div class="menu-item" onclick="switchPage('soldier_week', this)"><i class="fa-solid fa-award"></i> عسكري الأسبوع</div>
@@ -405,7 +404,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم تصفية منسوبي القطاعات لإظهار المسجلين فقط وتحديث حالات الإجازات وتحسين الأداء.</p>
+                <p style="color: var(--text-muted);">تم تحديث أسماء الدورات التدريبية وتعديل نظام الإحصائيات.</p>
             </div>
         </div>
 
@@ -430,7 +429,7 @@
             </div>
         </div>
 
-        <!-- منسوبي القطاعات (الأشخاص المسجلين فقط بدون الأماكن الشاغرة) -->
+        <!-- منسوبي القطاعات -->
         <div id="members" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منسوبي القطاعات</h2>
             
@@ -469,7 +468,6 @@
                                 <th>الديسكورد</th>
                                 <th>الاسم</th>
                                 <th>رقم الهوية ID</th>
-                                <th>الكود</th>
                                 <th>المسمى الوظيفي</th>
                                 <th>السجلات</th>
                                 <th>الإعلانات</th>
@@ -481,23 +479,8 @@
                             </tr>
                         </thead>
                         <tbody id="membersTableBody">
-                            <tr><td colspan="13" style="text-align: center;">جاري تحميل البيانات...</td></tr>
+                            <tr><td colspan="12" style="text-align: center;">جاري تحميل البيانات...</td></tr>
                         </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="codes" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">الأكواد العسكرية</h2>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button class="btn" onclick="renderCodes('used')">الأكواد المستعملة</button>
-                <button class="btn" onclick="renderCodes('vacant')">الأكواد الشاغرة</button>
-            </div>
-            <div class="card">
-                <div class="table-responsive">
-                    <table>
-                        <tbody id="codesTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -522,7 +505,7 @@
                 <div style="background: rgba(212,175,55,0.05); border: 1px solid var(--border-subtle); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                     <div><span style="color: var(--text-muted);">رتبة العسكري:</span> <strong id="courseViewRank" style="color: var(--accent-gold);">---</strong></div>
                     <div><span style="color: var(--text-muted);">الاسم:</span> <strong id="courseViewName" style="color: #fff;">---</strong></div>
-                    <div><span style="color: var(--text-muted);">الكود:</span> <strong id="courseViewCode" style="color: var(--accent-gold);">---</strong></div>
+                    <div><span style="color: var(--text-muted);">رقم الهوية:</span> <strong id="courseViewId" style="color: var(--accent-gold);">---</strong></div>
                 </div>
 
                 <div class="courses-container">
@@ -581,9 +564,9 @@
                     <div class="table-responsive">
                         <table>
                             <thead>
-                                <tr><th>الأسبوع</th><th>ID</th><th>الرتبة</th><th>الاسم</th><th>الكود</th><th>السجلات</th><th>الإعلانات</th><th>حذف</th></tr>
+                                <tr><th>الأسبوع</th><th>ID</th><th>الرتبة</th><th>الاسم</th><th>السجلات</th><th>الإعلانات</th><th>حذف</th></tr>
                             </thead>
-                            <tbody id="tableLogsAds"><tr><td colspan="8" style="text-align: center;">لا توجد بيانات مرفقة</td></tr></tbody>
+                            <tbody id="tableLogsAds"><tr><td colspan="7" style="text-align: center;">لا توجد بيانات مرفقة</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -611,9 +594,9 @@
                     <div class="table-responsive">
                         <table>
                             <thead>
-                                <tr><th>الأسبوع</th><th>ID</th><th>الرتبة</th><th>الاسم</th><th>الكود</th><th>العمليات</th><th>حذف</th></tr>
+                                <tr><th>الأسبوع</th><th>ID</th><th>الرتبة</th><th>الاسم</th><th>العمليات</th><th>حذف</th></tr>
                             </thead>
-                            <tbody id="tableOps"><tr><td colspan="7" style="text-align: center;">لا توجد بيانات مرفقة</td></tr></tbody>
+                            <tbody id="tableOps"><tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -641,9 +624,9 @@
                     <div class="table-responsive">
                         <table>
                             <thead>
-                                <tr><th>الأسبوع</th><th>ID</th><th>الرتبة</th><th>الاسم</th><th>الكود</th><th>المقبولين</th><th>حذف</th></tr>
+                                <tr><th>الأسبوع</th><th>ID</th><th>الرتبة</th><th>الاسم</th><th>المقبولين</th><th>حذف</th></tr>
                             </thead>
-                            <tbody id="tableAcceptance"><tr><td colspan="7" style="text-align: center;">لا توجد بيانات مرفقة</td></tr></tbody>
+                            <tbody id="tableAcceptance"><tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -668,7 +651,7 @@
                 
                 <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اعتماد عسكري الأسبوع يدوياً (اختياري):</h3>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل كود العسكري أو آيدي" style="margin:0;">
+                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0;">
                     <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
                 </div>
             </div>
@@ -695,8 +678,9 @@
         let currentMemberFilter = 'ALL';
 
         const allAvailableCourses = [
-            "دورة فرد أساس", "دورة العمليات", "دورة الإسعافات الأولية",
-            "دورة تأهيل الضباط", "دورة المظلات المشتركة", "دورة التدريب العسكري"
+            "فرد أساس", "مركز العمليات", "إسعافات أولية",
+            "تأهيل الضباط", "مظلات مشتركة", "الصاعقة",
+            "الضفادع", "الصقور الجوية"
         ];
 
         async function fetchSheetData() {
@@ -719,13 +703,11 @@
                     let nameVal = r[4] ? r[4].trim() : "";
                     let idVal = r[5] ? r[5].trim() : "";
                     
-                    // استبعاد الصفوف الفارغة أو التي لا تحتوي على اسم أو آيدي حقيقي (الأماكن الشاغرة)
                     if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
 
                     let codeVal = r[6] ? r[6].trim() : (r[4] ? r[4].trim() : ""); 
                     let category = codeVal.charAt(0).toUpperCase();
 
-                    // معالجة حالة الإجازة: إذا كانت True أو صح يكتب "في إجازة"، وإلا "على رأس العمل"
                     let rawVacation = r[14] ? r[14].trim().toLowerCase() : "";
                     let vacationStatus = (rawVacation === 'true' || rawVacation === '1' || rawVacation === 'صح' || rawVacation === 'yes') 
                         ? '<span style="color:var(--danger); font-weight:bold;">في إجازة</span>' 
@@ -843,7 +825,7 @@
             const tbody = document.getElementById('membersTableBody');
             if(!tbody) return;
             if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center;">لا توجد بيانات للعرض</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center;">لا توجد بيانات للعرض</td></tr>';
                 return;
             }
             tbody.innerHTML = '';
@@ -854,7 +836,6 @@
                         <td>${m.discord || '---'}</td>
                         <td>${m.name || '---'}</td>
                         <td>${m.id || '---'}</td>
-                        <td><span style="color:var(--accent-gold); font-weight:bold;">${m.code || '---'}</span></td>
                         <td>${m.title || '---'}</td>
                         <td>${m.logs || '0'}</td>
                         <td>${m.ads || '0'}</td>
@@ -871,41 +852,8 @@
         function renderAllPages() {
             updateMemberCounts();
             filterMembers(currentMemberFilter);
-            renderCodes('used');
             loadInventoryTables();
             renderSoldierOfWeek();
-        }
-
-        function renderCodes(type) {
-            const tbody = document.getElementById('codesTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            let usedCodes = csvData.map(m => m.code).filter(c => c);
-
-            if(type === 'used') {
-                if(usedCodes.length === 0) {
-                    tbody.innerHTML = '<tr><td style="text-align: center;">لا توجد أكواد مستعملة</td></tr>';
-                    return;
-                }
-                let rows = '<tr><th>الكود المستعمل</th><th>الاسم</th><th>الرتبة</th></tr>';
-                csvData.forEach(m => {
-                    if(m.code) rows += `<tr><td><strong style="color:var(--accent-gold);">${m.code}</strong></td><td>${m.name}</td><td>${m.rank}</td></tr>`;
-                });
-                tbody.innerHTML = rows;
-            } else {
-                let vacantList = [];
-                ['L', 'M', 'R'].forEach(cat => {
-                    for(let i = 1; i <= 50; i++) {
-                        let c = cat + '-' + i;
-                        if(!usedCodes.includes(c)) vacantList.push(c);
-                    }
-                });
-                let rows = '<tr><th>الأكواد الشاغرة المقترحة</th></tr>';
-                vacantList.slice(0, 30).forEach(code => {
-                    rows += `<tr><td><span style="color:var(--success); font-weight:bold;">${code}</span></td></tr>`;
-                });
-                tbody.innerHTML = rows;
-            }
         }
 
         function populateCourseDropdown() {
@@ -913,7 +861,7 @@
             if(!select) return;
             select.innerHTML = '<option value="">اختر العسكري...</option>';
             csvData.forEach(m => {
-                select.innerHTML += `<option value="${m.id}">${m.name} (${m.code}) - ID: ${m.id}</option>`;
+                select.innerHTML += `<option value="${m.id}">${m.name} - ID: ${m.id}</option>`;
             });
         }
 
@@ -923,8 +871,8 @@
             if(!select) return;
             select.innerHTML = '<option value="">اختر العسكري...</option>';
             csvData.forEach(m => {
-                if(!searchVal || m.id.toLowerCase().includes(searchVal) || m.code.toLowerCase().includes(searchVal) || m.name.toLowerCase().includes(searchVal)) {
-                    select.innerHTML += `<option value="${m.id}">${m.name} (${m.code}) - ID: ${m.id}</option>`;
+                if(!searchVal || m.id.toLowerCase().includes(searchVal) || m.name.toLowerCase().includes(searchVal)) {
+                    select.innerHTML += `<option value="${m.id}">${m.name} - ID: ${m.id}</option>`;
                 }
             });
         }
@@ -935,14 +883,14 @@
             if(!member) {
                 document.getElementById('courseViewRank').innerText = '---';
                 document.getElementById('courseViewName').innerText = '---';
-                document.getElementById('courseViewCode').innerText = '---';
+                document.getElementById('courseViewId').innerText = '---';
                 document.getElementById('missingCoursesList').innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">اختر عسكرياً</p>';
                 document.getElementById('earnedCoursesList').innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات</p>';
                 return;
             }
             document.getElementById('courseViewRank').innerText = member.rank || '---';
             document.getElementById('courseViewName').innerText = member.name || '---';
-            document.getElementById('courseViewCode').innerText = member.code || '---';
+            document.getElementById('courseViewId').innerText = member.id || '---';
             if(!memberCoursesState[member.id]) memberCoursesState[member.id] = [];
             renderMemberCourses(member.id);
         }
@@ -981,7 +929,7 @@
                     let p = line.split(',');
                     if(p.length >= 2) {
                         let m = csvData.find(x => x.id === p[0].trim());
-                        inventoryLogsAds.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', code: m?m.code:'---', logs: p[1].trim(), ads: p[2]?p[2].trim():'0' });
+                        inventoryLogsAds.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', logs: p[1].trim(), ads: p[2]?p[2].trim():'0' });
                     }
                 });
                 document.getElementById('bulkLogsAdsText').value = '';
@@ -993,7 +941,7 @@
                     let p = line.split(',');
                     if(p.length >= 2) {
                         let m = csvData.find(x => x.id === p[0].trim());
-                        inventoryOps.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', code: m?m.code:'---', ops: p[1].trim() });
+                        inventoryOps.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', ops: p[1].trim() });
                     }
                 });
                 document.getElementById('bulkOpsText').value = '';
@@ -1005,7 +953,7 @@
                     let p = line.split(',');
                     if(p.length >= 2) {
                         let m = csvData.find(x => x.id === p[0].trim());
-                        inventoryAcceptance.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', code: m?m.code:'---', accepted: p[1].trim() });
+                        inventoryAcceptance.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', accepted: p[1].trim() });
                     }
                 });
                 document.getElementById('bulkAcceptanceText').value = '';
@@ -1017,21 +965,21 @@
 
         function loadInventoryTables() {
             const tbLogs = document.getElementById('tableLogsAds');
-            tbLogs.innerHTML = inventoryLogsAds.length === 0 ? '<tr><td colspan="8" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
+            tbLogs.innerHTML = inventoryLogsAds.length === 0 ? '<tr><td colspan="7" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
             inventoryLogsAds.forEach((r, idx) => {
-                tbLogs.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td><strong style="color:var(--accent-gold);">${r.code}</strong></td><td>${r.logs}</td><td>${r.ads}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('logs_ads', ${idx})">حذف</button></td></tr>`;
+                tbLogs.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td>${r.logs}</td><td>${r.ads}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('logs_ads', ${idx})">حذف</button></td></tr>`;
             });
 
             const tbOps = document.getElementById('tableOps');
-            tbOps.innerHTML = inventoryOps.length === 0 ? '<tr><td colspan="7" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
+            tbOps.innerHTML = inventoryOps.length === 0 ? '<tr><td colspan="6" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
             inventoryOps.forEach((r, idx) => {
-                tbOps.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td><strong style="color:var(--accent-gold);">${r.code}</strong></td><td>${r.ops}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('ops', ${idx})">حذف</button></td></tr>`;
+                tbOps.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td>${r.ops}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('ops', ${idx})">حذف</button></td></tr>`;
             });
 
             const tbAcc = document.getElementById('tableAcceptance');
-            tbAcc.innerHTML = inventoryAcceptance.length === 0 ? '<tr><td colspan="7" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
+            tbAcc.innerHTML = inventoryAcceptance.length === 0 ? '<tr><td colspan="6" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
             inventoryAcceptance.forEach((r, idx) => {
-                tbAcc.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td><strong style="color:var(--accent-gold);">${r.code}</strong></td><td>${r.accepted}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('acceptance', ${idx})">حذف</button></td></tr>`;
+                tbAcc.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td>${r.accepted}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('acceptance', ${idx})">حذف</button></td></tr>`;
             });
         }
 
@@ -1048,38 +996,60 @@
             const selectedWeek = document.getElementById('selectWeekSoldier').value;
             if(!container) return;
 
-            let weekLogs = inventoryLogsAds.filter(r => r.week === selectedWeek);
-            let combined = [];
+            let map = {};
 
-            weekLogs.forEach(r => {
-                let existing = combined.find(x => x.id === r.id);
-                if(existing) {
-                    existing.logs += parseInt(r.logs) || 0;
-                } else {
-                    combined.push({
-                        name: r.name,
-                        code: r.code,
-                        id: r.id,
-                        rank: r.rank,
-                        logs: parseInt(r.logs) || 0
-                    });
+            inventoryLogsAds.filter(r => r.week === selectedWeek).forEach(r => {
+                if(!map[r.id]) {
+                    let member = csvData.find(x => x.id === r.id);
+                    map[r.id] = { id: r.id, name: r.name, rank: r.rank, code: member ? member.code : '', logs: 0, ads: 0, ops: 0, accepted: 0 };
                 }
+                map[r.id].logs += parseInt(r.logs) || 0;
+                map[r.id].ads += parseInt(r.ads) || 0;
             });
 
-            combined.sort((a, b) => b.logs - a.logs);
+            inventoryOps.filter(r => r.week === selectedWeek).forEach(r => {
+                if(!map[r.id]) {
+                    let member = csvData.find(x => x.id === r.id);
+                    map[r.id] = { id: r.id, name: r.name, rank: r.rank, code: member ? member.code : '', logs: 0, ads: 0, ops: 0, accepted: 0 };
+                }
+                map[r.id].ops += parseInt(r.ops) || 0;
+            });
+
+            inventoryAcceptance.filter(r => r.week === selectedWeek).forEach(r => {
+                if(!map[r.id]) {
+                    let member = csvData.find(x => x.id === r.id);
+                    map[r.id] = { id: r.id, name: r.name, rank: r.rank, code: member ? member.code : '', logs: 0, ads: 0, ops: 0, accepted: 0 };
+                }
+                map[r.id].accepted += parseInt(r.accepted) || 0;
+            });
+
+            let combined = Object.values(map).map(s => {
+                let totalScore = s.logs + s.ads + s.ops + s.accepted;
+                return { ...s, totalScore };
+            });
+
+            combined.sort((a, b) => b.totalScore - a.totalScore);
             let top3 = combined.slice(0, 3);
 
             let html = `<h3 style="color:var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-trophy"></i> المرشحين الأعلى أداءً لـ (${selectedWeek}):</h3>`;
             if(top3.length === 0) {
-                html += '<p style="color:var(--text-muted);">لا توجد سجلات مرفقة لهذا الأسبوع بعد</p>';
+                html += '<p style="color:var(--text-muted);">لا توجد بيانات جرد مرفقة لهذا الأسبوع بعد</p>';
             } else {
-                html += '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
+                html += '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">';
                 top3.forEach((s, i) => {
                     html += `
                         <div style="background: rgba(212,175,55,0.08); border: 1px solid var(--accent-gold); padding: 15px; border-radius: 10px; text-align: center;">
-                            <span style="font-size: 1.2rem; font-weight: bold; color: var(--accent-gold);">#${i+1} ${s.name}</span>
-                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">الكود: ${s.code} | الرتبة: ${s.rank}</div>
-                            <div style="font-size: 1rem; font-weight: bold; color: var(--success); margin-top: 8px;">إجمالي السجلات: ${s.logs}</div>
+                            <span style="font-size: 1.1rem; font-weight: bold; color: var(--accent-gold);">#${i+1} ${s.name}</span>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">الرتبة: ${s.rank || '---'}</div>
+                            <div style="font-size: 0.85rem; color: #fff; margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 6px; text-align: right; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                                <span>السجلات: <strong style="color:var(--accent-gold);">${s.logs}</strong></span>
+                                <span>الإعلانات: <strong style="color:var(--accent-gold);">${s.ads}</strong></span>
+                                <span>العمليات: <strong style="color:var(--accent-gold);">${s.ops}</strong></span>
+                                <span>المقبولين: <strong style="color:var(--accent-gold);">${s.accepted}</strong></span>
+                            </div>
+                            <div style="font-size: 0.95rem; font-weight: bold; color: var(--success); margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 6px;">
+                                المجموع الكلي: ${s.totalScore}
+                            </div>
                         </div>
                     `;
                 });
@@ -1103,7 +1073,7 @@
             const input = document.getElementById('selectedSoldierInput');
             if(!input) return;
             const val = input.value.trim();
-            if(!val) return alert('أدخل كود العسكري أو آيدي');
+            if(!val) return alert('أدخل آيدي العسكري');
             soldierOfWeekData[selectedWeek] = val;
             input.value = '';
             alert('تم اعتماد عسكري الأسبوع بنجاح!');
