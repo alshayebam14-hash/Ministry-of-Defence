@@ -3,434 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grave - Military Police Judicial</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Grave - لوحة التحكم التفاعلية</title>
     <style>
-        :root {
-            --bg-main: #070a12;
-            --bg-sidebar: #0b0f19;
-            --bg-card: #0e1422;
-            --bg-card-hover: #151d30;
-            --accent-gold: #d4af37;
-            --accent-gold-hover: #f1c40f;
-            --text-main: #f8fafc;
-            --text-muted: #8a94a6;
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: #070a12;
+            color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            overflow-x: hidden;
-        }
-
-        /* القائمة الجانبية */
-        aside {
-            width: 260px;
-            background-color: var(--bg-sidebar);
-            border-left: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px 15px;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            position: fixed;
-            right: 0;
-            top: 0;
+            margin: 0;
         }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 15px;
-        }
-
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-main);
-            font-weight: 800;
-            font-size: 0.95rem;
-        }
-
-        .sidebar-logo i {
-            color: var(--accent-gold);
-            font-size: 1.2rem;
-        }
-
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 15px;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        .menu-item:hover, .menu-item.active {
-            background-color: rgba(212, 175, 55, 0.1);
-            color: var(--accent-gold);
-        }
-
-        .menu-item.active {
-            background-color: var(--accent-gold);
-            color: #070a12;
-            font-weight: 700;
-        }
-        .menu-item.active i {
-            color: #070a12;
-        }
-
-        .menu-item i {
-            font-size: 1rem;
-            width: 20px;
+        .card {
+            background: #0e1422;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 16px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        .sidebar-footer {
-            border-top: 1px solid var(--border-subtle);
-            padding-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        h1 {
+            color: #d4af37;
+            margin-bottom: 10px;
         }
-
-        .user-badge {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-subtle);
-            padding: 8px 12px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.8rem;
-        }
-
-        /* المحتوى الرئيسي */
-        main {
-            margin-right: 260px;
-            flex: 1;
-            padding: 30px;
-            display: flex;
-            gap: 25px;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* قائمة التقارير الجانبية (الأيمن داخل المحتوى) */
-        .reports-sidebar {
-            width: 320px;
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .reports-sidebar-header {
-            padding: 15px 20px;
-            font-weight: 700;
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--accent-gold);
-            font-size: 1rem;
-        }
-
-        .reports-list {
-            overflow-y: auto;
-            flex: 1;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .report-item-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 12px 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .report-item-card:hover, .report-item-card.active {
-            border-color: var(--accent-gold);
-            background: var(--bg-card-hover);
-        }
-
-        .report-item-card.active {
-            border-right: 3px solid var(--accent-gold);
-        }
-
-        /* تفاصيل التقرير الكبرى (اليسار) */
-        .report-details-container {
-            flex: 1;
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            padding: 25px;
-            overflow-y: auto;
-        }
-
-        .badges-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+        p {
+            color: #8a94a6;
             margin-bottom: 25px;
         }
-
-        .badge-row-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
+        button {
+            background-color: #d4af37;
+            color: #070a12;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
             border-radius: 8px;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
         }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
+        button:hover {
+            background-color: #f1c40f;
+            transform: scale(1.05);
         }
-
-        .status-success { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-
-        .ai-notes-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 10px;
-            position: relative;
-        }
-
-        .ai-title {
-            color: var(--accent-gold);
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .ai-content-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        .soldier-info-text {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.8;
-        }
-
-        .soldier-info-text strong {
-            color: var(--text-main);
-        }
-
-        .ai-eval-text {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-subtle);
-            padding: 15px;
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .report-footer-meta {
+        .counter {
+            font-size: 2rem;
+            color: #22c55e;
             margin-top: 20px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <!-- القائمة الجانبية اليمنى -->
-    <aside>
-        <div>
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>GRAVE ADMIN PANEL</span>
-                </div>
-            </div>
+    <div class="card">
+        <h1>لوحة تحكم Grave التفاعلية</h1>
+        <p>هذي صفحة حية من الصفر، اضغط على الزر تحت عشان تتأكد إنها تستجيب معك!</p>
+        <button onclick="increaseCount()">اضغط هنا للتجربة</button>
+        <div class="counter" id="countDisplay">0</div>
+    </div>
 
-            <div class="sidebar-menu">
-                <a href="#" class="menu-item"><i class="fa-solid fa-house"></i> الرئيسية</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-binoculars"></i> المباشرة الميدانية</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-clipboard-user"></i> التحضير الميداني</a>
-                <a href="#" class="menu-item active"><i class="fa-solid fa-file-lines"></i> التقارير الميدانية</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-users-gear"></i> منسوبي القطاعات</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-shield"></i> جرد القطاعات</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-id-badge"></i> الاكواد العسكرية</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-scale-balanced"></i> القضايا</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-triangle-exclamation"></i> الشكاوي</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-circle-plus"></i> إنشاء قضية</a>
-                <a href="#" class="menu-item"><i class="fa-solid fa-users"></i> المستخدمين</a>
-            </div>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="user-badge">
-                <span>BETA1 User</span>
-                <span style="color: var(--accent-gold); font-weight: 700;">BETA1</span>
-            </div>
-            <a href="#" class="menu-item" style="color: var(--danger); justify-content: center; background: rgba(239,68,68,0.1);">
-                <i class="fa-solid fa-power-off"></i> تسجيل الخروج
-            </a>
-        </div>
-    </aside>
-
-    <!-- المحتوى الرئيسي للتقارير -->
-    <main>
-        <!-- قائمة التقارير المصغرة -->
-        <div class="reports-sidebar">
-            <div class="reports-sidebar-header">
-                <span>التقارير الميدانية</span>
-                <i class="fa-solid fa-list-check"></i>
-            </div>
-            <div class="reports-list">
-                <div class="report-item-card active">
-                    <div>
-                        <div style="font-weight: 700; color: #fff;">W-34</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA2 User</div>
-                    </div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
-                </div>
-                <div class="report-item-card">
-                    <div>
-                        <div style="font-weight: 700; color: #fff;">C-14</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA2 User</div>
-                    </div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
-                </div>
-                <div class="report-item-card">
-                    <div>
-                        <div style="font-weight: 700; color: #fff;">I-42</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA6 User</div>
-                    </div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
-                </div>
-                <div class="report-item-card">
-                    <div>
-                        <div style="font-weight: 700; color: #fff;">B-6</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA6 User</div>
-                    </div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
-                </div>
-                <div class="report-item-card">
-                    <div>
-                        <div style="font-weight: 700; color: #fff;">I-5</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تم الرفع بواسطة BETA6 User</div>
-                    </div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">٢٠٢٦/٠٧/٢٥</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- تفاصيل التقرير المحدد -->
-        <div class="report-details-container">
-            <div class="badges-grid">
-                <div class="badge-row-box">
-                    <span>الانضباط العسكري</span>
-                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> منضبط</span>
-                </div>
-                <div class="badge-row-box">
-                    <span>الالتزام بالبروتوكولات</span>
-                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> ملتزم</span>
-                </div>
-                <div class="badge-row-box">
-                    <span>تمرير البلاغ بالراديو</span>
-                    <span class="status-badge status-danger"><i class="fa-solid fa-xmark"></i> لم يتأخر</span>
-                </div>
-                <div class="badge-row-box">
-                    <span>التأخير في تنفيذ الأوامر</span>
-                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> صحيح</span>
-                </div>
-                <div class="badge-row-box">
-                    <span>مواجهة تحديات بالمهام</span>
-                    <span class="status-badge status-danger"><i class="fa-solid fa-xmark"></i> ملازم</span>
-                </div>
-                <div class="badge-row-box">
-                    <span>مخالفة أوامر الشرطة العسكرية</span>
-                    <span class="status-badge status-success"><i class="fa-solid fa-check"></i> نعم</span>
-                </div>
-            </div>
-
-            <!-- الملاحظات الفصاعة (مدعوم بالذكاء الاصطناعي) -->
-            <div class="ai-notes-box">
-                <div class="ai-title">
-                    <i class="fa-solid fa-brain"></i>
-                    <span>الملاحظات الفصاعة (مدعوم بالذكاء الاصطناعي)</span>
-                </div>
-                <div class="ai-content-grid">
-                    <div class="soldier-info-text">
-                        بيانات الضابط:<br>
-                        الرقم العسكري: <strong>W-34</strong><br>
-                        الاسم: <strong>Nwg4</strong><br>
-                        الرتبة: <strong>نقيب</strong>
-                    </div>
-                    <div class="ai-eval-text">
-                        شخصية قيادية فذة، تتسم بالقدرة على قيادة الأفراد والضباط وتقديم التوجيه الاستراتيجي والميداني المنضبط بأسلوب مهني واحترافي متكامل.
-                    </div>
-                </div>
-            </div>
-
-            <div class="report-footer-meta">
-                <i class="fa-solid fa-circle-user"></i>
-                <span>معتمد من قبل: <strong>BETA2 User</strong></span>
-            </div>
-        </div>
-    </main>
+    <script>
+        let clicks = 0;
+        function increaseCount() {
+            clicks++;
+            document.getElementById('countDisplay').innerText = clicks;
+        }
+    </script>
 
 </body>
 </html>
