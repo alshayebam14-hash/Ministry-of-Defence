@@ -218,22 +218,30 @@
             margin-bottom: 20px;
         }
 
+        .table-responsive {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            white-space: nowrap;
         }
 
         th, td {
             padding: 12px;
             text-align: right;
             border-bottom: 1px solid var(--border-subtle);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         th {
             color: var(--accent-gold);
             background: rgba(212, 175, 55, 0.05);
+            position: sticky;
+            top: 0;
         }
 
         .btn {
@@ -250,6 +258,88 @@
         .btn-danger {
             background: var(--danger);
             color: #fff;
+        }
+
+        /* إحصائيات */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        /* تنسيق الدورات ثنائية الصناديق */
+        .courses-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media(max-width: 768px) {
+            .courses-container { grid-template-columns: 1fr; }
+        }
+        .course-box {
+            background: #0b0f19;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .course-item {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .course-item:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        .course-item-done {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .course-item-done:hover {
+            background: rgba(34, 197, 94, 0.2);
         }
     </style>
 </head>
@@ -305,7 +395,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم ربط النظام بالجدول الحقيقي بنجاح وجاهز بالكامل.</p>
+                <p style="color: var(--text-muted);">تم تحديث النظام بالكامل وتطبيق الواجهات وتنسيق الأعمدة حسب طلباتك بدقة.</p>
             </div>
         </div>
 
@@ -313,44 +403,81 @@
         <div id="login_tracker" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">إدارة وحالة تسجيل الدخول لأعضاء المجلس و L1</h2>
             <div class="card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>اسم المستخدم</th>
-                            <th>الرتبة / الصلاحية</th>
-                            <th>الحالة</th>
-                            <th>مدة الجلسة الحالية</th>
-                            <th>آخر تسجيل خروج</th>
-                            <th>الإجراء (Owner فقط)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sessionsTableBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم المستخدم</th>
+                                <th>الرتبة / الصلاحية</th>
+                                <th>الحالة</th>
+                                <th>مدة الجلسة الحالية</th>
+                                <th>آخر تسجيل خروج</th>
+                                <th>الإجراء (Owner فقط)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessionsTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- منسوبي القطاعات -->
+        <!-- منسوبي القطاعات (مرتبة حسب C إلى O) -->
         <div id="members" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منسوبي القطاعات</h2>
+            
+            <!-- شبكة الإحصائيات والأعداد -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>إجمالي المنسوبين</h4>
+                    <div class="count" id="count-ALL">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>عدد القادة (L)</h4>
+                    <div class="count" id="count-L">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>عدد الضباط (M)</h4>
+                    <div class="count" id="count-M">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>عدد الأفراد (R)</h4>
+                    <div class="count" id="count-R">0</div>
+                </div>
+            </div>
+
+            <!-- أزرار الفلترة -->
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="btn" onclick="filterMembers('ALL')">الكل</button>
                 <button class="btn" onclick="filterMembers('L')">القادات (L)</button>
                 <button class="btn" onclick="filterMembers('M')">الضباط (M)</button>
                 <button class="btn" onclick="filterMembers('R')">الأفراد (R)</button>
-                <button class="btn" onclick="filterMembers('ALL')">الكل</button>
             </div>
+
             <div class="card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الآيدي</th>
-                            <th>الاسم</th>
-                            <th>الرتبة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="membersTableBody">
-                        <tr><td colspan="3" style="text-align: center;">جاري تحميل البيانات من الجدول...</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>C: الرتبة</th>
+                                <th>D: الديسكورد</th>
+                                <th>E: الاسم</th>
+                                <th>F: رقم الهوية ID</th>
+                                <th>G: الكود</th>
+                                <th>H: المسمى الوظيفي</th>
+                                <th>I: السجلات</th>
+                                <th>J: الإعلانات</th>
+                                <th>K: الملاحظات</th>
+                                <th>L: التحذيرات</th>
+                                <th>M: تاريخ آخر ترقية</th>
+                                <th>N: ملاحظات يدوية</th>
+                                <th>O: إجازة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersTableBody">
+                            <tr><td colspan="13" style="text-align: center;">جاري تحميل البيانات من الجدول...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -359,21 +486,23 @@
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">سجل ملاحظات المنسوبين</h2>
             <div class="card">
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="noteIdInput" class="login-input" placeholder="أدخل الآيدي للبحث أو الإضافة" style="margin:0;">
+                    <input type="text" id="noteIdInput" class="login-input" placeholder="أدخل الكود/الآيدي للبحث أو الإضافة" style="margin:0;">
                     <input type="text" id="noteTextInput" class="login-input" placeholder="اكتب الملاحظة اليدوية هنا..." style="margin:0; flex:2;">
                     <button class="btn" onclick="addNote()">إضافة ملاحظة</button>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الآيدي</th>
-                            <th>الملاحظة</th>
-                            <th>بواسطة</th>
-                            <th>إجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="notesTableBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الكود/الآيدي</th>
+                                <th>الملاحظة</th>
+                                <th>بواسطة</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notesTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -385,48 +514,121 @@
                 <button class="btn" onclick="renderCodes('vacant')">الأكواد الشاغرة</button>
             </div>
             <div class="card">
-                <table>
-                    <tbody id="codesTableBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <tbody id="codesTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- دورات القطاع -->
+        <!-- دورات القطاع (حسب التصميم الجديد المرفق) -->
         <div id="courses" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">دورات القطاع والمتطلبات حسب الرتبة</h2>
+            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">دورات القطاع والمتطلبات</h2>
             <div class="card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>العسكري / الآيدي</th>
-                            <th>الرتبة</th>
-                            <th>الدورات المتاحة/الحاصل عليها</th>
-                            <th>الدورات الناقصة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="coursesTableBody"></tbody>
-                </table>
+                <!-- شريط اختيار العسكري والبحث بالآيدي -->
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; background: #0b0f19; padding: 15px; border-radius: 10px;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">اختر اسم العسكري:</label>
+                        <select id="courseMemberSelect" class="login-input" style="margin:0;" onchange="onCourseMemberSelected()">
+                            <option value="">اختر العسكري...</option>
+                        </select>
+                    </div>
+                    <div style="width: 180px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">بحث برقم الهوية ID:</label>
+                        <input type="text" id="courseSearchId" class="login-input" placeholder="اكتب الآيدي للبحث..." style="margin:0;" oninput="filterCourseDropdownById()">
+                    </div>
+                </div>
+
+                <!-- معلومات العسكري المختارة الأعلى -->
+                <div style="background: rgba(212,175,55,0.05); border: 1px solid var(--border-subtle); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div><span style="color: var(--text-muted);">رتبة العسكري:</span> <strong id="courseViewRank" style="color: var(--accent-gold);">---</strong></div>
+                    <div><span style="color: var(--text-muted);">الاسم:</span> <strong id="courseViewName" style="color: #fff;">---</strong></div>
+                    <div><span style="color: var(--text-muted);">الكود:</span> <strong id="courseViewCode" style="color: var(--accent-gold);">---</strong></div>
+                </div>
+
+                <p style="color: var(--warning); font-size: 0.85rem; margin-top: 15px;">
+                    <i class="fa-solid fa-hand-pointer"></i> ملاحظة: الضغط على أي دورة باليسار (الناقصة) تحولها لليمين (الحاصل عليها والعكس صحيح).
+                </p>
+
+                <!-- صناديق الدورات الثنائية -->
+                <div class="courses-container">
+                    <!-- اليسار: الدورات الناقصة -->
+                    <div class="course-box">
+                        <h3 style="color: #ef4444; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid rgba(239,68,68,0.2); padding-bottom: 8px;">
+                            <i class="fa-solid fa-circle-xmark"></i> الدورات الناقصة (المطالب بها برتبته)
+                        </h3>
+                        <div id="missingCoursesList">
+                            <p style="color: var(--text-muted); text-align: center; margin-top: 40px;">الرجاء اختيار عسكري أولاً</p>
+                        </div>
+                    </div>
+
+                    <!-- اليمين: الدورات الحاصل عليها -->
+                    <div class="course-box">
+                        <h3 style="color: #22c55e; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid rgba(34,197,94,0.2); padding-bottom: 8px;">
+                            <i class="fa-solid fa-circle-check"></i> الدورات الحاصل عليها
+                        </h3>
+                        <div id="earnedCoursesList">
+                            <p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات مسجلة له بالثبيت</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- صفحة الجرد -->
+        <!-- صفحة الجرد (بالشكل الجديد المرفق بالصورة) -->
         <div id="inventory" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">صفحة الجرد الأسبوعي</h2>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <select id="weekSelect" class="login-input" style="margin:0; width: 200px;" onchange="loadInventoryWeek()">
-                    <option value="week_1">الأسبوع الأول</option>
-                </select>
-                <button class="btn" onclick="addNewWeek()">إضافة أسبوع جديد</button>
-            </div>
             <div class="card">
-                <h3 style="color: var(--accent-gold); margin-bottom: 10px;">جرد السجلات والاعلانات</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" id="inv_id" class="login-input" placeholder="الآيدي" style="margin:0;">
-                    <input type="number" id="inv_rec" class="login-input" placeholder="السجلات" style="margin:0;">
-                    <input type="number" id="inv_ads" class="login-input" placeholder="الاعلانات" style="margin:0;">
-                    <button class="btn" onclick="saveInventory()">إرفاق البيانات</button>
+                <!-- إرفاق سجلات متعددة دفعة واحدة -->
+                <div style="background: #0b0f19; border: 1px solid var(--border-subtle); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">
+                        <i class="fa-solid fa-file-arrow-down"></i> إرفاق سجلات متعددة دفعة واحدة (ID, سجلات, إعلانات)
+                    </h3>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة المطلوبة (كل سطر بيانات بشكل مستقل):</label>
+                            <textarea id="bulkInventoryText" class="login-input" rows="4" placeholder="مثال:&#10;779,38,3&#10;980,28,3&#10;288,27,1" style="resize: vertical; font-family: monospace;"></textarea>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">اختر القائمة منه:</label>
+                            <select id="inventoryWeekSelect" class="login-input" style="margin-bottom: 15px;" onchange="loadInventoryWeekTable()">
+                                <option value="week_1">الأسبوع الأول</option>
+                            </select>
+                            <button class="btn" style="width: 100%;" onclick="processBulkInventory()">إرفاق البيانات دفعة واحدة</button>
+                        </div>
+                    </div>
                 </div>
-                <table id="invTable"></table>
+
+                <!-- البحث في سجلات أسبوع محدد -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; background: #0b0f19; padding: 12px; border-radius: 10px;">
+                    <span style="color: var(--accent-gold); font-size: 0.9rem; font-weight: bold;"><i class="fa-solid fa-magnifying-glass"></i> بحث في سجلات أسبوع محدد:</span>
+                    <select id="searchWeekSelect" class="login-input" style="width: 180px; margin:0;" onchange="loadInventoryWeekTable()">
+                        <option value="week_1">جميع الأسابيع</option>
+                    </select>
+                    <input type="text" id="inventorySearchInput" class="login-input" placeholder="ابحث بـ ID أو الاسم..." style="margin:0; flex:1;" oninput="loadInventoryWeekTable()">
+                </div>
+
+                <!-- الجدول السفلي للجرد -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الأسبوع</th>
+                                <th>رقم الهوية ID</th>
+                                <th>الرتبة</th>
+                                <th>الاسم</th>
+                                <th>الكود</th>
+                                <th>السجلات</th>
+                                <th>الإعلانات</th>
+                                <th>إدارة / حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr><td colspan="8" style="text-align: center;">لا توجد سجلات مرفقة حالياً</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -437,7 +639,7 @@
                 <div id="topSoldiersList" style="margin-bottom: 20px;"></div>
                 <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اعتماد عسكري الأسبوع:</h3>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0;">
+                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل كود العسكري أو آيدي" style="margin:0;">
                     <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
                 </div>
             </div>
@@ -445,7 +647,6 @@
     </main>
 
     <script>
-        // حسابات المستخدمين الجديدة التي طلبتها
         let accounts = {
             "Ahmed": { pass: "Owner2010629", role: "Owner", loggedIn: true, loginTime: Date.now(), lastLogout: "---" },
             "Nawaf": { pass: "m43d65f65", role: "D-0", loggedIn: false, loginTime: null, lastLogout: "---" },
@@ -458,21 +659,19 @@
         let currentUser = "Ahmed";
         let csvData = [];
         let notesList = [];
-        let inventoryData = { "week_1": [] };
+        let inventoryRecords = []; // تخزين الجرد المرفق
         let soldierOfWeekData = { "week_1": "" };
+        let memberCoursesState = {}; // لتخزين الدورات الحاصل عليها لكل عسكري بناءً على الـ ID
 
-        // شروط الدورات حسب الرتبة
-        const courseRules = {
-            "فرد أساس": ["جندي", "جندي اول", "عريف", "وكيل رقيب"],
-            "العمليات": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء"],
-            "الإسعافات الأولية": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم"],
-            "تأهيل الضباط": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم"],
-            "المظلات المشتركة": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم", "ملازم اول"],
-            "الصاعقة أو الضفادع البشرية": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم", "نقيب", "رائد"],
-            "الصقور الجوية": ["جندي", "جندي اول", "عريف", "وكيل رقيب", "رقيب", "رقيب اول", "رئيس رقباء", "ملازم", "نقيب", "رائد", "مقدم"]
-        };
+        const allAvailableCourses = [
+            "دورة فرد أساس",
+            "دورة العمليات",
+            "دورة الإسعافات الأولية",
+            "دورة تأهيل الضباط",
+            "دورة المظلات المشتركة",
+            "دورة التدريب العسكري"
+        ];
 
-        // جلب البيانات من الجدول
         async function fetchSheetData() {
             const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=1490249519&single=true&output=csv";
             try {
@@ -487,24 +686,44 @@
         function parseCSV(text) {
             const rows = text.split("\n").map(r => r.split(","));
             csvData = [];
-            for(let i=1; i<rows.length; i++) {
-                if(rows[i].length >= 2 && rows[i][0].trim() !== "") {
-                    let idVal = rows[i][0].trim();
-                    csvData.push({
-                        id: idVal,
-                        name: rows[i][1] ? rows[i][1].trim() : "غير محدد",
-                        rank: rows[i][2] ? rows[i][2].trim() : "جندي",
-                        type: idVal.charAt(0).toUpperCase()
-                    });
+            
+            for(let i = 1; i < rows.length; i++) {
+                let r = rows[i];
+                if(r.length >= 3) {
+                    let codeVal = r[4] ? r[4].trim() : ""; 
+                    let category = codeVal.charAt(0).toUpperCase();
+
+                    let memberObj = {
+                        rank: r[2] ? r[2].trim() : "",        // C: الرتبة
+                        discord: r[3] ? r[3].trim() : "",     // D: الديسكورد
+                        name: r[4] ? r[4].trim() : "",        // E: الاسم
+                        id: r[5] ? r[5].trim() : "",          // F: رقم الهوية ID
+                        code: codeVal,                        // G: الكود
+                        title: r[7] ? r[7].trim() : "",       // H: المسمى الوظيفي
+                        logs: r[8] ? r[8].trim() : "0",       // I: السجلات
+                        ads: r[9] ? r[9].trim() : "0",        // J: الإعلانات
+                        notes: r[10] ? r[10].trim() : "",     // K: الملاحظات
+                        warnings: r[11] ? r[11].trim() : "",  // L: التحذيرات
+                        lastPromo: r[12] ? r[12].trim() : "", // M: تاريخ آخر ترقية
+                        manualNotes: r[13] ? r[13].trim() : "",// N: ملاحظات يدوية
+                        vacation: r[14] ? r[14].trim() : "",  // O: إجازة
+                        category: category
+                    };
+                    csvData.push(memberObj);
+
+                    // تهيئة الدورات مبدئياً إذا لم تكن موجودة
+                    if(!memberCoursesState[memberObj.id]) {
+                        memberCoursesState[memberObj.id] = []; // الدورات الحاصل عليها فارغة بالبداية والباقي ناقصة
+                    }
                 }
             }
             renderAllPages();
+            populateCourseDropdown();
         }
 
         function handleLogin() {
             const u = document.getElementById('usernameInput').value;
             const p = document.getElementById('passwordInput').value;
-            // معالجة تشابه اسم Ahmed بين Owner و D-3
             let matchedKey = u;
             if(u === "Ahmed" && p === "mdf") matchedKey = "Ahmed_D3";
 
@@ -565,12 +784,45 @@
             renderSessionsTable();
         }
 
+        function updateMemberCounts() {
+            let countL = csvData.filter(m => m.category === 'L').length;
+            let countM = csvData.filter(m => m.category === 'M').length;
+            let countR = csvData.filter(m => m.category === 'R').length;
+
+            document.getElementById('count-ALL').innerText = csvData.length;
+            document.getElementById('count-L').innerText = countL;
+            document.getElementById('count-M').innerText = countM;
+            document.getElementById('count-R').innerText = countR;
+        }
+
         function filterMembers(type) {
             const tbody = document.getElementById('membersTableBody');
             tbody.innerHTML = '';
-            const filtered = type === 'ALL' ? csvData : csvData.filter(m => m.type === type);
+            const filtered = type === 'ALL' ? csvData : csvData.filter(m => m.category === type);
+            
+            if(filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center;">لا توجد بيانات متاحة</td></tr>';
+                return;
+            }
+
             filtered.forEach(m => {
-                tbody.innerHTML += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.rank}</td></tr>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${m.rank}</td>
+                        <td>${m.discord}</td>
+                        <td>${m.name}</td>
+                        <td>${m.id}</td>
+                        <td>${m.code}</td>
+                        <td>${m.title}</td>
+                        <td>${m.logs}</td>
+                        <td>${m.ads}</td>
+                        <td>${m.notes}</td>
+                        <td>${m.warnings}</td>
+                        <td>${m.lastPromo}</td>
+                        <td>${m.manualNotes}</td>
+                        <td>${m.vacation}</td>
+                    </tr>
+                `;
             });
         }
 
@@ -595,71 +847,183 @@
 
         function renderCodes(type) {
             const tbody = document.getElementById('codesTableBody');
-            tbody.innerHTML = '<tr><th>الكود</th><th>الحالة</th><th>معلومات العسكري</th></tr>';
-            const usedIds = csvData.map(m => m.id);
+            tbody.innerHTML = '<tr><th>الكود</th><th>الحالة</th><th>اسم العسكري والرتبة</th></tr>';
+            const usedCodes = csvData.map(m => m.code);
+
             if(type === 'used') {
                 csvData.forEach(m => {
-                    tbody.innerHTML += `<tr><td>${m.id}</td><td style="color:var(--success)">مستعمل</td><td>${m.name} (${m.rank})</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${m.code}</td><td style="color:var(--success)">مستعمل</td><td>${m.name} (${m.rank})</td></tr>`;
                 });
             } else {
                 for(let i=0; i<50; i++) {
                     let code = "R" + (300 + i);
-                    if(!usedIds.includes(code)) {
+                    if(!usedCodes.includes(code)) {
                         tbody.innerHTML += `<tr><td>${code}</td><td style="color:var(--warning)">شاغر</td><td>---</td></tr>`;
                     }
                 }
             }
         }
 
-        function renderCourses() {
-            const tbody = document.getElementById('coursesTableBody');
-            tbody.innerHTML = '';
+        /* دوال صفحة الدورات المخصصة بالصناديق الثنائية */
+        function populateCourseDropdown(filterText = "") {
+            const select = document.getElementById('courseMemberSelect');
+            select.innerHTML = '<option value="">اختر العسكري...</option>';
+            
             csvData.forEach(m => {
-                let eligible = [];
-                let missing = [];
-                Object.keys(courseRules).forEach(course => {
-                    if(courseRules[course].includes(m.rank)) eligible.push(course);
-                    else missing.push(course);
-                });
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${m.id} - ${m.name}</td>
-                        <td>${m.rank}</td>
-                        <td>${eligible.join(', ')}</td>
-                        <td style="color:var(--warning)">${missing.join(', ')}</td>
-                    </tr>
-                `;
+                if(filterText === "" || m.id.includes(filterText) || m.name.toLowerCase().includes(filterText.toLowerCase())) {
+                    select.innerHTML += `<option value="${m.id}">${m.name} - ${m.id} (${m.rank})</option>`;
+                }
             });
         }
 
-        function saveInventory() {
-            const week = document.getElementById('weekSelect').value;
-            const id = document.getElementById('inv_id').value;
-            const rec = document.getElementById('inv_rec').value;
-            const ads = document.getElementById('inv_ads').value;
-            if(!inventoryData[week]) inventoryData[week] = [];
-            inventoryData[week].push({ id, rec, ads });
-            loadInventoryWeek();
+        function filterCourseDropdownById() {
+            const query = document.getElementById('courseSearchId').value;
+            populateCourseDropdown(query);
         }
 
-        function loadInventoryWeek() {
-            const week = document.getElementById('weekSelect').value;
-            const table = document.getElementById('invTable');
-            table.innerHTML = '<tr><th>الآيدي</th><th>السجلات</th><th>الاعلانات</th><th>إجراء</th></tr>';
-            if(inventoryData[week]) {
-                inventoryData[week].forEach((item, idx) => {
-                    table.innerHTML += `<tr><td>${item.id}</td><td>${item.rec}</td><td>${item.ads}</td><td><button class="btn btn-danger" onclick="inventoryData['${week}'].splice(${idx},1); loadInventoryWeek()">حذف</button></td></tr>`;
+        function onCourseMemberSelected() {
+            const selectedId = document.getElementById('courseMemberSelect').value;
+            const missingDiv = document.getElementById('missingCoursesList');
+            const earnedDiv = document.getElementById('earnedCoursesList');
+
+            if(!selectedId) {
+                document.getElementById('courseViewRank').innerText = "---";
+                document.getElementById('courseViewName').innerText = "---";
+                document.getElementById('courseViewCode').innerText = "---";
+                missingDiv.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">الرجاء اختيار عسكري أولاً</p>';
+                earnedDiv.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات مسجلة له بالثبيت</p>';
+                return;
+            }
+
+            const member = csvData.find(m => m.id === selectedId);
+            if(member) {
+                document.getElementById('courseViewRank').innerText = member.rank;
+                document.getElementById('courseViewName').innerText = member.name;
+                document.getElementById('courseViewCode').innerText = member.code;
+                renderMemberCourses(member.id);
+            }
+        }
+
+        function renderMemberCourses(memberId) {
+            const missingDiv = document.getElementById('missingCoursesList');
+            const earnedDiv = document.getElementById('earnedCoursesList');
+
+            missingDiv.innerHTML = '';
+            earnedDiv.innerHTML = '';
+
+            let earnedList = memberCoursesState[memberId] || [];
+            let missingList = allAvailableCourses.filter(c => !earnedList.includes(c));
+
+            if(missingList.length === 0) {
+                missingDiv.innerHTML = '<p style="color: var(--success); text-align: center; margin-top: 40px;">أتم كافة الدورات المطلوبة</p>';
+            } else {
+                missingList.forEach(course => {
+                    missingDiv.innerHTML += `
+                        <div class="course-item" onclick="moveCourse('${memberId}', '${course}', 'toEarned')">
+                            <span>${course}</span>
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                    `;
+                });
+            }
+
+            if(earnedList.length === 0) {
+                earnedDiv.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات مسجلة له بالثبيت</p>';
+            } else {
+                earnedList.forEach(course => {
+                    earnedDiv.innerHTML += `
+                        <div class="course-item-done" onclick="moveCourse('${memberId}', '${course}', 'toMissing')">
+                            <span>${course}</span>
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    `;
                 });
             }
         }
 
-        function addNewWeek() {
-            const newWeekName = "week_" + (Object.keys(inventoryData).length + 1);
-            inventoryData[newWeekName] = [];
-            const select = document.getElementById('weekSelect');
-            select.innerHTML += `<option value="${newWeekName}">الأسبوع ${Object.keys(inventoryData).length + 1}</option>`;
-            select.value = newWeekName;
-            loadInventoryWeek();
+        function moveCourse(memberId, courseName, action) {
+            if(!memberCoursesState[memberId]) memberCoursesState[memberId] = [];
+
+            if(action === 'toEarned') {
+                // نقل من الناقصة (يسار) إلى الحاصل عليها (يمين)
+                if(!memberCoursesState[memberId].includes(courseName)) {
+                    memberCoursesState[memberId].push(courseName);
+                }
+            } else {
+                // نقل من الحاصل عليها (يمين) إلى الناقصة (يسار)
+                memberCoursesState[memberId] = memberCoursesState[memberId].filter(c => c !== courseName);
+            }
+            renderMemberCourses(memberId);
+        }
+
+        /* دوال صفحة الجرد المحدثة بالتصميم الجديد والصيغة الجماعية */
+        function processBulkInventory() {
+            const text = document.getElementById('bulkInventoryText').value.trim();
+            const week = document.getElementById('inventoryWeekSelect').value;
+            
+            if(!text) return;
+
+            const lines = text.split("\n");
+            lines.forEach(line => {
+                const parts = line.split(",");
+                if(parts.length >= 3) {
+                    const id = parts[0].trim();
+                    const rec = parts[1].trim();
+                    const ads = parts[2].trim();
+                    
+                    inventoryRecords.push({
+                        week: week,
+                        id: id,
+                        rec: rec,
+                        ads: ads
+                    });
+                }
+            });
+
+            document.getElementById('bulkInventoryText').value = '';
+            loadInventoryWeekTable();
+        }
+
+        function loadInventoryWeekTable() {
+            const searchWeek = document.getElementById('searchWeekSelect').value;
+            const searchInput = document.getElementById('inventorySearchInput').value.toLowerCase();
+            const tbody = document.getElementById('inventoryTableBody');
+            
+            tbody.innerHTML = '';
+
+            let filtered = inventoryRecords.filter(item => {
+                let matchWeek = (searchWeek === 'week_1' || item.week === searchWeek);
+                let member = csvData.find(m => m.id === item.id);
+                let name = member ? member.name.toLowerCase() : "";
+                let matchSearch = (item.id.toLowerCase().includes(searchInput) || name.includes(searchInput));
+                return matchWeek && matchSearch;
+            });
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">لا توجد سجلات مطابقة</td></tr>';
+                return;
+            }
+
+            filtered.forEach((item, idx) => {
+                let member = csvData.find(m => m.id === item.id);
+                let rank = member ? member.rank : "---";
+                let name = member ? member.name : "غير معروف";
+                let code = member ? member.code : "---";
+                let weekDisplayName = item.week === 'week_1' ? 'الأسبوع الأول' : item.week;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${weekDisplayName}</td>
+                        <td>${item.id}</td>
+                        <td>${rank}</td>
+                        <td>${name}</td>
+                        <td>${code}</td>
+                        <td><span style="background: rgba(34,197,94,0.1); color: var(--success); padding: 4px 8px; border-radius: 4px;">${item.rec} سجل</span></td>
+                        <td><span style="background: rgba(212,175,55,0.1); color: var(--accent-gold); padding: 4px 8px; border-radius: 4px;">${item.ads} إعلان</span></td>
+                        <td><button class="btn btn-danger" onclick="inventoryRecords.splice(${idx},1); loadInventoryWeekTable()">حذف</button></td>
+                    </tr>
+                `;
+            });
         }
 
         function saveSoldierOfWeek() {
@@ -677,11 +1041,11 @@
         }
 
         function renderAllPages() {
+            updateMemberCounts();
             filterMembers('ALL');
             renderNotes();
             renderCodes('used');
-            renderCourses();
-            loadInventoryWeek();
+            loadInventoryWeekTable();
             renderSessionsTable();
             renderSoldierOfWeek();
         }
