@@ -402,7 +402,7 @@
     </aside>
 
     <main>
-        <!-- الصفحة الرئيسية -->
+        <!-- الرئيسية -->
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
@@ -639,7 +639,7 @@
         <div id="soldier_week" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
             
-            <!-- لوحة إدارة الأسابيع (إضافة / حذف) -->
+            <!-- لوحة إدارة الأسابيع (إضافة / حذف الأسبوع) -->
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
                 <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
@@ -655,18 +655,26 @@
 
             <div class="card">
                 <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items:center; flex-wrap: wrap;">
-                    <label style="color: var(--text-muted);">اختر الأسبوع لعرض العسكري:</label>
+                    <label style="color: var(--text-muted);">اختر الأسبوع لعرض المرشحين:</label>
                     <select id="selectWeekSoldier" class="login-input" style="width: 250px; margin:0;" onchange="renderSoldierOfWeek()"></select>
                 </div>
 
-                <div id="topSoldiersList" style="margin-bottom: 20px;"></div>
+                <!-- أعلى الناس تلقائياً بناءً على الجرد -->
+                <div style="background: #0b0f19; border: 1px solid var(--border-subtle); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-medal"></i> أعلى العساكر في هذا الأسبوع (حسب السجلات):</h3>
+                    <div id="topSoldiersList">
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات مسجلة لهذا الأسبوع بعد.</p>
+                    </div>
+                </div>
                 
                 <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اعتماد عسكري الأسبوع يدوياً (اختياري):</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                     <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0; flex:1; min-width: 200px;">
                     <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
-                    <button class="btn btn-danger" onclick="removeSoldierOfWeek()">حذف عسكري الأسبوع</button>
+                    <button class="btn btn-danger" onclick="removeSoldierOfWeek()">حذف عسكري الأسبوع المعتمد</button>
                 </div>
+
+                <div id="currentApprovedSoldier" style="margin-top: 15px;"></div>
             </div>
         </div>
     </main>
@@ -765,7 +773,7 @@
                 return;
             }
             
-            if(confirm(`هل أنت متأكد من حذف (${weekName})؟`)) {
+            if(confirm(`هل أنت متأكد من حذف الأسبوع (${weekName})؟`)) {
                 customWeeks = customWeeks.filter(w => w !== weekName);
                 inventoryLogsAds = inventoryLogsAds.filter(i => i.week !== weekName);
                 inventoryOps = inventoryOps.filter(i => i.week !== weekName);
@@ -1095,11 +1103,11 @@
                     let member = csvData.find(m => m.id === id);
                     if(member) {
                         if(type === 'logs_ads' && parts.length >= 3) {
-                            inventoryLogsAds.push({ week, id, rank: member.rank, name: member.name, logs: parts[1], ads: parts[2] });
+                            inventoryLogsAds.push({ week, id, rank: member.rank, name: member.name, logs: Number(parts[1]) || 0, ads: Number(parts[2]) || 0 });
                         } else if(type === 'ops') {
-                            inventoryOps.push({ week, id, rank: member.rank, name: member.name, ops: parts[1] });
+                            inventoryOps.push({ week, id, rank: member.rank, name: member.name, ops: Number(parts[1]) || 0 });
                         } else if(type === 'acceptance') {
-                            inventoryAcceptance.push({ week, id, rank: member.rank, name: member.name, acceptance: parts[1] });
+                            inventoryAcceptance.push({ week, id, rank: member.rank, name: member.name, acceptance: Number(parts[1]) || 0 });
                         }
                     }
                 }
@@ -1107,6 +1115,7 @@
 
             saveToLocalStorage();
             renderInventoryTables();
+            updateWeekDropdowns();
             if(type === 'logs_ads') document.getElementById('bulkLogsAdsText').value = "";
             if(type === 'ops') document.getElementById('bulkOpsText').value = "";
             if(type === 'acceptance') document.getElementById('bulkAcceptanceText').value = "";
@@ -1130,6 +1139,7 @@
             inventoryAcceptance.forEach((item, index) => {
                 tbodyAcc.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.acceptance}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('acceptance', ${index})">حذف</button></td></tr>`;
             });
+            renderSoldierOfWeek();
         }
 
         function deleteInventoryItem(type, index) {
@@ -1142,13 +1152,41 @@
 
         function renderSoldierOfWeek() {
             let week = document.getElementById('selectWeekSoldier').value;
-            let container = document.getElementById('topSoldiersList');
-            let data = soldierOfWeekData[week];
+            let topContainer = document.getElementById('topSoldiersList');
+            let approvedContainer = document.getElementById('currentApprovedSoldier');
 
-            if(data) {
-                container.innerHTML = `<div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--accent-gold);"><h3 style="color: var(--accent-gold);">العسكري المعتمد للأسبوع (${week}): ${data.name} (${data.id}) - ${data.rank}</h3></div>`;
+            // جلب وترتيب أعلى العساكر بناءً على السجلات والإعلانات المرفقة في هذا الأسبوع
+            let weekLogs = inventoryLogsAds.filter(i => i.week === week);
+            
+            if(weekLogs.length > 0) {
+                // ترتيب تنازلي حسب السجلات
+                weekLogs.sort((a, b) => b.logs - a.logs);
+                
+                let html = `<div class="table-responsive"><table><thead><tr><th>المركز</th><th>ID</th><th>الاسم</th><th>الرتبة</th><th>السجلات</th><th>الإعلانات</th><th>اختيار</th></tr></thead><tbody>`;
+                
+                weekLogs.forEach((item, idx) => {
+                    html += `<tr>
+                        <td>#${idx + 1}</td>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.rank}</td>
+                        <td><strong style="color: var(--accent-gold);">${item.logs}</strong></td>
+                        <td>${item.ads}</td>
+                        <td><button class="btn" style="padding: 4px 10px; font-size: 0.75rem;" onclick="document.getElementById('selectedSoldierInput').value='${item.id}'">اختيار</button></td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                topContainer.innerHTML = html;
             } else {
-                container.innerHTML = `<p style="color: var(--text-muted);">لم يتم اعتماد عسكري لهذا الأسبوع بعد.</p>`;
+                topContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات سجلات مرفقة لهذا الأسبوع حتى الآن.</p>`;
+            }
+
+            // عرض العسكري المعتمد للأسبوع
+            let approvedData = soldierOfWeekData[week];
+            if(approvedData) {
+                approvedContainer.innerHTML = `<div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--accent-gold);"><h3 style="color: var(--accent-gold); font-size: 0.95rem;">العسكري المعتمد للأسبوع (${week}): ${approvedData.name} (${approvedData.id}) - ${approvedData.rank}</h3></div>`;
+            } else {
+                approvedContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لم يتم اعتماد عسكري لهذا الأسبوع بعد.</p>`;
             }
         }
 
@@ -1162,8 +1200,9 @@
                 saveToLocalStorage();
                 renderSoldierOfWeek();
                 document.getElementById('selectedSoldierInput').value = "";
+                alert("تم اعتماد عسكري الأسبوع بنجاح!");
             } else {
-                alert("لم يتم العثور على العسكري بهذا الآيدي!");
+                alert("لم يتم العثور على العسكري بهذا الآيدي في قائمة منسوبي القطاع!");
             }
         }
 
@@ -1174,6 +1213,7 @@
                     delete soldierOfWeekData[week];
                     saveToLocalStorage();
                     renderSoldierOfWeek();
+                    alert("تم إزالة اعتماد عسكري الأسبوع.");
                 }
             } else {
                 alert("لا يوجد عسكري معتمد أساساً في هذا الأسبوع.");
