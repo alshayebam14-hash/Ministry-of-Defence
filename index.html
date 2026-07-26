@@ -404,7 +404,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم تحديث الجدول الجديد وتفعيل الحفظ التلقائي بنجاح.</p>
+                <p style="color: var(--text-muted);">تم تفعيل البحث الفوري بالآيدي وتصحيح رصد الضباط والأفراد بنجاح.</p>
             </div>
         </div>
 
@@ -452,11 +452,17 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button class="btn" onclick="filterMembers('ALL')">الكل</button>
-                <button class="btn" onclick="filterMembers('L')">القادات (L)</button>
-                <button class="btn" onclick="filterMembers('M')">الضباط (M)</button>
-                <button class="btn" onclick="filterMembers('R')">الأفراد (R)</button>
+            <!-- أزرار الفلترة + خانة البحث بالآيدي -->
+            <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="filterMembers('ALL')">الكل</button>
+                    <button class="btn" onclick="filterMembers('L')">القادات (L)</button>
+                    <button class="btn" onclick="filterMembers('M')">الضباط (M)</button>
+                    <button class="btn" onclick="filterMembers('R')">الأفراد (R)</button>
+                </div>
+                <div style="min-width: 250px; flex: 1; max-width: 350px;">
+                    <input type="text" id="memberSearchInput" class="login-input" placeholder="بحث برقم الهوية ID أو الاسم..." style="margin: 0;" oninput="filterMembersTableBySearch()">
+                </div>
             </div>
 
             <div class="card">
@@ -719,8 +725,19 @@
                     
                     if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
 
-                    let codeVal = r[6] ? r[6].trim() : (r[4] ? r[4].trim() : ""); 
-                    let category = codeVal.charAt(0).toUpperCase();
+                    let rankVal = r[2] ? r[2].trim() : "";
+                    let codeVal = r[6] ? r[6].trim() : ""; 
+                    
+                    // تصنيف تلقائي ذكي بناءً على رتبة العسكري أو كود التصنيف لتفادي الصفر
+                    let category = 'R';
+                    let fullText = (rankVal + " " + codeVal).toLowerCase();
+                    if(fullText.includes('قائد') || fullText.includes('لواء') || fullText.includes('عميد') || fullText.includes('عقيد') || fullText.includes('مقدم') || codeVal.toUpperCase() === 'L') {
+                        category = 'L';
+                    } else if(fullText.includes('رائد') || fullText.includes('نقيب') || fullText.includes('ملازم') || fullText.includes('ضابط') || codeVal.toUpperCase() === 'M') {
+                        category = 'M';
+                    } else {
+                        category = 'R';
+                    }
 
                     let rawVacation = r[14] ? r[14].trim().toLowerCase() : "";
                     let vacationStatus = (rawVacation === 'true' || rawVacation === '1' || rawVacation === 'صح' || rawVacation === 'yes') 
@@ -728,7 +745,7 @@
                         : '<span style="color:var(--success);">على رأس العمل</span>';
 
                     let memberObj = {
-                        rank: r[2] ? r[2].trim() : "",
+                        rank: rankVal,
                         discord: r[3] ? r[3].trim() : "",
                         name: nameVal,
                         id: idVal,
@@ -831,15 +848,29 @@
 
         function filterMembers(cat) {
             currentMemberFilter = cat;
+            document.getElementById('memberSearchInput').value = '';
             let data = cat === 'ALL' ? csvData : csvData.filter(m => m.category === cat);
             renderMembersTable(data);
+        }
+
+        function filterMembersTableBySearch() {
+            const query = document.getElementById('memberSearchInput').value.trim().toLowerCase();
+            let baseData = currentMemberFilter === 'ALL' ? csvData : csvData.filter(m => m.category === currentMemberFilter);
+            
+            if(!query) {
+                renderMembersTable(baseData);
+                return;
+            }
+
+            let filtered = baseData.filter(m => m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query));
+            renderMembersTable(filtered);
         }
 
         function renderMembersTable(data) {
             const tbody = document.getElementById('membersTableBody');
             if(!tbody) return;
             if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center;">لا توجد بيانات للعرض</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center;">لا توجد بيانات تطابق البحث</td></tr>';
                 return;
             }
             tbody.innerHTML = '';
