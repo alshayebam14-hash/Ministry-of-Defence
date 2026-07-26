@@ -404,7 +404,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted);">تم ضبط فلتر القادات (L) ليعتمد على أكواد (L-) بدقة.</p>
+                <p style="color: var(--text-muted);">تم ضبط فلتر القادات (L) ليعتمد على أكواد (L-) و (D-) بدقة.</p>
             </div>
         </div>
 
@@ -727,426 +727,355 @@
                     if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
 
                     let rankVal = r[2] ? r[2].trim() : "";
-                    let codeVal = r[6] ? r[6].trim().toUpperCase() : ""; // العمود السادس: الكود
-                    let titleVal = r[7] ? r[7].trim() : ""; // العمود السابع: المسمى الوظيفي
+                    let codeVal = r[6] ? r[6].trim().toUpperCase() : ""; 
+                    let titleVal = r[7] ? r[7].trim() : ""; 
                     
-                    // التصنيف بناءً على الكود (إذا كان الكود يحتوي على حرف L مثل L-1, L-2 يعتبر قائد L)
+                    // تصنيف العسكري بناءً على الأكواد والمسميات
                     let category = 'R';
-                    if (codeVal.includes('L')) {
+                    if (codeVal.startsWith('L') || codeVal.startsWith('D')) {
                         category = 'L';
-                    } else if (titleVal.includes('ضابط وزارة الدفاع') || codeVal.includes('M')) {
+                    } else if (titleVal.includes('ضابط') || codeVal.includes('M')) {
                         category = 'M';
                     } else {
                         category = 'R';
                     }
 
-                    let rawVacation = r[14] ? r[14].trim().toLowerCase() : "";
-                    let vacationStatus = (rawVacation === 'true' || rawVacation === '1' || rawVacation === 'صح' || rawVacation === 'yes') 
-                        ? '<span style="color:var(--danger); font-weight:bold;">في إجازة</span>' 
-                        : '<span style="color:var(--success);">على رأس العمل</span>';
-
-                    let memberObj = {
+                    csvData.push({
                         rank: rankVal,
                         discord: r[3] ? r[3].trim() : "",
                         name: nameVal,
                         id: idVal,
-                        code: r[6] ? r[6].trim() : "",
+                        code: codeVal,
                         title: titleVal,
                         logs: r[8] ? r[8].trim() : "0",
                         ads: r[9] ? r[9].trim() : "0",
-                        notes: r[10] ? r[10].trim() : "",
-                        warnings: r[11] ? r[11].trim() : "",
-                        lastPromo: r[12] ? r[12].trim() : "",
+                        notes: r[10] ? r[10].trim() : "0",
+                        warnings: r[11] ? r[11].trim() : "0",
+                        promotionDate: r[12] ? r[12].trim() : "---",
                         manualNotes: r[13] ? r[13].trim() : "",
-                        vacation: vacationStatus,
+                        vacationStatus: r[14] ? r[14].trim() : "على رأس العمل",
                         category: category
-                    };
-                    csvData.push(memberObj);
-                    if(!memberCoursesState[memberObj.id]) memberCoursesState[memberObj.id] = [];
+                    });
                 }
             }
-            renderAllPages();
+            updateMemberStats();
+            renderMembersTable();
             populateCourseDropdown();
+            renderInventoryTables();
         }
 
-        function handleLogin() {
-            const u = document.getElementById('usernameInput').value;
-            const p = document.getElementById('passwordInput').value;
-            let matchedKey = u;
-            if(u === "Ahmed" && p === "mdf") matchedKey = "Ahmed_D3";
+        function updateMemberStats() {
+            let total = csvData.length;
+            let countL = csvData.filter(m => m.category === 'L').length;
+            let countM = csvData.filter(m => m.category === 'M').length;
+            let countR = csvData.filter(m => m.category === 'R').length;
 
-            if(accounts[matchedKey] && accounts[matchedKey].pass === p) {
-                currentUser = matchedKey;
-                accounts[matchedKey].loggedIn = true;
-                accounts[matchedKey].loginTime = Date.now();
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('currentRoleDisplay').innerText = matchedKey + " (" + accounts[matchedKey].role + ")";
-                renderSessionsTable();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
+            document.getElementById('count-ALL').innerText = total;
+            document.getElementById('count-L').innerText = countL;
+            document.getElementById('count-M').innerText = countM;
+            document.getElementById('count-R').innerText = countR;
         }
 
-        function logout() {
-            if(accounts[currentUser]) {
-                accounts[currentUser].loggedIn = false;
-                accounts[currentUser].lastLogout = "الآن";
-            }
-            document.getElementById('loginOverlay').style.display = 'flex';
-        }
+        function renderMembersTable() {
+            let tbody = document.getElementById('membersTableBody');
+            tbody.innerHTML = "";
 
-        function switchPage(pageId, element) {
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            if(element) element.classList.add('active');
-        }
+            let searchVal = document.getElementById('memberSearchInput').value.toLowerCase();
 
-        function switchInvTab(tabName, btn) {
-            document.querySelectorAll('.inv-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.inv-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('inv_' + tabName).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        function renderSessionsTable() {
-            const tbody = document.getElementById('sessionsTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            Object.keys(accounts).forEach(acc => {
-                const data = accounts[acc];
-                let displayName = acc === "Ahmed_D3" ? "Ahmed (D-3)" : acc;
-                let duration = "غير مسجل";
-                if(data.loggedIn && data.loginTime) {
-                    const mins = Math.floor((Date.now() - data.loginTime) / 60000);
-                    duration = mins + " دقيقة";
-                }
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${displayName}</td>
-                        <td>${data.role}</td>
-                        <td>${data.loggedIn ? '<span style="color:var(--success)">متصل</span>' : '<span style="color:var(--danger)">غير متصل</span>'}</td>
-                        <td>${duration}</td>
-                        <td>${data.lastLogout}</td>
-                        <td>${currentUser === 'Ahmed' && data.loggedIn && acc !== 'Ahmed' ? `<button class="btn btn-danger" onclick="forceLogout('${acc}')">إجبار خروج</button>` : '---'}</td>
-                    </tr>
-                `;
+            let filtered = csvData.filter(m => {
+                let matchesCat = (currentMemberFilter === 'ALL' || m.category === currentMemberFilter);
+                let matchesSearch = m.name.toLowerCase().includes(searchVal) || m.id.toLowerCase().includes(searchVal) || m.code.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
             });
-        }
 
-        function forceLogout(acc) {
-            accounts[acc].loggedIn = false;
-            accounts[acc].lastLogout = "بواسطة الأونر";
-            renderSessionsTable();
-        }
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" style="text-align: center;">لا توجد نتائج مطابقة</td></tr>`;
+                return;
+            }
 
-        function updateMemberCounts() {
-            if(document.getElementById('count-ALL')) document.getElementById('count-ALL').innerText = csvData.length;
-            if(document.getElementById('count-L')) document.getElementById('count-L').innerText = csvData.filter(m => m.category === 'L').length;
-            if(document.getElementById('count-M')) document.getElementById('count-M').innerText = csvData.filter(m => m.category === 'M').length;
-            if(document.getElementById('count-R')) document.getElementById('count-R').innerText = csvData.filter(m => m.category === 'R').length;
+            filtered.forEach(m => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${m.rank}</td>
+                    <td>${m.discord}</td>
+                    <td>${m.name}</td>
+                    <td>${m.id}</td>
+                    <td>${m.code}</td>
+                    <td>${m.title}</td>
+                    <td>${m.logs}</td>
+                    <td>${m.ads}</td>
+                    <td>${m.notes}</td>
+                    <td>${m.warnings}</td>
+                    <td>${m.promotionDate}</td>
+                    <td>${m.manualNotes}</td>
+                    <td>${m.vacationStatus}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function filterMembers(cat) {
             currentMemberFilter = cat;
-            document.getElementById('memberSearchInput').value = '';
-            let data = cat === 'ALL' ? csvData : csvData.filter(m => m.category === cat);
-            renderMembersTable(data);
+            renderMembersTable();
         }
 
         function filterMembersTableBySearch() {
-            const query = document.getElementById('memberSearchInput').value.trim().toLowerCase();
-            let baseData = currentMemberFilter === 'ALL' ? csvData : csvData.filter(m => m.category === currentMemberFilter);
+            renderMembersTable();
+        }
+
+        function switchPage(pageId, element) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => item.classList.remove('active'));
             
-            if(!query) {
-                renderMembersTable(baseData);
-                return;
-            }
-
-            let filtered = baseData.filter(m => m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query));
-            renderMembersTable(filtered);
+            document.getElementById(pageId).classList.add('active');
+            if(element) element.classList.add('active');
         }
 
-        function renderMembersTable(data) {
-            const tbody = document.getElementById('membersTableBody');
-            if(!tbody) return;
-            if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center;">لا توجد بيانات تطابق البحث</td></tr>';
-                return;
+        function handleLogin() {
+            let user = document.getElementById('usernameInput').value.trim();
+            let pass = document.getElementById('passwordInput').value.trim();
+            let err = document.getElementById('loginError');
+
+            if(accounts[user] && accounts[user].pass === pass) {
+                currentUser = user;
+                accounts[user].loggedIn = true;
+                accounts[user].loginTime = Date.now();
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('currentRoleDisplay').innerText = accounts[user].role;
+                renderSessionsTable();
+            } else {
+                err.style.display = 'block';
             }
-            tbody.innerHTML = '';
-            data.forEach(m => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${m.rank || '---'}</td>
-                        <td>${m.discord || '---'}</td>
-                        <td>${m.name || '---'}</td>
-                        <td>${m.id || '---'}</td>
-                        <td>${m.code || '---'}</td>
-                        <td>${m.title || '---'}</td>
-                        <td>${m.logs || '0'}</td>
-                        <td>${m.ads || '0'}</td>
-                        <td>${m.notes || '---'}</td>
-                        <td>${m.warnings || '---'}</td>
-                        <td>${m.lastPromo || '---'}</td>
-                        <td>${m.manualNotes || '---'}</td>
-                        <td>${m.vacation}</td>
-                    </tr>
+        }
+
+        function logout() {
+            accounts[currentUser].loggedIn = false;
+            accounts[currentUser].loginTime = null;
+            accounts[currentUser].lastLogout = new Date().toLocaleTimeString();
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+        }
+
+        function renderSessionsTable() {
+            let tbody = document.getElementById('sessionsTableBody');
+            tbody.innerHTML = "";
+            for(let acc in accounts) {
+                let data = accounts[acc];
+                let tr = document.createElement('tr');
+                let duration = data.loggedIn ? Math.floor((Date.now() - data.loginTime) / 60000) + " دقيقة" : "---";
+                tr.innerHTML = `
+                    <td>${acc}</td>
+                    <td>${data.role}</td>
+                    <td style="color: ${data.loggedIn ? 'var(--success)' : 'var(--danger)'};">${data.loggedIn ? 'متصل' : 'غير متصل'}</td>
+                    <td>${duration}</td>
+                    <td>${data.lastLogout}</td>
+                    <td>${currentUser === 'Owner' && acc !== 'Owner' ? `<button class="btn btn-danger" onclick="forceLogout('${acc}')">فصل الجلسة</button>` : '---'}</td>
                 `;
-            });
+                tbody.appendChild(tr);
+            }
         }
 
-        function renderAllPages() {
-            updateMemberCounts();
-            filterMembers(currentMemberFilter);
-            loadInventoryTables();
-            renderSoldierOfWeek();
+        function forceLogout(acc) {
+            accounts[acc].loggedIn = false;
+            accounts[acc].loginTime = null;
+            accounts[acc].lastLogout = new Date().toLocaleTimeString();
+            renderSessionsTable();
+        }
+
+        function switchInvTab(tabName, btnElement) {
+            document.querySelectorAll('.inv-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.inv-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('inv_' + tabName).classList.add('active');
+            btnElement.classList.add('active');
         }
 
         function populateCourseDropdown() {
-            const select = document.getElementById('courseMemberSelect');
-            if(!select) return;
-            select.innerHTML = '<option value="">اختر العسكري...</option>';
+            let select = document.getElementById('courseMemberSelect');
+            select.innerHTML = `<option value="">اختر العسكري...</option>`;
             csvData.forEach(m => {
-                select.innerHTML += `<option value="${m.id}">${m.name} - ID: ${m.id}</option>`;
+                let opt = document.createElement('option');
+                opt.value = m.id;
+                opt.textContent = `${m.name} (${m.id}) - ${m.rank}`;
+                select.appendChild(opt);
             });
         }
 
         function filterCourseDropdownById() {
-            const searchVal = document.getElementById('courseSearchId').value.trim().toLowerCase();
-            const select = document.getElementById('courseMemberSelect');
-            if(!select) return;
-            select.innerHTML = '<option value="">اختر العسكري...</option>';
-            csvData.forEach(m => {
-                if(!searchVal || m.id.toLowerCase().includes(searchVal) || m.name.toLowerCase().includes(searchVal)) {
-                    select.innerHTML += `<option value="${m.id}">${m.name} - ID: ${m.id}</option>`;
-                }
+            let searchId = document.getElementById('courseSearchId').value.trim();
+            let select = document.getElementById('courseMemberSelect');
+            select.innerHTML = `<option value="">اختر العسكري...</option>`;
+            
+            let filtered = csvData.filter(m => m.id.includes(searchId));
+            filtered.forEach(m => {
+                let opt = document.createElement('option');
+                opt.value = m.id;
+                opt.textContent = `${m.name} (${m.id}) - ${m.rank}`;
+                select.appendChild(opt);
             });
+
+            if(filtered.length === 1) {
+                select.value = filtered[0].id;
+                onCourseMemberSelected();
+            }
         }
 
         function onCourseMemberSelected() {
-            const memberId = document.getElementById('courseMemberSelect').value;
-            const member = csvData.find(m => m.id === memberId);
+            let id = document.getElementById('courseMemberSelect').value;
+            let member = csvData.find(m => m.id === id);
+
             if(!member) {
-                document.getElementById('courseViewRank').innerText = '---';
-                document.getElementById('courseViewName').innerText = '---';
-                document.getElementById('courseViewId').innerText = '---';
-                document.getElementById('missingCoursesList').innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">اختر عسكرياً</p>';
-                document.getElementById('earnedCoursesList').innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات</p>';
+                document.getElementById('courseViewRank').innerText = "---";
+                document.getElementById('courseViewName').innerText = "---";
+                document.getElementById('courseViewId').innerText = "---";
+                document.getElementById('missingCoursesList').innerHTML = `<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">الرجاء اختيار عسكري أولاً</p>`;
+                document.getElementById('earnedCoursesList').innerHTML = `<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات مسجلة له</p>`;
                 return;
             }
-            document.getElementById('courseViewRank').innerText = member.rank || '---';
-            document.getElementById('courseViewName').innerText = member.name || '---';
-            document.getElementById('courseViewId').innerText = member.id || '---';
-            if(!memberCoursesState[member.id]) memberCoursesState[member.id] = [];
-            renderMemberCourses(member.id);
+
+            document.getElementById('courseViewRank').innerText = member.rank;
+            document.getElementById('courseViewName').innerText = member.name;
+            document.getElementById('courseViewId').innerText = member.id;
+
+            if(!memberCoursesState[id]) {
+                memberCoursesState[id] = [];
+            }
+
+            let earned = memberCoursesState[id];
+            let missing = allAvailableCourses.filter(c => !earned.includes(c));
+
+            let missingHtml = "";
+            if(missing.length === 0) {
+                missingHtml = `<p style="color: var(--success); text-align: center; margin-top: 40px;">أكمل جميع الدورات بنجاح!</p>`;
+            } else {
+                missing.forEach(c => {
+                    missingHtml += `<div class="course-item" onclick="toggleCourseForMember('${id}', '${c}')"><span>${c}</span> <i class="fa-solid fa-plus"></i></div>`;
+                });
+            }
+            document.getElementById('missingCoursesList').innerHTML = missingHtml;
+
+            let earnedHtml = "";
+            if(earned.length === 0) {
+                earnedHtml = `<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">لا توجد دورات مسجلة له</p>`;
+            } else {
+                earned.forEach(c => {
+                    earnedHtml += `<div class="course-item-done" onclick="toggleCourseForMember('${id}', '${c}')"><span>${c}</span> <i class="fa-solid fa-check"></i></div>`;
+                });
+            }
+            document.getElementById('earnedCoursesList').innerHTML = earnedHtml;
         }
 
-        function renderMemberCourses(memberId) {
-            const earned = memberCoursesState[memberId] || [];
-            const missing = allAvailableCourses.filter(c => !earned.includes(c));
-            const missingBox = document.getElementById('missingCoursesList');
-            const earnedBox = document.getElementById('earnedCoursesList');
-
-            missingBox.innerHTML = missing.length === 0 ? '<p style="color: var(--success); text-align: center;">مكتمل جميع الدورات</p>' : '';
-            missing.forEach(c => {
-                missingBox.innerHTML += `<div class="course-item" onclick="toggleCourse('${memberId}', '${c}')"><span>${c}</span><i class="fa-solid fa-plus"></i></div>`;
-            });
-
-            earnedBox.innerHTML = earned.length === 0 ? '<p style="color: var(--text-muted); text-align: center;">لم يحصل على دورات</p>' : '';
-            earned.forEach(c => {
-                earnedBox.innerHTML += `<div class="course-item-done" onclick="toggleCourse('${memberId}', '${c}')"><span>${c}</span><i class="fa-solid fa-check"></i></div>`;
-            });
-        }
-
-        function toggleCourse(memberId, courseName) {
-            let list = memberCoursesState[memberId];
-            let idx = list.indexOf(courseName);
-            if(idx > -1) list.splice(idx, 1);
-            else list.push(courseName);
+        function toggleCourseForMember(id, courseName) {
+            if(!memberCoursesState[id]) memberCoursesState[id] = [];
+            let index = memberCoursesState[id].indexOf(courseName);
+            if(index > -1) {
+                memberCoursesState[id].splice(index, 1);
+            } else {
+                memberCoursesState[id].push(courseName);
+            }
             saveToLocalStorage();
-            renderMemberCourses(memberId);
+            onCourseMemberSelected();
         }
 
         function processInventoryData(type) {
+            let text = "";
+            let week = "";
             if(type === 'logs_ads') {
-                let text = document.getElementById('bulkLogsAdsText').value.trim();
-                let week = document.getElementById('autoWeekLogsAds').value;
-                if(!text) return alert('أدخل البيانات');
-                text.split('\n').forEach(line => {
-                    let p = line.split(',');
-                    if(p.length >= 2) {
-                        let m = csvData.find(x => x.id === p[0].trim());
-                        inventoryLogsAds.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', logs: p[1].trim(), ads: p[2]?p[2].trim():'0' });
-                    }
-                });
-                document.getElementById('bulkLogsAdsText').value = '';
+                text = document.getElementById('bulkLogsAdsText').value;
+                week = document.getElementById('autoWeekLogsAds').value;
             } else if(type === 'ops') {
-                let text = document.getElementById('bulkOpsText').value.trim();
-                let week = document.getElementById('autoWeekOps').value;
-                if(!text) return alert('أدخل البيانات');
-                text.split('\n').forEach(line => {
-                    let p = line.split(',');
-                    if(p.length >= 2) {
-                        let m = csvData.find(x => x.id === p[0].trim());
-                        inventoryOps.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', ops: p[1].trim() });
-                    }
-                });
-                document.getElementById('bulkOpsText').value = '';
+                text = document.getElementById('bulkOpsText').value;
+                week = document.getElementById('autoWeekOps').value;
             } else if(type === 'acceptance') {
-                let text = document.getElementById('bulkAcceptanceText').value.trim();
-                let week = document.getElementById('autoWeekAcceptance').value;
-                if(!text) return alert('أدخل البيانات');
-                text.split('\n').forEach(line => {
-                    let p = line.split(',');
-                    if(p.length >= 2) {
-                        let m = csvData.find(x => x.id === p[0].trim());
-                        inventoryAcceptance.push({ week, id: p[0].trim(), rank: m?m.rank:'---', name: m?m.name:'غير معروف', accepted: p[1].trim() });
-                    }
-                });
-                document.getElementById('bulkAcceptanceText').value = '';
+                text = document.getElementById('bulkAcceptanceText').value;
+                week = document.getElementById('autoWeekAcceptance').value;
             }
+
+            let lines = text.split("\n");
+            lines.forEach(line => {
+                let parts = line.split(",").map(p => p.trim());
+                if(parts.length >= 2) {
+                    let id = parts[0];
+                    let member = csvData.find(m => m.id === id);
+                    if(member) {
+                        if(type === 'logs_ads' && parts.length >= 3) {
+                            inventoryLogsAds.push({ week, id, rank: member.rank, name: member.name, logs: parts[1], ads: parts[2] });
+                        } else if(type === 'ops') {
+                            inventoryOps.push({ week, id, rank: member.rank, name: member.name, ops: parts[1] });
+                        } else if(type === 'acceptance') {
+                            inventoryAcceptance.push({ week, id, rank: member.rank, name: member.name, acceptance: parts[1] });
+                        }
+                    }
+                }
+            });
+
             saveToLocalStorage();
-            alert('تم إرفاق البيانات بنجاح!');
-            loadInventoryTables();
-            renderSoldierOfWeek();
+            renderInventoryTables();
+            if(type === 'logs_ads') document.getElementById('bulkLogsAdsText').value = "";
+            if(type === 'ops') document.getElementById('bulkOpsText').value = "";
+            if(type === 'acceptance') document.getElementById('bulkAcceptanceText').value = "";
         }
 
-        function loadInventoryTables() {
-            const tbLogs = document.getElementById('tableLogsAds');
-            tbLogs.innerHTML = inventoryLogsAds.length === 0 ? '<tr><td colspan="7" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
-            inventoryLogsAds.forEach((r, idx) => {
-                tbLogs.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td>${r.logs}</td><td>${r.ads}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('logs_ads', ${idx})">حذف</button></td></tr>`;
+        function renderInventoryTables() {
+            let tbodyLogs = document.getElementById('tableLogsAds');
+            tbodyLogs.innerHTML = inventoryLogsAds.length === 0 ? `<tr><td colspan="7" style="text-align: center;">لا توجد بيانات مرفقة</td></tr>` : "";
+            inventoryLogsAds.forEach((item, index) => {
+                tbodyLogs.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.logs}</td><td>${item.ads}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('logs_ads', ${index})">حذف</button></td></tr>`;
             });
 
-            const tbOps = document.getElementById('tableOps');
-            tbOps.innerHTML = inventoryOps.length === 0 ? '<tr><td colspan="6" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
-            inventoryOps.forEach((r, idx) => {
-                tbOps.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td>${r.ops}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('ops', ${idx})">حذف</button></td></tr>`;
+            let tbodyOps = document.getElementById('tableOps');
+            tbodyOps.innerHTML = inventoryOps.length === 0 ? `<tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة</td></tr>` : "";
+            inventoryOps.forEach((item, index) => {
+                tbodyOps.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.ops}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('ops', ${index})">حذف</button></td></tr>`;
             });
 
-            const tbAcc = document.getElementById('tableAcceptance');
-            tbAcc.innerHTML = inventoryAcceptance.length === 0 ? '<tr><td colspan="6" style="text-align: center;">لا توجد بيانات</td></tr>' : '';
-            inventoryAcceptance.forEach((r, idx) => {
-                tbAcc.innerHTML += `<tr><td>${r.week}</td><td>${r.id}</td><td>${r.rank}</td><td>${r.name}</td><td>${r.accepted}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteInv('acceptance', ${idx})">حذف</button></td></tr>`;
+            let tbodyAcc = document.getElementById('tableAcceptance');
+            tbodyAcc.innerHTML = inventoryAcceptance.length === 0 ? `<tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة</td></tr>` : "";
+            inventoryAcceptance.forEach((item, index) => {
+                tbodyAcc.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.acceptance}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('acceptance', ${index})">حذف</button></td></tr>`;
             });
         }
 
-        function deleteInv(cat, idx) {
-            if(cat === 'logs_ads') inventoryLogsAds.splice(idx, 1);
-            if(cat === 'ops') inventoryOps.splice(idx, 1);
-            if(cat === 'acceptance') inventoryAcceptance.splice(idx, 1);
+        function deleteInventoryItem(type, index) {
+            if(type === 'logs_ads') inventoryLogsAds.splice(index, 1);
+            if(type === 'ops') inventoryOps.splice(index, 1);
+            if(type === 'acceptance') inventoryAcceptance.splice(index, 1);
             saveToLocalStorage();
-            loadInventoryTables();
-            renderSoldierOfWeek();
+            renderInventoryTables();
         }
 
         function renderSoldierOfWeek() {
-            const container = document.getElementById('topSoldiersList');
-            const selectedWeek = document.getElementById('selectWeekSoldier').value;
-            if(!container) return;
+            let week = document.getElementById('selectWeekSoldier').value;
+            let container = document.getElementById('topSoldiersList');
+            let data = soldierOfWeekData[week];
 
-            let map = {};
-
-            inventoryLogsAds.filter(r => r.week === selectedWeek).forEach(r => {
-                if(!map[r.id]) {
-                    let member = csvData.find(x => x.id === r.id);
-                    map[r.id] = { id: r.id, name: r.name, rank: r.rank, code: member ? member.code : '', logs: 0, ads: 0, ops: 0, accepted: 0 };
-                }
-                map[r.id].logs += parseInt(r.logs) || 0;
-                map[r.id].ads += parseInt(r.ads) || 0;
-            });
-
-            inventoryOps.filter(r => r.week === selectedWeek).forEach(r => {
-                if(!map[r.id]) {
-                    let member = csvData.find(x => x.id === r.id);
-                    map[r.id] = { id: r.id, name: r.name, rank: r.rank, code: member ? member.code : '', logs: 0, ads: 0, ops: 0, accepted: 0 };
-                }
-                map[r.id].ops += parseInt(r.ops) || 0;
-            });
-
-            inventoryAcceptance.filter(r => r.week === selectedWeek).forEach(r => {
-                if(!map[r.id]) {
-                    let member = csvData.find(x => x.id === r.id);
-                    map[r.id] = { id: r.id, name: r.name, rank: r.rank, code: member ? member.code : '', logs: 0, ads: 0, ops: 0, accepted: 0 };
-                }
-                map[r.id].accepted += parseInt(r.accepted) || 0;
-            });
-
-            let combined = Object.values(map).map(s => {
-                let totalScore = s.logs + s.ads + s.ops + s.accepted;
-                return { ...s, totalScore };
-            });
-
-            combined.sort((a, b) => b.totalScore - a.totalScore);
-            let top3 = combined.slice(0, 3);
-
-            let html = `<h3 style="color:var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-trophy"></i> المرشحين الأعلى أداءً لـ (${selectedWeek}):</h3>`;
-            if(top3.length === 0) {
-                html += '<p style="color:var(--text-muted);">لا توجد بيانات جرد مرفقة لهذا الأسبوع بعد</p>';
+            if(data) {
+                container.innerHTML = `<div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--accent-gold);"><h3 style="color: var(--accent-gold);">العسكري المعتمد للأسبوع: ${data.name} (${data.id}) - ${data.rank}</h3></div>`;
             } else {
-                html += '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">';
-                top3.forEach((s, i) => {
-                    html += `
-                        <div style="background: rgba(212,175,55,0.08); border: 1px solid var(--accent-gold); padding: 15px; border-radius: 10px; text-align: center;">
-                            <span style="font-size: 1.1rem; font-weight: bold; color: var(--accent-gold);">#${i+1} ${s.name}</span>
-                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">الرتبة: ${s.rank || '---'}</div>
-                            <div style="font-size: 0.85rem; color: #fff; margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 6px; text-align: right; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
-                                <span>السجلات: <strong style="color:var(--accent-gold);">${s.logs}</strong></span>
-                                <span>الإعلانات: <strong style="color:var(--accent-gold);">${s.ads}</strong></span>
-                                <span>العمليات: <strong style="color:var(--accent-gold);">${s.ops}</strong></span>
-                                <span>المقبولين: <strong style="color:var(--accent-gold);">${s.accepted}</strong></span>
-                            </div>
-                            <div style="font-size: 0.95rem; font-weight: bold; color: var(--success); margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 6px;">
-                                المجموع الكلي: ${s.totalScore}
-                            </div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
+                container.innerHTML = `<p style="color: var(--text-muted);">لم يتم اعتماد عسكري لهذا الأسبوع بعد.</p>`;
             }
-
-            if(soldierOfWeekData[selectedWeek]) {
-                html += `
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(34,197,94,0.1); border: 1px solid var(--success); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h4 style="color: var(--success);"><i class="fa-solid fa-star"></i> عسكري الأسبوع المعتمد لـ (${selectedWeek}):</h4>
-                            <p style="font-size: 1.1rem; font-weight: bold; color: #fff; margin-top: 5px;">${soldierOfWeekData[selectedWeek]}</p>
-                        </div>
-                        <button class="btn btn-danger" onclick="removeSoldierOfWeek()">إلغاء وحذف الاعتماد</button>
-                    </div>
-                `;
-            }
-
-            container.innerHTML = html;
         }
 
         function saveSoldierOfWeek() {
-            const selectedWeek = document.getElementById('selectWeekSoldier').value;
-            const input = document.getElementById('selectedSoldierInput');
-            if(!input) return;
-            const val = input.value.trim();
-            if(!val) return alert('أدخل آيدي العسكري');
-            soldierOfWeekData[selectedWeek] = val;
-            saveToLocalStorage();
-            input.value = '';
-            alert('تم اعتماد عسكري الأسبوع بنجاح!');
-            renderSoldierOfWeek();
-        }
+            let week = document.getElementById('selectWeekSoldier').value;
+            let id = document.getElementById('selectedSoldierInput').value.trim();
+            let member = csvData.find(m => m.id === id);
 
-        function removeSoldierOfWeek() {
-            const selectedWeek = document.getElementById('selectWeekSoldier').value;
-            if(soldierOfWeekData[selectedWeek]) {
-                delete soldierOfWeekData[selectedWeek];
+            if(member) {
+                soldierOfWeekData[week] = member;
                 saveToLocalStorage();
-                alert('تم حذف عسكري الأسبوع المعتمد بنجاح!');
                 renderSoldierOfWeek();
+                document.getElementById('selectedSoldierInput').value = "";
+            } else {
+                alert("لم يتم العثور على العسكري بهذا الآيدي!");
             }
         }
 
         window.onload = function() {
             fetchSheetData();
             renderSessionsTable();
+            renderSoldierOfWeek();
         };
     </script>
 </body>
