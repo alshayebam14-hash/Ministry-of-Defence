@@ -358,40 +358,37 @@
         .inv-section { display: none; }
         .inv-section.active { display: block; }
 
-        /* تصميم كارت عسكري الأسبوع المطابق للرسمة */
-        .soldier-card-custom {
+        /* تصميم كارت عسكري الأسبوع المطابق تماماً للرسام */
+        .paint-soldier-card {
             background: var(--bg-card);
             border: 4px solid var(--accent-gold);
             border-radius: 16px;
             padding: 30px;
             max-width: 650px;
-            margin: 20px auto;
+            margin: 25px auto;
             position: relative;
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
         }
 
-        .soldier-card-header {
-            display: flex;
-            justify-content: flex-end;
+        .paint-card-top-right {
             text-align: right;
             line-height: 1.8;
+            font-size: 0.95rem;
             font-weight: bold;
-            font-size: 1rem;
             color: var(--text-main);
         }
 
-        .soldier-card-avatar-area {
+        .paint-card-avatar-section {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 20px 0 30px 0;
-            position: relative;
+            margin: 15px 0 25px 0;
         }
 
-        .soldier-card-avatar {
-            width: 90px;
-            height: 90px;
+        .paint-card-circle-avatar {
+            width: 85px;
+            height: 85px;
             border: 3px solid var(--accent-gold);
             border-radius: 50%;
             display: flex;
@@ -399,48 +396,48 @@
             justify-content: center;
             background: #0b0f19;
             color: var(--accent-gold);
-            font-size: 2.2rem;
-            margin-bottom: 15px;
+            font-size: 2rem;
+            margin-bottom: 12px;
         }
 
-        .soldier-card-curve-line {
-            width: 80%;
+        .paint-card-curved-line {
+            width: 70%;
             height: 3px;
             background: var(--accent-gold);
             border-radius: 50%;
         }
 
-        .soldier-card-body-grid {
+        .paint-card-bottom-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 15px;
             text-align: center;
             margin-top: 15px;
+            align-items: center;
         }
 
-        .soldier-card-metric-box {
+        .paint-metric-item {
             background: #0b0f19;
             border: 1px solid var(--border-subtle);
             padding: 12px;
             border-radius: 8px;
         }
 
-        .soldier-card-metric-box.total-box {
-            grid-column: 1 / -1;
+        .paint-metric-item.center-total {
             background: rgba(212, 175, 55, 0.08);
             border-color: var(--accent-gold);
         }
 
-        .metric-title {
+        .paint-metric-title {
             color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 5px;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
         }
 
-        .metric-value {
+        .paint-metric-val {
             color: var(--accent-gold);
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
     </style>
 </head>
@@ -491,7 +488,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط فلتر القادات (L) ليعتمد على أكواد (L-) و (D-) بدقة.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط كارت عسكري الأسبوع وفقاً لتصميم الرسم تماماً.</p>
                 
                 <button class="btn" onclick="fetchSheetData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
@@ -1220,7 +1217,6 @@
         }
 
         function renderInventoryTables() {
-            // جرد السجلات والإعلانات المرتبط بالأسبوع المختار في هذا القسم
             let selectedWeekLogs = document.getElementById('autoWeekLogsAds').value;
             let filteredLogs = inventoryLogsAds.filter(i => i.week === selectedWeekLogs);
             let tbodyLogs = document.getElementById('tableLogsAds');
@@ -1230,7 +1226,6 @@
                 tbodyLogs.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.logs}</td><td>${item.ads}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('logs_ads', ${originalIndex})">حذف</button></td></tr>`;
             });
 
-            // جرد العمليات المرتبط بالأسبوع المختار في هذا القسم
             let selectedWeekOps = document.getElementById('autoWeekOps').value;
             let filteredOps = inventoryOps.filter(i => i.week === selectedWeekOps);
             let tbodyOps = document.getElementById('tableOps');
@@ -1240,7 +1235,6 @@
                 tbodyOps.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.ops}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('ops', ${originalIndex})">حذف</button></td></tr>`;
             });
 
-            // جرد القبول المرتبط بالأسبوع المختار في هذا القسم
             let selectedWeekAcc = document.getElementById('autoWeekAcceptance').value;
             let filteredAcc = inventoryAcceptance.filter(i => i.week === selectedWeekAcc);
             let tbodyAcc = document.getElementById('tableAcceptance');
@@ -1302,43 +1296,43 @@
                 
                 let totalScore = Number(logEntry.logs) + Number(logEntry.ads) + Number(opEntry.ops) + Number(accEntry.acceptance);
 
+                // الكارت المطابق لتصميم الرسام بدقة
                 approvedContainer.innerHTML = `
-                    <div class="soldier-card-custom">
-                        <div class="soldier-card-header">
-                            <div>
-                                اسم العسكري: ${approvedData.name}<br>
-                                رقم الهوية: ${approvedData.id}<br>
-                                الكود العسكري: ${approvedData.code || '---'}
-                            </div>
+                    <div class="paint-soldier-card">
+                        <div class="paint-card-top-right">
+                            <div>اسم العسكري : ${approvedData.name}</div>
+                            <div>رقم الهوية : ${approvedData.id}</div>
+                            <div>الكود العسكري : ${approvedData.code || '---'}</div>
                         </div>
 
-                        <div class="soldier-card-avatar-area">
-                            <div class="soldier-card-avatar">
+                        <div class="paint-card-avatar-section">
+                            <div class="paint-card-circle-avatar">
                                 <i class="fa-solid fa-user-shield"></i>
                             </div>
-                            <div class="soldier-card-curve-line"></div>
+                            <div class="paint-card-curved-line"></div>
                         </div>
 
-                        <div class="soldier-card-body-grid">
-                            <div class="soldier-card-metric-box">
-                                <div class="metric-title">السجلات :</div>
-                                <div class="metric-value">${logEntry.logs}</div>
+                        <div class="paint-card-bottom-grid">
+                            <div class="paint-metric-item">
+                                <div class="paint-metric-title">السجلات :</div>
+                                <div class="paint-metric-val">${logEntry.logs}</div>
                             </div>
-                            <div class="soldier-card-metric-box">
-                                <div class="metric-title">الإعلانات :</div>
-                                <div class="metric-value">${logEntry.ads}</div>
+                            <div class="paint-metric-item center-total">
+                                <div class="paint-metric-title">مجموع النقاط</div>
+                                <div class="paint-metric-val" style="font-size: 1.2rem;">${totalScore}</div>
                             </div>
-                            <div class="soldier-card-metric-box">
-                                <div class="metric-title">مسؤول العمليات :</div>
-                                <div class="metric-value">${opEntry.ops}</div>
+                            <div class="paint-metric-item">
+                                <div class="paint-metric-title">الإعلانات :</div>
+                                <div class="paint-metric-val">${logEntry.ads}</div>
                             </div>
-                            <div class="soldier-card-metric-box" style="grid-column: 1 / span 1;">
-                                <div class="metric-title">مسؤول القبول :</div>
-                                <div class="metric-value">${accEntry.acceptance}</div>
+                            <div class="paint-metric-item">
+                                <div class="paint-metric-title">مسؤول القبول :</div>
+                                <div class="paint-metric-val">${accEntry.acceptance}</div>
                             </div>
-                            <div class="soldier-card-metric-box total-box" style="grid-column: 2 / span 2;">
-                                <div class="metric-title">مجموع النقاط</div>
-                                <div class="metric-value" style="font-size: 1.3rem;">${totalScore}</div>
+                            <div></div> <!-- مساحة فارغة لضبط التنسيق -->
+                            <div class="paint-metric-item">
+                                <div class="paint-metric-title">مسؤول العمليات :</div>
+                                <div class="paint-metric-val">${opEntry.ops}</div>
                             </div>
                         </div>
                     </div>
