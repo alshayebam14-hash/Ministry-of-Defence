@@ -663,7 +663,7 @@
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">اختر الأسبوع:</label>
-                                <select id="autoWeekLogsAds" class="login-input" style="margin-bottom: 15px;"></select>
+                                <select id="autoWeekLogsAds" class="login-input" style="margin-bottom: 15px;" onchange="renderInventoryTables()"></select>
                                 <button class="btn" style="width: 100%;" onclick="processInventoryData('logs_ads')">إرفاق البيانات</button>
                             </div>
                         </div>
@@ -689,7 +689,7 @@
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الأسبوع:</label>
-                                <select id="autoWeekOps" class="login-input" style="margin-bottom: 15px;"></select>
+                                <select id="autoWeekOps" class="login-input" style="margin-bottom: 15px;" onchange="renderInventoryTables()"></select>
                                 <button class="btn" style="width: 100%;" onclick="processInventoryData('ops')">إرفاق العمليات</button>
                             </div>
                         </div>
@@ -715,7 +715,7 @@
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الأسبوع:</label>
-                                <select id="autoWeekAcceptance" class="login-input" style="margin-bottom: 15px;"></select>
+                                <select id="autoWeekAcceptance" class="login-input" style="margin-bottom: 15px;" onchange="renderInventoryTables()"></select>
                                 <button class="btn" style="width: 100%;" onclick="processInventoryData('acceptance')">إرفاق القبول</button>
                             </div>
                         </div>
@@ -837,6 +837,7 @@
                     select.value = currentValue;
                 }
             });
+            renderInventoryTables();
             renderSoldierOfWeek();
         }
 
@@ -856,7 +857,6 @@
             
             customWeeks.push(weekName);
             saveToLocalStorage();
-            input.value = "";
             document.getElementById('newWeekInputInv').value = "";
             document.getElementById('newWeekInputSoldier').value = "";
             updateWeekDropdowns();
@@ -882,7 +882,6 @@
                 
                 saveToLocalStorage();
                 updateWeekDropdowns();
-                renderInventoryTables();
                 alert("تم حذف الأسبوع بنجاح!");
             }
         }
@@ -1215,30 +1214,42 @@
 
             saveToLocalStorage();
             renderInventoryTables();
-            updateWeekDropdowns();
             if(type === 'logs_ads') document.getElementById('bulkLogsAdsText').value = "";
             if(type === 'ops') document.getElementById('bulkOpsText').value = "";
             if(type === 'acceptance') document.getElementById('bulkAcceptanceText').value = "";
         }
 
         function renderInventoryTables() {
+            // جرد السجلات والإعلانات المرتبط بالأسبوع المختار في هذا القسم
+            let selectedWeekLogs = document.getElementById('autoWeekLogsAds').value;
+            let filteredLogs = inventoryLogsAds.filter(i => i.week === selectedWeekLogs);
             let tbodyLogs = document.getElementById('tableLogsAds');
-            tbodyLogs.innerHTML = inventoryLogsAds.length === 0 ? `<tr><td colspan="7" style="text-align: center;">لا توجد بيانات مرفقة</td></tr>` : "";
-            inventoryLogsAds.forEach((item, index) => {
-                tbodyLogs.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.logs}</td><td>${item.ads}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('logs_ads', ${index})">حذف</button></td></tr>`;
+            tbodyLogs.innerHTML = filteredLogs.length === 0 ? `<tr><td colspan="7" style="text-align: center;">لا توجد بيانات مرفقة لهذا الأسبوع</td></tr>` : "";
+            filteredLogs.forEach((item) => {
+                let originalIndex = inventoryLogsAds.indexOf(item);
+                tbodyLogs.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.logs}</td><td>${item.ads}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('logs_ads', ${originalIndex})">حذف</button></td></tr>`;
             });
 
+            // جرد العمليات المرتبط بالأسبوع المختار في هذا القسم
+            let selectedWeekOps = document.getElementById('autoWeekOps').value;
+            let filteredOps = inventoryOps.filter(i => i.week === selectedWeekOps);
             let tbodyOps = document.getElementById('tableOps');
-            tbodyOps.innerHTML = inventoryOps.length === 0 ? `<tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة</td></tr>` : "";
-            inventoryOps.forEach((item, index) => {
-                tbodyOps.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.ops}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('ops', ${index})">حذف</button></td></tr>`;
+            tbodyOps.innerHTML = filteredOps.length === 0 ? `<tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة لهذا الأسبوع</td></tr>` : "";
+            filteredOps.forEach((item) => {
+                let originalIndex = inventoryOps.indexOf(item);
+                tbodyOps.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.ops}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('ops', ${originalIndex})">حذف</button></td></tr>`;
             });
 
+            // جرد القبول المرتبط بالأسبوع المختار في هذا القسم
+            let selectedWeekAcc = document.getElementById('autoWeekAcceptance').value;
+            let filteredAcc = inventoryAcceptance.filter(i => i.week === selectedWeekAcc);
             let tbodyAcc = document.getElementById('tableAcceptance');
-            tbodyAcc.innerHTML = inventoryAcceptance.length === 0 ? `<tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة</td></tr>` : "";
-            inventoryAcceptance.forEach((item, index) => {
-                tbodyAcc.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.acceptance}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('acceptance', ${index})">حذف</button></td></tr>`;
+            tbodyAcc.innerHTML = filteredAcc.length === 0 ? `<tr><td colspan="6" style="text-align: center;">لا توجد بيانات مرفقة لهذا الأسبوع</td></tr>` : "";
+            filteredAcc.forEach((item) => {
+                let originalIndex = inventoryAcceptance.indexOf(item);
+                tbodyAcc.innerHTML += `<tr><td>${item.week}</td><td>${item.id}</td><td>${item.rank}</td><td>${item.name}</td><td>${item.acceptance}</td><td><button class="btn btn-danger" onclick="deleteInventoryItem('acceptance', ${originalIndex})">حذف</button></td></tr>`;
             });
+
             renderSoldierOfWeek();
         }
 
@@ -1254,6 +1265,8 @@
             let week = document.getElementById('selectWeekSoldier').value;
             let topContainer = document.getElementById('topSoldiersList');
             let approvedContainer = document.getElementById('currentApprovedSoldier');
+
+            if(!week) return;
 
             let weekLogs = inventoryLogsAds.filter(i => i.week === week);
             
@@ -1283,7 +1296,6 @@
             if(approvedData) {
                 let id = approvedData.id;
                 
-                // جمع البيانات من الجرد لنفس الآيدي والأسبوع
                 let logEntry = inventoryLogsAds.find(i => i.week === week && i.id === id) || { logs: 0, ads: 0 };
                 let opEntry = inventoryOps.find(i => i.week === week && i.id === id) || { ops: 0 };
                 let accEntry = inventoryAcceptance.find(i => i.week === week && i.id === id) || { acceptance: 0 };
@@ -1370,7 +1382,6 @@
             updateWeekDropdowns();
             fetchSheetData();
             renderSessionsTable();
-            renderSoldierOfWeek();
         };
     </script>
 </body>
