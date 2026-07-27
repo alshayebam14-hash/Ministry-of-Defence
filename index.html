@@ -357,6 +357,91 @@
         }
         .inv-section { display: none; }
         .inv-section.active { display: block; }
+
+        /* تصميم كارت عسكري الأسبوع المطابق للرسمة */
+        .soldier-card-custom {
+            background: var(--bg-card);
+            border: 4px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 650px;
+            margin: 20px auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .soldier-card-header {
+            display: flex;
+            justify-content: flex-end;
+            text-align: right;
+            line-height: 1.8;
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .soldier-card-avatar-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0 30px 0;
+            position: relative;
+        }
+
+        .soldier-card-avatar {
+            width: 90px;
+            height: 90px;
+            border: 3px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0b0f19;
+            color: var(--accent-gold);
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .soldier-card-curve-line {
+            width: 80%;
+            height: 3px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+        }
+
+        .soldier-card-body-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .soldier-card-metric-box {
+            background: #0b0f19;
+            border: 1px solid var(--border-subtle);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .soldier-card-metric-box.total-box {
+            grid-column: 1 / -1;
+            background: rgba(212, 175, 55, 0.08);
+            border-color: var(--accent-gold);
+        }
+
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
@@ -547,7 +632,6 @@
         <div id="inventory" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">صفحة الجرد الأسبوعي</h2>
 
-            <!-- لوحة إدارة الأسابيع المتاحة في الجرد -->
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
                 <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
@@ -653,7 +737,6 @@
         <div id="soldier_week" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
             
-            <!-- لوحة إدارة الأسابيع المتاحة في عسكري الأسبوع -->
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle);">
                 <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إدارة الأسابيع المتاحة</h3>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
@@ -673,7 +756,6 @@
                     <select id="selectWeekSoldier" class="login-input" style="width: 250px; margin:0;" onchange="renderSoldierOfWeek()"></select>
                 </div>
 
-                <!-- أعلى الناس تلقائياً بناءً على الجرد -->
                 <div style="background: #0b0f19; border: 1px solid var(--border-subtle); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
                     <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-medal"></i> أعلى العساكر في هذا الأسبوع (حسب السجلات):</h3>
                     <div id="topSoldiersList">
@@ -1199,9 +1281,58 @@
 
             let approvedData = soldierOfWeekData[week];
             if(approvedData) {
-                approvedContainer.innerHTML = `<div class="card" style="background: rgba(212,175,55,0.1); border-color: var(--accent-gold);"><h3 style="color: var(--accent-gold); font-size: 0.95rem;">العسكري المعتمد للأسبوع (${week}): ${approvedData.name} (${approvedData.id}) - ${approvedData.rank}</h3></div>`;
+                let id = approvedData.id;
+                
+                // جمع البيانات من الجرد لنفس الآيدي والأسبوع
+                let logEntry = inventoryLogsAds.find(i => i.week === week && i.id === id) || { logs: 0, ads: 0 };
+                let opEntry = inventoryOps.find(i => i.week === week && i.id === id) || { ops: 0 };
+                let accEntry = inventoryAcceptance.find(i => i.week === week && i.id === id) || { acceptance: 0 };
+                
+                let totalScore = Number(logEntry.logs) + Number(logEntry.ads) + Number(opEntry.ops) + Number(accEntry.acceptance);
+
+                approvedContainer.innerHTML = `
+                    <div class="soldier-card-custom">
+                        <div class="soldier-card-header">
+                            <div>
+                                اسم العسكري: ${approvedData.name}<br>
+                                رقم الهوية: ${approvedData.id}<br>
+                                الكود العسكري: ${approvedData.code || '---'}
+                            </div>
+                        </div>
+
+                        <div class="soldier-card-avatar-area">
+                            <div class="soldier-card-avatar">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div class="soldier-card-curve-line"></div>
+                        </div>
+
+                        <div class="soldier-card-body-grid">
+                            <div class="soldier-card-metric-box">
+                                <div class="metric-title">السجلات :</div>
+                                <div class="metric-value">${logEntry.logs}</div>
+                            </div>
+                            <div class="soldier-card-metric-box">
+                                <div class="metric-title">الإعلانات :</div>
+                                <div class="metric-value">${logEntry.ads}</div>
+                            </div>
+                            <div class="soldier-card-metric-box">
+                                <div class="metric-title">مسؤول العمليات :</div>
+                                <div class="metric-value">${opEntry.ops}</div>
+                            </div>
+                            <div class="soldier-card-metric-box" style="grid-column: 1 / span 1;">
+                                <div class="metric-title">مسؤول القبول :</div>
+                                <div class="metric-value">${accEntry.acceptance}</div>
+                            </div>
+                            <div class="soldier-card-metric-box total-box" style="grid-column: 2 / span 2;">
+                                <div class="metric-title">مجموع النقاط</div>
+                                <div class="metric-value" style="font-size: 1.3rem;">${totalScore}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             } else {
-                approvedContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لم يتم اعتماد عسكري لهذا الأسبوع بعد.</p>`;
+                approvedContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">لم يتم اعتماد عسكري لهذا الأسبوع بعد.</p>`;
             }
         }
 
