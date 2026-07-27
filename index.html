@@ -358,10 +358,10 @@
         .inv-section { display: none; }
         .inv-section.active { display: block; }
 
-        /* تصميم كارت عسكري الأسبوع المطابق تماماً للرسام */
+        /* تصميم كارت عسكري الأسبوع المطابق تماماً لصورة الطلب الجديد */
         .paint-soldier-card {
             background: var(--bg-card);
-            border: 4px solid var(--accent-gold);
+            border: 3px solid var(--accent-gold);
             border-radius: 16px;
             padding: 30px;
             max-width: 650px;
@@ -488,7 +488,7 @@
         <div id="home" class="page-section active">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط كارت عسكري الأسبوع وفقاً لتصميم الرسم تماماً.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط كارت عسكري الأسبوع ليظهر عند النقر على (اختيار) للمرشحين.</p>
                 
                 <button class="btn" onclick="fetchSheetData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
@@ -759,8 +759,11 @@
                         <p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات مسجلة لهذا الأسبوع بعد.</p>
                     </div>
                 </div>
+
+                <!-- حاوية عرض الكارت للمرشح عند النقر على اختيار -->
+                <div id="candidateCardPreview"></div>
                 
-                <h3 style="color: var(--accent-gold); margin-bottom: 10px;">اعتماد عسكري الأسبوع يدوياً (اختياري):</h3>
+                <h3 style="color: var(--accent-gold); margin-bottom: 10px; margin-top: 25px;">اعتماد عسكري الأسبوع يدوياً (اختياري):</h3>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                     <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0; flex:1; min-width: 200px;">
                     <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
@@ -1277,32 +1280,33 @@
                         <td>${item.rank}</td>
                         <td><strong style="color: var(--accent-gold);">${item.logs}</strong></td>
                         <td>${item.ads}</td>
-                        <td><button class="btn" style="padding: 4px 10px; font-size: 0.75rem;" onclick="document.getElementById('selectedSoldierInput').value='${item.id}'">اختيار</button></td>
+                        <td><button class="btn" style="padding: 4px 10px; font-size: 0.75rem;" onclick="previewCandidateCard('${item.id}', '${week}')">اختيار</button></td>
                     </tr>`;
                 });
                 html += `</tbody></table></div>`;
                 topContainer.innerHTML = html;
             } else {
                 topContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات سجلات مرفقة لهذا الأسبوع حتى الآن.</p>`;
+                document.getElementById('candidateCardPreview').innerHTML = "";
             }
 
+            // عرض الكارت للمعتمد نهائياً
             let approvedData = soldierOfWeekData[week];
             if(approvedData) {
                 let id = approvedData.id;
-                
+                let memberObj = csvData.find(m => m.id === id) || {};
                 let logEntry = inventoryLogsAds.find(i => i.week === week && i.id === id) || { logs: 0, ads: 0 };
                 let opEntry = inventoryOps.find(i => i.week === week && i.id === id) || { ops: 0 };
                 let accEntry = inventoryAcceptance.find(i => i.week === week && i.id === id) || { acceptance: 0 };
-                
                 let totalScore = Number(logEntry.logs) + Number(logEntry.ads) + Number(opEntry.ops) + Number(accEntry.acceptance);
 
-                // الكارت المطابق لتصميم الرسام بدقة
                 approvedContainer.innerHTML = `
+                    <div style="margin-top: 10px; color: var(--accent-gold); font-weight: bold; font-size: 0.95rem;"><i class="fa-solid fa-circle-check"></i> العسكري المعتمد نهائياً للأسبوع:</div>
                     <div class="paint-soldier-card">
                         <div class="paint-card-top-right">
                             <div>اسم العسكري : ${approvedData.name}</div>
                             <div>رقم الهوية : ${approvedData.id}</div>
-                            <div>الكود العسكري : ${approvedData.code || '---'}</div>
+                            <div>الكود العسكري : ${memberObj.code || '---'}</div>
                         </div>
 
                         <div class="paint-card-avatar-section">
@@ -1329,7 +1333,7 @@
                                 <div class="paint-metric-title">مسؤول القبول :</div>
                                 <div class="paint-metric-val">${accEntry.acceptance}</div>
                             </div>
-                            <div></div> <!-- مساحة فارغة لضبط التنسيق -->
+                            <div></div>
                             <div class="paint-metric-item">
                                 <div class="paint-metric-title">مسؤول العمليات :</div>
                                 <div class="paint-metric-val">${opEntry.ops}</div>
@@ -1342,6 +1346,60 @@
             }
         }
 
+        // دالة لعرض الكارت عند النقر على (اختيار) في جدول المرشحين
+        function previewCandidateCard(id, week) {
+            document.getElementById('selectedSoldierInput').value = id;
+            let previewContainer = document.getElementById('candidateCardPreview');
+            let memberObj = csvData.find(m => m.id === id) || {};
+            let logEntry = inventoryLogsAds.find(i => i.week === week && i.id === id) || { logs: 0, ads: 0, name: memberObj.name || "عسكري" };
+            let opEntry = inventoryOps.find(i => i.week === week && i.id === id) || { ops: 0 };
+            let accEntry = inventoryAcceptance.find(i => i.week === week && i.id === id) || { acceptance: 0 };
+            let totalScore = Number(logEntry.logs) + Number(logEntry.ads) + Number(opEntry.ops) + Number(accEntry.acceptance);
+
+            previewContainer.innerHTML = `
+                <div style="margin-top: 15px; color: var(--accent-gold); font-weight: bold; font-size: 0.95rem;"><i class="fa-solid fa-eye"></i> معاينة الكارت للمرشح المختار:</div>
+                <div class="paint-soldier-card">
+                    <div class="paint-card-top-right">
+                        <div>اسم العسكري : ${logEntry.name}</div>
+                        <div>رقم الهوية : ${id}</div>
+                        <div>الكود العسكري : ${memberObj.code || '---'}</div>
+                    </div>
+
+                    <div class="paint-card-avatar-section">
+                        <div class="paint-card-circle-avatar">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <div class="paint-card-curved-line"></div>
+                    </div>
+
+                    <div class="paint-card-bottom-grid">
+                        <div class="paint-metric-item">
+                            <div class="paint-metric-title">السجلات :</div>
+                            <div class="paint-metric-val">${logEntry.logs}</div>
+                        </div>
+                        <div class="paint-metric-item center-total">
+                            <div class="paint-metric-title">مجموع النقاط</div>
+                            <div class="paint-metric-val" style="font-size: 1.2rem;">${totalScore}</div>
+                        </div>
+                        <div class="paint-metric-item">
+                            <div class="paint-metric-title">الإعلانات :</div>
+                            <div class="paint-metric-val">${logEntry.ads}</div>
+                        </div>
+                        <div class="paint-metric-item">
+                            <div class="paint-metric-title">مسؤول القبول :</div>
+                            <div class="paint-metric-val">${accEntry.acceptance}</div>
+                        </div>
+                        <div></div>
+                        <div class="paint-metric-item">
+                            <div class="paint-metric-title">مسؤول العمليات :</div>
+                            <div class="paint-metric-val">${opEntry.ops}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            previewContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
         function saveSoldierOfWeek() {
             let week = document.getElementById('selectWeekSoldier').value;
             let id = document.getElementById('selectedSoldierInput').value.trim();
@@ -1351,7 +1409,6 @@
                 soldierOfWeekData[week] = member;
                 saveToLocalStorage();
                 renderSoldierOfWeek();
-                document.getElementById('selectedSoldierInput').value = "";
                 alert("تم اعتماد عسكري الأسبوع بنجاح!");
             } else {
                 alert("لم يتم العثور على العسكري بهذا الآيدي في قائمة منسوبي القطاع!");
@@ -1365,6 +1422,7 @@
                     delete soldierOfWeekData[week];
                     saveToLocalStorage();
                     renderSoldierOfWeek();
+                    document.getElementById('candidateCardPreview').innerHTML = "";
                     alert("تم إزالة اعتماد عسكري الأسبوع.");
                 }
             } else {
