@@ -788,8 +788,8 @@
                         <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إرفاق سجلات والإعلانات جديدة</h3>
                         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
-                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة (ID , سجلات , إعلانات كل سطر مستقل):</label>
-                                <textarea id="bulkLogsAdsText" class="login-input" rows="4" placeholder="مثال:&#10;779,38,3" style="resize: vertical; font-family: monospace;"></textarea>
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة (اسم المستخدم أو الكود أو ID , سجلات , إعلانات كل سطر مستقل):</label>
+                                <textarea id="bulkLogsAdsText" class="login-input" rows="4" placeholder="مثال:&#10;D-3,38,3&#10;779,38,3" style="resize: vertical; font-family: monospace;"></textarea>
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">اختر الأسبوع:</label>
@@ -813,8 +813,8 @@
                         <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إرفاق جرد العمليات</h3>
                         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
-                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة (ID , عدد العمليات):</label>
-                                <textarea id="bulkOpsText" class="login-input" rows="4" placeholder="مثال:&#10;779,15" style="resize: vertical; font-family: monospace;"></textarea>
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة (معرف/ID/كود , عدد العمليات):</label>
+                                <textarea id="bulkOpsText" class="login-input" rows="4" placeholder="مثال:&#10;D-3,15&#10;779,15" style="resize: vertical; font-family: monospace;"></textarea>
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الأسبوع:</label>
@@ -838,8 +838,8 @@
                         <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;">إرفاق جرد القبول</h3>
                         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
-                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة (ID , المقبولين):</label>
-                                <textarea id="bulkAcceptanceText" class="login-input" rows="4" placeholder="مثال:&#10;779,5" style="resize: vertical; font-family: monospace;"></textarea>
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الصيغة (معرف/ID/كود , المقبولين):</label>
+                                <textarea id="bulkAcceptanceText" class="login-input" rows="4" placeholder="مثال:&#10;D-3,5&#10;779,5" style="resize: vertical; font-family: monospace;"></textarea>
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">الأسبوع:</label>
@@ -867,8 +867,8 @@
                 <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> إضافة ملاحظة جديدة للأرشيف</h3>
                 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-bottom: 15px;">
                     <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رقم الهوية ID للعسكري:</label>
-                        <input type="text" id="archiveSoldierId" class="login-input" placeholder="مثال: 779" style="margin:0;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رقم الهوية ID أو الكود للعسكري:</label>
+                        <input type="text" id="archiveSoldierId" class="login-input" placeholder="مثال: 779 أو D-3" style="margin:0;">
                     </div>
                     <div>
                         <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">نص الملاحظة أو التدوينة:</label>
@@ -926,7 +926,7 @@
                 
                 <h3 style="color: var(--accent-gold); margin-bottom: 10px; margin-top: 25px;">اعتماد عسكري الأسبوع يدوياً (اختياري):</h3>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي العسكري" style="margin:0; flex:1; min-width: 200px;">
+                    <input type="text" id="selectedSoldierInput" class="login-input" placeholder="أدخل آيدي أو كود العسكري (مثل D-3)" style="margin:0; flex:1; min-width: 200px;">
                     <button class="btn" onclick="saveSoldierOfWeek()">حفظ واعتماد</button>
                     <button class="btn btn-danger" onclick="removeSoldierOfWeek()">حذف عسكري الأسبوع المعتمد</button>
                 </div>
@@ -971,6 +971,20 @@
             "الصاعقة او الضفادع",
             "الصجور الجوية"
         ];
+
+        function findMemberByIdOrCode(inputStr) {
+            if (!inputStr) return null;
+            let clean = inputStr.trim().toLowerCase();
+            // البحث المطابق بالآيدي أولاً
+            let found = csvData.find(m => m.id.toLowerCase() === clean);
+            if (found) return found;
+            // البحث المطابق بالكود تماماً
+            found = csvData.find(m => m.code.toLowerCase() === clean);
+            if (found) return found;
+            // البحث الجزئي في الكود أو الاسم أو الآيدي
+            found = csvData.find(m => m.id.toLowerCase().includes(clean) || m.code.toLowerCase().includes(clean) || m.name.toLowerCase().includes(clean));
+            return found || null;
+        }
 
         function saveToLocalStorage() {
             localStorage.setItem('grave_customWeeks', JSON.stringify(customWeeks));
@@ -1053,7 +1067,7 @@
         }
 
         async function fetchSheetData(isManualClick = false) {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";[cite: 3]
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2081140975&single=true&output=csv";
             
             let statusText = document.getElementById('refreshStatus');
             let icon = document.getElementById('refreshIcon');
@@ -1115,7 +1129,9 @@
                     if(!nameVal || nameVal === "" || !idVal || idVal === "" || nameVal === "---") continue;
 
                     let rankVal = r[2] ? r[2].trim() : "";
-                    let codeVal = r[6] ? r[6].trim().toUpperCase() : ""; 
+                    let rawCode = r[6] ? r[6].trim() : "";
+                    // تنظيف الكود ليعرض الحرف والرقم فقط بدون إيموجي أو زخارف إضافية بناءً على طلب المستخدم
+                    let codeVal = rawCode.replace(/[^a-zA-Z0-9\-]/g, "").toUpperCase();
                     let titleVal = r[7] ? r[7].trim() : ""; 
                     
                     let category = 'R';
@@ -1225,21 +1241,21 @@
 
             let currentSelectedId = select.value;
             select.innerHTML = "";
-            let filtered = csvData.filter(m => searchId === "" || m.id.includes(searchId));
+            let filtered = csvData.filter(m => searchId === "" || m.id.includes(searchId) || m.code.toLowerCase().includes(searchId.toLowerCase()));
 
             if(filtered.length === 0) {
                 let opt = document.createElement('option');
                 opt.value = "";
                 opt.textContent = "لا توجد نتائج مطابقة";
                 select.appendChild(opt);
-                renderCoursesListsForSelectedSoldier();
+                renderCoursesListsForSelectedSoldier(null);
                 return;
             }
 
             filtered.forEach(m => {
                 let opt = document.createElement('option');
                 opt.value = m.id;
-                opt.textContent = `${m.name} (${m.id}) - ${m.rank}`;
+                opt.textContent = `${m.name} (${m.code || m.id}) - ${m.rank}`;
                 select.appendChild(opt);
             });
 
@@ -1269,7 +1285,7 @@
             if(!member) return;
 
             document.getElementById('courseDisplayRank').innerText = `رتبة العسكري: ${member.rank}`;
-            document.getElementById('courseDisplayId').innerText = `رقم الهوية: ${member.id}`;
+            document.getElementById('courseDisplayId').innerText = `رقم الهوية: ${member.id} (${member.code})`;
             document.getElementById('courseDisplayName').innerText = `الاسم: ${member.name}`;
 
             renderCoursesListsForSelectedSoldier(id);
@@ -1343,15 +1359,16 @@
         }
 
         function saveArchiveNote() {
-            let id = document.getElementById('archiveSoldierId').value.trim();
+            let inputKey = document.getElementById('archiveSoldierId').value.trim();
             let noteText = document.getElementById('archiveNoteText').value.trim();
 
-            if(!id || !noteText) {
-                alert("الرجاء إدخال رقم الهوية (ID) ونص الملاحظة.");
+            if(!inputKey || !noteText) {
+                alert("الرجاء إدخال رقم الهوية/الكود ونص الملاحظة.");
                 return;
             }
 
-            let member = csvData.find(m => m.id === id);
+            let member = findMemberByIdOrCode(inputKey);
+            let id = member ? member.id : inputKey;
             let name = member ? member.name : "عسكري غير معروف";
             let now = new Date().toLocaleString('ar-SA');
 
@@ -1518,16 +1535,17 @@
         }
 
         function submitFieldMission() {
-            let id = document.getElementById('missionSoldierId').value.trim();
+            let inputKey = document.getElementById('missionSoldierId').value.trim();
             let link = document.getElementById('missionImageLink').value.trim();
             let details = document.getElementById('missionDetailsText').value.trim();
 
-            if(!id || !details) {
-                alert("الرجاء إدخال رقم الهوية وتفاصيل المهمة على الأقل.");
+            if(!inputKey || !details) {
+                alert("الرجاء إدخال رقم الهوية/الكود وتفاصيل المهمة على الأقل.");
                 return;
             }
 
-            let member = csvData.find(m => m.id === id);
+            let member = findMemberByIdOrCode(inputKey);
+            let id = member ? member.id : inputKey;
             let name = member ? member.name : "عسكري غير معروف";
 
             fieldMissionsList.push({
@@ -1710,15 +1728,15 @@
             lines.forEach(line => {
                 let parts = line.split(",").map(p => p.trim());
                 if(parts.length >= 2) {
-                    let id = parts[0];
-                    let member = csvData.find(m => m.id === id);
+                    let key = parts[0];
+                    let member = findMemberByIdOrCode(key);
                     if(member) {
                         if(type === 'logs_ads' && parts.length >= 3) {
-                            inventoryLogsAds.push({ week, id, rank: member.rank, name: member.name, logs: Number(parts[1]) || 0, ads: Number(parts[2]) || 0 });
+                            inventoryLogsAds.push({ week, id: member.id, rank: member.rank, name: member.name, logs: Number(parts[1]) || 0, ads: Number(parts[2]) || 0 });
                         } else if(type === 'ops') {
-                            inventoryOps.push({ week, id, rank: member.rank, name: member.name, ops: Number(parts[1]) || 0 });
+                            inventoryOps.push({ week, id: member.id, rank: member.rank, name: member.name, ops: Number(parts[1]) || 0 });
                         } else if(type === 'acceptance') {
-                            inventoryAcceptance.push({ week, id, rank: member.rank, name: member.name, acceptance: Number(parts[1]) || 0 });
+                            inventoryAcceptance.push({ week, id: member.id, rank: member.rank, name: member.name, acceptance: Number(parts[1]) || 0 });
                         }
                     }
                 }
@@ -1905,7 +1923,7 @@
                             <div class="paint-metric-val">${logEntry.ads}</div>
                         </div>
                         <div class="paint-metric-item">
-                            <div class="paint-metric-title">مسؤول القبول :</div>
+                            <div class="paint-metric-title">مسؤول العببول / القبول :</div>
                             <div class="paint-metric-val">${accEntry.acceptance}</div>
                         </div>
                         <div></div>
@@ -1921,8 +1939,8 @@
 
         function saveSoldierOfWeek() {
             let week = document.getElementById('selectWeekSoldier').value;
-            let id = document.getElementById('selectedSoldierInput').value.trim();
-            let member = csvData.find(m => m.id === id);
+            let inputKey = document.getElementById('selectedSoldierInput').value.trim();
+            let member = findMemberByIdOrCode(inputKey);
 
             if(member) {
                 soldierOfWeekData[week] = member;
@@ -1930,7 +1948,7 @@
                 renderSoldierOfWeek();
                 alert("تم اعتماد عسكري الأسبوع بنجاح!");
             } else {
-                alert("لم يتم العثور على العسكري بهذا الآيدي في قائمة منسوبي القطاع!");
+                alert("لم يتم العثور على العسكري بهذا الآيدي أو الكود في قائمة منسوبي القطاع!");
             }
         }
 
