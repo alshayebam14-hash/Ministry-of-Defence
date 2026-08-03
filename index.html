@@ -1053,7 +1053,7 @@
         }
 
         async function fetchSheetData(isManualClick = false) {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2081140975&single=true&output=csv";
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";[cite: 3]
             
             let statusText = document.getElementById('refreshStatus');
             let icon = document.getElementById('refreshIcon');
@@ -1184,7 +1184,6 @@
             }
 
             filtered.forEach(m => {
-                // تحويل قيمة حالة الإجازة إلى نص واضح وملون
                 let isLeave = m.vacationStatus === true || m.vacationStatus === "TRUE" || m.vacationStatus === "true" || m.vacationStatus === "في إجازة";
                 let leaveStatusHtml = isLeave 
                     ? '<span style="color: var(--danger); font-weight: bold;">في إجازة</span>' 
