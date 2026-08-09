@@ -916,7 +916,7 @@
                 </div>
 
                 <div style="background: #0b0f19; border: 1px solid var(--border-subtle); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                    <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-medal"></i> أعلى العساكر في هذا الأسبوع (حسب مجموع النقاط):</h3>
+                    <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-medal"></i> أعلى العساكر في هذا الأسبوع (حسب السجلات):</h3>
                     <div id="topSoldiersList">
                         <p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات مسجلة لهذا الأسبوع بعد.</p>
                     </div>
@@ -1053,7 +1053,7 @@
         }
 
         async function fetchSheetData(isManualClick = false) {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";[cite: 4]
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv"; // تم التحديث هنا[cite: 6]
             
             let statusText = document.getElementById('refreshStatus');
             let icon = document.getElementById('refreshIcon');
@@ -1184,6 +1184,7 @@
             }
 
             filtered.forEach(m => {
+                // تحويل قيمة حالة الإجازة إلى نص واضح وملون
                 let isLeave = m.vacationStatus === true || m.vacationStatus === "TRUE" || m.vacationStatus === "true" || m.vacationStatus === "في إجازة";
                 let leaveStatusHtml = isLeave 
                     ? '<span style="color: var(--danger); font-weight: bold;">في إجازة</span>' 
@@ -1785,65 +1786,28 @@
 
             if(!week) return;
 
-            // جمع كل الأيديوهات (IDs) الفريدة الموجودة في سجلات هذا الأسبوع أو العمليات أو القبول
-            let allIdsInWeek = new Set();
-            inventoryLogsAds.filter(i => i.week === week).forEach(i => allIdsInWeek.add(i.id));
-            inventoryOps.filter(i => i.week === week).forEach(i => allIdsInWeek.add(i.id));
-            inventoryAcceptance.filter(i => i.week === week).forEach(i => allIdsInWeek.add(i.id));
-
-            let soldiersWithScores = [];
-            allIdsInWeek.forEach(id => {
-                let logEntry = inventoryLogsAds.find(i => i.week === week && i.id === id) || { logs: 0, ads: 0, name: "", rank: "" };
-                let opEntry = inventoryOps.find(i => i.week === week && i.id === id) || { ops: 0 };
-                let accEntry = inventoryAcceptance.find(i => i.week === week && i.id === id) || { acceptance: 0 };
-                
-                let memberObj = csvData.find(m => m.id === id) || {};
-                let name = logEntry.name || memberObj.name || "عسكري";
-                let rank = logEntry.rank || memberObj.rank || "---";
-
-                let logsVal = Number(logEntry.logs) || 0;
-                let adsVal = Number(logEntry.ads) || 0;
-                let opsVal = Number(opEntry.ops) || 0;
-                let accVal = Number(accEntry.acceptance) || 0;
-
-                let totalScore = logsVal + adsVal + opsVal + accVal;
-
-                soldiersWithScores.push({
-                    id: id,
-                    name: name,
-                    rank: rank,
-                    logs: logsVal,
-                    ads: adsVal,
-                    ops: opsVal,
-                    acceptance: accVal,
-                    totalScore: totalScore
-                });
-            });
-
-            // الفرز تنازلياً حسب مجموع النقاط (totalScore)
-            soldiersWithScores.sort((a, b) => b.totalScore - a.totalScore);
+            let weekLogs = inventoryLogsAds.filter(i => i.week === week);
             
-            if(soldiersWithScores.length > 0) {
-                let html = `<div class="table-responsive"><table><thead><tr><th>المركز</th><th>ID</th><th>الاسم</th><th>الرتبة</th><th>السجلات</th><th>الإعلانات</th><th>العمليات</th><th>القبول</th><th>مجموع النقاط</th><th>اختيار</th></tr></thead><tbody>`;
+            if(weekLogs.length > 0) {
+                weekLogs.sort((a, b) => b.logs - a.logs);
                 
-                soldiersWithScores.forEach((item, idx) => {
+                let html = `<div class="table-responsive"><table><thead><tr><th>المركز</th><th>ID</th><th>الاسم</th><th>الرتبة</th><th>السجلات</th><th>الإعلانات</th><th>اختيار</th></tr></thead><tbody>`;
+                
+                weekLogs.forEach((item, idx) => {
                     html += `<tr>
                         <td>#${idx + 1}</td>
                         <td>${item.id}</td>
                         <td>${item.name}</td>
                         <td>${item.rank}</td>
-                        <td>${item.logs}</td>
+                        <td><strong style="color: var(--accent-gold);">${item.logs}</strong></td>
                         <td>${item.ads}</td>
-                        <td>${item.ops}</td>
-                        <td>${item.acceptance}</td>
-                        <td><strong style="color: var(--accent-gold); font-size: 1rem;">${item.totalScore}</strong></td>
                         <td><button class="btn" style="padding: 4px 10px; font-size: 0.75rem;" onclick="previewCandidateCard('${item.id}', '${week}')">اختيار</button></td>
                     </tr>`;
                 });
                 html += `</tbody></table></div>`;
                 topContainer.innerHTML = html;
             } else {
-                topContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات جرد مسجلة لهذا الأسبوع بعد.</p>`;
+                topContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد بيانات سجلات مرفقة لهذا الأسبوع حتى الآن.</p>`;
                 let candidatePreview = document.getElementById('candidateCardPreview');
                 if(candidatePreview) candidatePreview.innerHTML = "";
             }
@@ -1916,7 +1880,7 @@
                 <div style="margin-top: 15px; color: var(--accent-gold); font-weight: bold; font-size: 0.95rem;"><i class="fa-solid fa-eye"></i> معاينة الكارت للمرشح المختار:</div>
                 <div class="paint-soldier-card">
                     <div class="paint-card-top-right">
-                        <div>اسم العسكري : ${logEntry.name || memberObj.name || "عسكري"}</div>
+                        <div>اسم العسكري : ${logEntry.name}</div>
                         <div>رقم الهوية : ${id}</div>
                         <div>الكود العسكري : ${memberObj.code || '---'}</div>
                     </div>
