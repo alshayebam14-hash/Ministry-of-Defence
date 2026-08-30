@@ -530,25 +530,6 @@
             color: #fff;
             border-color: var(--danger);
         }
-        
-        .permissions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .permission-checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: var(--text-main);
-            background: #0b0f19;
-            border: 1px solid var(--border-subtle);
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -573,9 +554,8 @@
             </div>
 
             <div class="sidebar-menu" id="sidebarMenuContainer">
-                <div class="menu-item active" onclick="switchPage('home', this)" id="menuHome"><i class="fa-solid fa-house"></i> الرئيسية</div>
+                <div class="menu-item" onclick="switchPage('home', this)" id="menuHome"><i class="fa-solid fa-house"></i> الرئيسية</div>
                 <div class="menu-item" onclick="switchPage('login_tracker', this)" id="menuLoginTracker"><i class="fa-solid fa-right-to-bracket"></i> متابعة تسجيل الدخول</div>
-                <div class="menu-item" onclick="switchPage('accounts_management', this)" id="menuAccounts"><i class="fa-solid fa-user-shield"></i> إدارة الحسابات والصلاحيات</div>
                 <div class="menu-item" onclick="switchPage('members', this)" id="menuMembers"><i class="fa-solid fa-users-gear"></i> منسوبي القطاعات</div>
                 <div class="menu-item" onclick="switchPage('field_missions', this)" id="menuFieldMissions"><i class="fa-solid fa-flag-checkered"></i> المهام الميدانية</div>
                 <div class="menu-item" onclick="switchPage('courses', this)" id="menuCourses"><i class="fa-solid fa-graduation-cap"></i> دورات القطاع</div>
@@ -598,10 +578,10 @@
 
     <main>
         <!-- الرئيسية -->
-        <div id="home" class="page-section active">
+        <div id="home" class="page-section">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم وإدارة الصلاحيات والحسابات بنجاح.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم والحسابات والصلاحيات الثابتة داخل الكود بنجاح.</p>
                 
                 <button class="btn" onclick="fetchSheetData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
@@ -627,57 +607,6 @@
                             </tr>
                         </thead>
                         <tbody id="sessionsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- إدارة الحسابات والصلاحيات -->
-        <div id="accounts_management" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">إدارة الحسابات وصلاحيات الأقسام</h2>
-            
-            <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 25px;">
-                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 15px;"><i class="fa-solid fa-user-plus"></i> إضافة حساب جديد أو تعديل صلاحيات حساب</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">اسم المستخدم:</label>
-                        <input type="text" id="newAccountUser" class="login-input" placeholder="مثال: officer_khalid" style="margin:0;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">كلمة المرور:</label>
-                        <input type="text" id="newAccountPass" class="login-input" placeholder="كلمة المرور..." style="margin:0;">
-                    </div>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">تخصيص الأقسام والصلاحيات المسموح بها لهذا الحساب:</label>
-                    <div class="permissions-grid">
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="home"> الرئيسية</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="login_tracker"> متابعة تسجيل الدخول</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="accounts_management"> إدارة الحسابات والصلاحيات</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="members"> منسوبي القطاعات</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="field_missions"> المهام الميدانية</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="courses"> دورات القطاع</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="inventory"> صفحة الجرد</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="notes_archive"> أرشيف الملاحظات</label>
-                        <label class="permission-checkbox-label"><input type="checkbox" class="perm-check" value="soldier_week"> عسكري الأسبوع</label>
-                    </div>
-                </div>
-                <button class="btn" onclick="saveNewOrUpdatedAccount()">حفظ / إنشاء الحساب</button>
-            </div>
-
-            <div class="card">
-                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 15px;"><i class="fa-solid fa-users"></i> الحسابات المسجلة في النظام</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم المستخدم</th>
-                                <th>كلمة المرور</th>
-                                <th>الصلاحيات المسموحة</th>
-                                <th>الإجراء</th>
-                            </tr>
-                        </thead>
-                        <tbody id="accountsTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -748,7 +677,7 @@
 
         <!-- المهام الميدانية -->
         <div id="field_missions" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">المهام الميدانية (بوابة إرسال الإثباتات)</h2>
+            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">المهام الميدانية (بوابة رفع الإثباتات)</h2>
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 25px;">
                 <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 15px;"><i class="fa-solid fa-cloud-arrow-up"></i> رفع إثبات مهمة ميدانية جديدة</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
@@ -757,15 +686,21 @@
                         <input type="text" id="missionSoldierId" class="login-input" placeholder="مثال: 779" style="margin:0;">
                     </div>
                     <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رابط أو تفاصيل الصورة / الإثبات:</label>
-                        <input type="text" id="missionImageLink" class="login-input" placeholder="ضع رابط الصورة هنا..." style="margin:0;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رفع صورة الإثبات:</label>
+                        <input type="file" id="missionImageFile" class="login-input" accept="image/*" style="margin:0; padding: 9px; cursor: pointer;" onchange="previewSelectedImage(event)">
                     </div>
                 </div>
+                
+                <div id="imagePreviewContainer" style="margin-bottom: 15px; display: none; text-align: center;">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">معاينة الصورة المختارة:</p>
+                    <img id="missionImgPreview" src="" alt="معاينة" style="max-height: 120px; border-radius: 8px; border: 1px solid var(--accent-gold);">
+                </div>
+
                 <div style="margin-bottom: 15px;">
                     <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">تفاصيل ووصف المهمة:</label>
                     <textarea id="missionDetailsText" class="login-input" rows="3" placeholder="اكتب تفاصيل المهمة الميدانية..." style="resize: vertical;"></textarea>
                 </div>
-                <button class="btn" onclick="submitFieldMission()">إرسال المهمة للسجل</button>
+                <button class="btn" onclick="submitFieldMission()">إرفع المهمة للسجل</button>
             </div>
 
             <div class="card">
@@ -1008,10 +943,61 @@
     </main>
 
     <script>
-        let accounts = JSON.parse(localStorage.getItem('grave_accounts')) || {
-            "Ahmed": { pass: "Owner2010629", role: "Owner", loggedIn: false, loginTime: null, lastLogout: "---", permissions: ["home", "login_tracker", "accounts_management", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week"] },
-            "leader": { pass: "L483D@r200", role: "Leader", loggedIn: false, loginTime: null, lastLogout: "---", permissions: ["field_missions"] }
+        // قائمة الحسابات والصلاحيات الثابتة المحدثة داخل الكود
+        const accounts = {
+            "Ahmed": {
+                password: "Owner2010629",
+                role: "Owner",
+                loggedIn: false, 
+                loginTime: null, 
+                lastLogout: "---",
+                permissions: ["home", "login_tracker", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week"]
+            },
+            "Ahmed Owner": {
+                password: "Owner@432",
+                role: "Owner",
+                loggedIn: false, 
+                loginTime: null, 
+                lastLogout: "---",
+                permissions: ["home", "login_tracker", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week"]
+            },
+            "The Minister": {
+                password: "t33m7@200",
+                role: "Minister",
+                loggedIn: false, 
+                loginTime: null, 
+                lastLogout: "---",
+                permissions: ["home", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week"]
+            },
+            "Leader": {
+                password: "L483D@r200",
+                role: "Leader",
+                loggedIn: false, 
+                loginTime: null, 
+                lastLogout: "---",
+                permissions: ["members", "field_missions"]
+            },
+            "Affairs": {
+                password: "a64@ff76",
+                role: "Affairs",
+                loggedIn: false, 
+                loginTime: null, 
+                lastLogout: "---",
+                permissions: ["members", "notes_archive"]
+            }
         };
+
+        // دالة التحقق من تسجيل الدخول والصلاحيات
+        function checkPermissions(username, password, pageName) {
+            const account = accounts[username];
+            if (account && account.password === password) {
+                if (account.permissions.includes(pageName)) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
 
         let currentUser = null;
         let csvData = [];
@@ -1027,6 +1013,7 @@
         let notesArchiveList = JSON.parse(localStorage.getItem('grave_notesArchiveList')) || [];
 
         let currentMemberFilter = 'ALL';
+        let uploadedImageBase64 = "";
 
         let allAvailableCourses = [
             "فرد أساس",
@@ -1039,7 +1026,6 @@
         ];
 
         function saveToLocalStorage() {
-            localStorage.setItem('grave_accounts', JSON.stringify(accounts));
             localStorage.setItem('grave_customWeeks', JSON.stringify(customWeeks));
             localStorage.setItem('grave_invLogsAds', JSON.stringify(inventoryLogsAds));
             localStorage.setItem('grave_invOps', JSON.stringify(inventoryOps));
@@ -1048,6 +1034,25 @@
             localStorage.setItem('grave_fieldMissions', JSON.stringify(fieldMissionsList));
             localStorage.setItem('grave_soldierCoursesData', JSON.stringify(soldierCoursesData));
             localStorage.setItem('grave_notesArchiveList', JSON.stringify(notesArchiveList));
+        }
+
+        function previewSelectedImage(event) {
+            let file = event.target.files[0];
+            let previewContainer = document.getElementById('imagePreviewContainer');
+            let imgPreview = document.getElementById('missionImgPreview');
+
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    imgPreview.src = uploadedImageBase64;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                uploadedImageBase64 = "";
+                previewContainer.style.display = 'none';
+            }
         }
 
         function updateWeekDropdowns() {
@@ -1502,7 +1507,6 @@
             const mapping = {
                 "home": "menuHome",
                 "login_tracker": "menuLoginTracker",
-                "accounts_management": "menuAccounts",
                 "members": "menuMembers",
                 "field_missions": "menuFieldMissions",
                 "courses": "menuCourses",
@@ -1545,39 +1549,16 @@
             let password = document.getElementById('passwordInput').value.trim();
             let err = document.getElementById('loginError');
 
-            if (username === 'Ahmed' && password === 'Owner2010629') {
-                localStorage.setItem('currentUser', 'Ahmed');
-                currentUser = 'Ahmed';
-                
-                if (!accounts['Ahmed']) {
-                    accounts['Ahmed'] = { pass: "Owner2010629", role: "Owner", permissions: ["home", "login_tracker", "accounts_management", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week"] };
-                }
-                accounts['Ahmed'].loggedIn = true;
-                accounts['Ahmed'].loginTime = Date.now();
-                saveToLocalStorage();
-
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('currentRoleDisplay').innerText = 'Ahmed';
-
-                applyUserPermissions();
-                renderSessionsTable();
-                renderAccountsTable();
-                renderFieldMissionsTable();
-                return;
-            }
-
-            if(accounts[username] && accounts[username].pass === password) {
+            if(checkPermissions(username, password, 'home') || checkPermissions(username, password, 'members')) {
                 currentUser = username;
                 accounts[username].loggedIn = true;
                 accounts[username].loginTime = Date.now();
-                saveToLocalStorage();
                 
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('currentRoleDisplay').innerText = username;
 
                 applyUserPermissions();
                 renderSessionsTable();
-                renderAccountsTable();
                 renderFieldMissionsTable();
             } else {
                 err.style.display = 'block';
@@ -1589,7 +1570,6 @@
                 accounts[currentUser].loggedIn = false;
                 accounts[currentUser].loginTime = null;
                 accounts[currentUser].lastLogout = new Date().toLocaleTimeString();
-                saveToLocalStorage();
             }
             currentUser = null;
             document.getElementById('loginOverlay').style.display = 'flex';
@@ -1601,17 +1581,25 @@
             let tbody = document.getElementById('sessionsTableBody');
             if(!tbody) return;
             tbody.innerHTML = "";
+            let isUserOwner = (accounts[currentUser] && accounts[currentUser].role === "Owner");
+
             for(let acc in accounts) {
                 let data = accounts[acc];
                 let tr = document.createElement('tr');
                 let duration = data.loggedIn ? Math.floor((Date.now() - data.loginTime) / 60000) + " دقيقة" : "---";
+                
+                let actionBtn = '---';
+                if(isUserOwner && acc !== currentUser) {
+                    actionBtn = `<button class="btn btn-danger" onclick="forceLogout('${acc}')">فصل الجلسة</button>`;
+                }
+
                 tr.innerHTML = `
                     <td>${acc}</td>
                     <td>${data.role || 'مسؤول فرعي'}</td>
                     <td style="color: ${data.loggedIn ? 'var(--success)' : 'var(--danger)'};">${data.loggedIn ? 'متصل' : 'غير متصل'}</td>
                     <td>${duration}</td>
                     <td>${data.lastLogout}</td>
-                    <td>${currentUser === 'Ahmed' && acc !== 'Ahmed' ? `<button class="btn btn-danger" onclick="forceLogout('${acc}')">فصل الجلسة</button>` : '---'}</td>
+                    <td>${actionBtn}</td>
                 `;
                 tbody.appendChild(tr);
             }
@@ -1621,84 +1609,11 @@
             accounts[acc].loggedIn = false;
             accounts[acc].loginTime = null;
             accounts[acc].lastLogout = new Date().toLocaleTimeString();
-            saveToLocalStorage();
             renderSessionsTable();
-        }
-
-        function saveNewOrUpdatedAccount() {
-            let uName = document.getElementById('newAccountUser').value.trim();
-            let uPass = document.getElementById('newAccountPass').value.trim();
-
-            if(!uName || !uPass) {
-                alert("الرجاء إدخال اسم المستخدم وكلمة المرور.");
-                return;
-            }
-
-            let checkedPerms = [];
-            document.querySelectorAll('.perm-check:checked').forEach(chk => {
-                checkedPerms.push(chk.value);
-            });
-
-            if(!accounts[uName]) {
-                accounts[uName] = {
-                    role: "مسؤول فرعي",
-                    loggedIn: false,
-                    loginTime: null,
-                    lastLogout: "---"
-                };
-            }
-
-            accounts[uName].pass = uPass;
-            accounts[uName].permissions = checkedPerms;
-
-            saveToLocalStorage();
-            renderAccountsTable();
-            document.getElementById('newAccountUser').value = "";
-            document.getElementById('newAccountPass').value = "";
-            document.querySelectorAll('.perm-check').forEach(chk => chk.checked = false);
-            alert("تم حفظ الحساب وصلاحياته بنجاح!");
-        }
-
-        function renderAccountsTable() {
-            let tbody = document.getElementById('accountsTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = "";
-
-            for(let acc in accounts) {
-                let data = accounts[acc];
-                let permsText = (data.permissions || []).join(" , ");
-                
-                let maskedPass = acc === 'Ahmed' ? '••••••••' : data.pass;
-
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${acc}</strong> ${acc === 'Ahmed' ? '(المالك الأساسي)' : ''}</td>
-                    <td>${maskedPass}</td>
-                    <td style="font-size: 0.8rem; color: var(--accent-gold);">${permsText}</td>
-                    <td>
-                        ${acc !== 'Ahmed' ? `<button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="deleteAccount('${acc}')">حذف الحساب</button>` : '---'}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            }
-        }
-
-        function deleteAccount(acc) {
-            if(acc === 'Ahmed') {
-                alert("لا يمكن حذف حساب المالك الأساسي!");
-                return;
-            }
-            if(confirm(`هل أنت متأكد من حذف الحساب (${acc})؟`)) {
-                delete accounts[acc];
-                saveToLocalStorage();
-                renderAccountsTable();
-                alert("تم حذف الحساب بنجاح.");
-            }
         }
 
         function submitFieldMission() {
             let id = document.getElementById('missionSoldierId').value.trim();
-            let link = document.getElementById('missionImageLink').value.trim();
             let details = document.getElementById('missionDetailsText').value.trim();
 
             if(!id || !details) {
@@ -1713,7 +1628,7 @@
                 id: id,
                 name: name,
                 details: details,
-                link: link || "بدون رابط",
+                image: uploadedImageBase64 || "",
                 status: "قيد المراجعة"
             });
 
@@ -1721,8 +1636,11 @@
             renderFieldMissionsTable();
 
             document.getElementById('missionSoldierId').value = "";
-            document.getElementById('missionImageLink').value = "";
+            document.getElementById('missionImageFile').value = "";
             document.getElementById('missionDetailsText').value = "";
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+            uploadedImageBase64 = "";
+
             alert("تم إرسال المهمة الميدانية بنجاح إلى السجل!");
         }
 
@@ -1746,12 +1664,17 @@
                 if(item.status === "مقبولة") statusColor = "var(--success)";
                 if(item.status === "مرفوضة") statusColor = "var(--danger)";
 
+                let imageHtml = "بدون إثبات";
+                if(item.image) {
+                    imageHtml = `<a href="#" onclick="openImageModal('${item.image}'); return false;" style="color: var(--accent-gold);">عرض الصورة المرفوعة <i class="fa-solid fa-image"></i></a>`;
+                }
+
                 let tr = document.createElement('tr');
                 let rowHTML = `
                     <td>${item.id}</td>
                     <td>${item.name}</td>
                     <td>${item.details}</td>
-                    <td>${item.link !== "بدون رابط" ? `<a href="${item.link}" target="_blank" style="color: var(--accent-gold);">عرض الصورة <i class="fa-solid fa-external-link-alt"></i></a>` : "بدون إثبات"}</td>
+                    <td>${imageHtml}</td>
                     <td><strong style="color: ${statusColor};">${item.status}</strong></td>
                     <td>
                         <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="updateMissionStatus(${index}, 'مقبولة')">قبول</button>
@@ -1762,6 +1685,18 @@
                 tr.innerHTML = rowHTML;
                 tbody.appendChild(tr);
             });
+        }
+
+        function openImageModal(imgSrc) {
+            let modal = document.createElement('div');
+            modal.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:3000;";
+            modal.innerHTML = `
+                <div style="position:relative; max-width: 90%; max-height: 90%;">
+                    <img src="${imgSrc}" style="max-width: 100%; max-height: 85vh; border-radius: 10px; border: 2px solid var(--accent-gold);">
+                    <button class="btn btn-danger" style="display:block; margin: 15px auto 0 auto;" onclick="this.closest('div').parentElement.remove()">إغلاق المعاينة</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         function updateMissionStatus(index, newStatus) {
@@ -2160,11 +2095,9 @@
             updateWeekDropdowns();
             fetchSheetData();
             renderSessionsTable();
-            renderAccountsTable();
             renderFieldMissionsTable();
             renderNotesArchiveTable();
         };
     </script>
 </body>
 </html>
-```[cite: 7]
