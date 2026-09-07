@@ -581,7 +581,7 @@
         <div id="home" class="page-section">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم والحسابات والصلاحيات الثابتة داخل الكود بنجاح.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم والحسابات والصلاحيات الثابتة وتفعيل المزامنة السحابية بنجاح.</p>
                 
                 <button class="btn" onclick="fetchSheetData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
@@ -943,6 +943,9 @@
     </main>
 
     <script>
+        // رابط تطبيق الويب السحابي المربوط بقوقل شيت
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzH1QJRV5gJGNWZWvpdEnh7A8nF0-SqDOBM7r9zzQlB_1cDSxNyii5j1Q3Cr8xaEj998Q/exec";
+
         // قائمة الحسابات والصلاحيات الثابتة المحدثة داخل الكود
         const accounts = {
             "Ahmed": {
@@ -987,7 +990,6 @@
             }
         };
 
-        // دالة التحقق من تسجيل الدخول والصلاحيات
         function checkPermissions(username, password, pageName) {
             const account = accounts[username];
             if (account && account.password === password) {
@@ -1002,15 +1004,14 @@
         let currentUser = null;
         let csvData = [];
         
-        let customWeeks = JSON.parse(localStorage.getItem('grave_customWeeks')) || ["الأسبوع الأول", "الأسبوع الثاني", "الأسبوع الثالث"];
-
-        let inventoryLogsAds = JSON.parse(localStorage.getItem('grave_invLogsAds')) || [];
-        let inventoryOps = JSON.parse(localStorage.getItem('grave_invOps')) || [];
-        let inventoryAcceptance = JSON.parse(localStorage.getItem('grave_invAcceptance')) || [];
-        let soldierOfWeekData = JSON.parse(localStorage.getItem('grave_soldierOfWeekData')) || {};
-        let fieldMissionsList = JSON.parse(localStorage.getItem('grave_fieldMissions')) || [];
-        let soldierCoursesData = JSON.parse(localStorage.getItem('grave_soldierCoursesData')) || {};
-        let notesArchiveList = JSON.parse(localStorage.getItem('grave_notesArchiveList')) || [];
+        let customWeeks = ["الأسبوع الأول", "الأسبوع الثاني", "الأسبوع الثالث"];
+        let inventoryLogsAds = [];
+        let inventoryOps = [];
+        let inventoryAcceptance = [];
+        let soldierOfWeekData = {};
+        let fieldMissionsList = [];
+        let soldierCoursesData = {};
+        let notesArchiveList = [];
 
         let currentMemberFilter = 'ALL';
         let uploadedImageBase64 = "";
@@ -1025,15 +1026,41 @@
             "الصجور الجوية"
         ];
 
-        function saveToLocalStorage() {
-            localStorage.setItem('grave_customWeeks', JSON.stringify(customWeeks));
-            localStorage.setItem('grave_invLogsAds', JSON.stringify(inventoryLogsAds));
-            localStorage.setItem('grave_invOps', JSON.stringify(inventoryOps));
-            localStorage.setItem('grave_invAcceptance', JSON.stringify(inventoryAcceptance));
-            localStorage.setItem('grave_soldierOfWeekData', JSON.stringify(soldierOfWeekData));
-            localStorage.setItem('grave_fieldMissions', JSON.stringify(fieldMissionsList));
-            localStorage.setItem('grave_soldierCoursesData', JSON.stringify(soldierCoursesData));
-            localStorage.setItem('grave_notesArchiveList', JSON.stringify(notesArchiveList));
+        // دوال المزامنة السحابية مع Google Sheets
+        async function loadCloudData() {
+            try {
+                // جلب الملاحظات
+                let resNotes = await fetch(WEB_APP_URL + "?sheet=notesArchive");
+                let notesData = await resNotes.json();
+                if(Array.isArray(notesData) && notesData.length > 1) {
+                    notesArchiveList = notesData.slice(1).map(r => ({ date: r[0], id: r[1], name: r[2], note: r[3], author: r[4] }));
+                }
+
+                // جلب المهام
+                let resMissions = await fetch(WEB_APP_URL + "?sheet=fieldMissions");
+                let missionsData = await resMissions.json();
+                if(Array.isArray(missionsData) && missionsData.length > 1) {
+                    fieldMissionsList = missionsData.slice(1).map(r => ({ id: r[0], name: r[1], details: r[2], image: r[3], status: r[4] }));
+                }
+
+                renderNotesArchiveTable();
+                renderFieldMissionsTable();
+            } catch(e) {
+                console.log("خطأ في جلب البيانات السحابية", e);
+            }
+        }
+
+        async function saveCloudRow(sheetName, rowData) {
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sheet: sheetName, row: rowData })
+                });
+            } catch(e) {
+                console.log("خطأ في الحفظ السحابي", e);
+            }
         }
 
         function previewSelectedImage(event) {
@@ -1094,7 +1121,6 @@
             }
             
             customWeeks.push(weekName);
-            saveToLocalStorage();
             document.getElementById('newWeekInputInv').value = "";
             document.getElementById('newWeekInputSoldier').value = "";
             updateWeekDropdowns();
@@ -1118,7 +1144,6 @@
                 inventoryAcceptance = inventoryAcceptance.filter(i => i.week !== weekName);
                 delete soldierOfWeekData[weekName];
                 
-                saveToLocalStorage();
                 updateWeekDropdowns();
                 alert("تم حذف الأسبوع بنجاح!");
             }
@@ -1139,6 +1164,7 @@
                 const response = await fetch(url + "&t=" + new Date().getTime());
                 const data = await response.text();
                 parseCSV(data);
+                await loadCloudData();
 
                 if (isManualClick && statusText) {
                     statusText.innerText = "تم تحديث البيانات بنجاح! (" + new Date().toLocaleTimeString() + ")";
@@ -1410,11 +1436,10 @@
                 }
             }
 
-            saveToLocalStorage();
             renderCoursesListsForSelectedSoldier(soldierId);
         }
 
-        function saveArchiveNote() {
+        async function saveArchiveNote() {
             let id = document.getElementById('archiveSoldierId').value.trim();
             let noteText = document.getElementById('archiveNoteText').value.trim();
 
@@ -1427,20 +1452,22 @@
             let name = member ? member.name : "عسكري غير معروف";
             let now = new Date().toLocaleString('ar-SA');
 
-            notesArchiveList.unshift({
+            let newNote = {
                 date: now,
                 id: id,
                 name: name,
                 note: noteText,
                 author: currentUser
-            });
+            };
 
-            saveToLocalStorage();
+            notesArchiveList.unshift(newNote);
             renderNotesArchiveTable();
+
+            await saveCloudRow("notesArchive", [now, id, name, noteText, currentUser]);
 
             document.getElementById('archiveSoldierId').value = "";
             document.getElementById('archiveNoteText').value = "";
-            alert("تم حفظ الملاحظة في الأرشيف بنجاح!");
+            alert("تم حفظ الملاحظة سحابياً في الأرشيف بنجاح!");
         }
 
         function renderNotesArchiveTable() {
@@ -1493,7 +1520,6 @@
         function deleteArchiveNote(index) {
             if(confirm("هل أنت متأكد من حذف هذه الملاحظة من الأرشيف؟")) {
                 notesArchiveList.splice(index, 1);
-                saveToLocalStorage();
                 renderNotesArchiveTable();
             }
         }
@@ -1612,7 +1638,7 @@
             renderSessionsTable();
         }
 
-        function submitFieldMission() {
+        async function submitFieldMission() {
             let id = document.getElementById('missionSoldierId').value.trim();
             let details = document.getElementById('missionDetailsText').value.trim();
 
@@ -1624,16 +1650,18 @@
             let member = csvData.find(m => m.id === id);
             let name = member ? member.name : "عسكري غير معروف";
 
-            fieldMissionsList.push({
+            let newMission = {
                 id: id,
                 name: name,
                 details: details,
                 image: uploadedImageBase64 || "",
                 status: "قيد المراجعة"
-            });
+            };
 
-            saveToLocalStorage();
+            fieldMissionsList.push(newMission);
             renderFieldMissionsTable();
+
+            await saveCloudRow("fieldMissions", [id, name, details, uploadedImageBase64 || "", "قيد المراجعة"]);
 
             document.getElementById('missionSoldierId').value = "";
             document.getElementById('missionImageFile').value = "";
@@ -1641,7 +1669,7 @@
             document.getElementById('imagePreviewContainer').style.display = 'none';
             uploadedImageBase64 = "";
 
-            alert("تم إرسال المهمة الميدانية بنجاح إلى السجل!");
+            alert("تم إرسال المهمة الميدانية سحابياً بنجاح إلى السجل!");
         }
 
         function renderFieldMissionsTable() {
@@ -1701,14 +1729,12 @@
 
         function updateMissionStatus(index, newStatus) {
             fieldMissionsList[index].status = newStatus;
-            saveToLocalStorage();
             renderFieldMissionsTable();
         }
 
         function deleteMission(index) {
             if(confirm("هل أنت متأكد من حذف هذه المهمة؟")) {
                 fieldMissionsList.splice(index, 1);
-                saveToLocalStorage();
                 renderFieldMissionsTable();
             }
         }
@@ -1731,7 +1757,6 @@
                 inventoryLogsAds = inventoryLogsAds.filter(i => i.week !== currentWeek);
                 inventoryOps = inventoryOps.filter(i => i.week !== currentWeek);
                 inventoryAcceptance = inventoryAcceptance.filter(i => i.week !== currentWeek);
-                saveToLocalStorage();
                 renderInventoryTables();
                 alert(`تم تفريغ كافة بيانات الأسبوع (${currentWeek}) بنجاح!`);
             }
@@ -1829,7 +1854,6 @@
                 }
             });
 
-            saveToLocalStorage();
             renderInventoryTables();
             if(type === 'logs_ads') document.getElementById('bulkLogsAdsText').value = "";
             if(type === 'ops') document.getElementById('bulkOpsText').value = "";
@@ -1877,7 +1901,6 @@
             if(type === 'logs_ads') inventoryLogsAds.splice(index, 1);
             if(type === 'ops') inventoryOps.splice(index, 1);
             if(type === 'acceptance') inventoryAcceptance.splice(index, 1);
-            saveToLocalStorage();
             renderInventoryTables();
         }
 
@@ -2068,7 +2091,6 @@
 
             if(member) {
                 soldierOfWeekData[week] = member;
-                saveToLocalStorage();
                 renderSoldierOfWeek();
                 alert("تم اعتماد عسكري الأسبوع بنجاح!");
             } else {
@@ -2081,7 +2103,6 @@
             if(soldierOfWeekData[week]) {
                 if(confirm(`هل أنت متأكد من حذف عسكري الأسبوع المعتمد لـ (${week})؟`)) {
                     delete soldierOfWeekData[week];
-                    saveToLocalStorage();
                     renderSoldierOfWeek();
                     document.getElementById('candidateCardPreview').innerHTML = "";
                     alert("تم إزالة اعتماد عسكري الأسبوع.");
@@ -2095,8 +2116,6 @@
             updateWeekDropdowns();
             fetchSheetData();
             renderSessionsTable();
-            renderFieldMissionsTable();
-            renderNotesArchiveTable();
         };
     </script>
 </body>
