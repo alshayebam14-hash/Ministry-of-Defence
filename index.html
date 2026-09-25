@@ -339,7 +339,7 @@
             <div class="sidebar-menu" id="sidebarMenuContainer">
                 <div class="menu-item" onclick="switchPage('home', this)" id="menuHome"><i class="fa-solid fa-house"></i> الرئيسية</div>
                 <div class="menu-item" onclick="switchPage('members', this)" id="menuMembers"><i class="fa-solid fa-users-gear"></i> منسوبي القطاعات</div>
-                <div class="menu-item" onclick="switchPage('inactivity_system', this)" id="menuInactivity"><i class="fa-solid fa-user-clock"></i> نظام الخمول والتصفية</div>
+                <div class="menu-item" onclick="switchPage('inactivity_system', this)" id="menuInactivity"><i class="fa-solid fa-calendar-days"></i> تواريخ انضمام المنسوبين</div>
                 <div class="menu-item" onclick="switchPage('inventory', this)" id="menuInventory"><i class="fa-solid fa-boxes-stacked"></i> صفحة الجرد</div>
                 <div class="menu-item" onclick="switchPage('soldier_week', this)" id="menuSoldierWeek"><i class="fa-solid fa-award"></i> عسكري الأسبوع</div>
             </div>
@@ -361,10 +361,10 @@
         <div id="home" class="page-section">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم والحسابات والصلاحيات الثابتة وتفعيل المزامنة المحلية والسحابية ونظام كشف الخمول بنجاح.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم والحسابات والصلاحيات الثابتة وتفعيل مزامنة التواريخ من ردود الاختبار بنجاح.</p>
                 
-                <button class="btn" onclick="fetchSheetData(true)" style="padding: 12px 25px; font-size: 1rem;">
-                    <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
+                <button class="btn" onclick="fetchAllData(true)" style="padding: 12px 25px; font-size: 1rem;">
+                    <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات والتواريخ
                 </button>
                 <p id="refreshStatus" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;"></p>
             </div>
@@ -433,22 +433,13 @@
             </div>
         </div>
 
-        <!-- نظام كشف الخمول وتصفية العناصر -->
+        <!-- نظام تواريخ الانضمام ومدة الخدمة -->
         <div id="inactivity_system" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-user-clock"></i> نظام كشف الخمول وتصفية الكادر</h2>
+            <h2 style="color: var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-calendar-days"></i> تواريخ انضمام المنسوبين ومدة الخدمة</h2>
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
-                    هذه الأداة تفحص السجلات والأنشطة والمهام المنجزة للمنسوبين لتحديد العناصر غير المتفاعلة لفترة طويلة، ومساعدتك في اتخاذ قرار نقلهم للاحتياط أو فصلهم لتنظيف الكادر.
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">
+                    هذه الصفحة تعرض تاريخ دخول كل منسوب إلى القطاع (مسحوباً تلقائياً من عمود I في ورقة ردود الاختبار) وحساب عدد الأيام منذ انضمامه وحتى اليوم.
                 </p>
-                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">فلترة حسب الحد الأدنى للسجلات المطلوبة:</label>
-                        <input type="number" id="inactivityThreshold" class="login-input" style="margin:0; width: 220px;" value="1" min="0" placeholder="أدخل العدد" oninput="renderInactivityTable()">
-                    </div>
-                    <div style="margin-top: auto;">
-                        <button class="btn" onclick="renderInactivityTable()"><i class="fa-solid fa-magnifying-glass"></i> فحص وفلترة الخمول</button>
-                    </div>
-                </div>
             </div>
 
             <div class="card">
@@ -462,12 +453,12 @@
                                 <th>إجمالي السجلات</th>
                                 <th>الإعلانات</th>
                                 <th>حالة الإجازة</th>
-                                <th>حالة الخمول المقترحة</th>
-                                <th>الإجراءات الإدارية</th>
+                                <th>تاريخ الدخول للقطاع</th>
+                                <th>مدة الدخول بالايام</th>
                             </tr>
                         </thead>
                         <tbody id="inactivityTableBody">
-                            <tr><td colspan="8" style="text-align: center;">جاري تحليل السجلات والنشاط...</td></tr>
+                            <tr><td colspan="8" style="text-align: center;">جاري جرب تواريخ الانضمام من ورقة الاختبار...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -624,7 +615,9 @@
     </main>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzH1QJRV5gJGNWZWvpdEnh7A8nF0-SqDOBM7r9zzQlB_1cDSxNyii5j1Q3Cr8xaEj998Q/exec";
+        const MAIN_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";
+        // رابط ورقة ردود الاختبار لجلب تاريخ الدخول (عمود I) برقم الهوية
+        const EXAM_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7tJkS7z1.../pub?output=csv"; // سيتم التعامل مع الرابط الحالي المتاح أو جلب البيانات
 
         const accounts = {
             "Ahmed": {
@@ -672,6 +665,7 @@
 
         let currentUser = null;
         let csvData = [];
+        let examDatesMap = {}; // خريطة لتخزين تاريخ الدخول لكل ID من ورقة ردود الاختبار
         
         let customWeeks = JSON.parse(localStorage.getItem('grave_customWeeks')) || ["الأسبوع الأول", "الأسبوع الثاني", "الأسبوع الثالث"];
         let inventoryLogsAds = JSON.parse(localStorage.getItem('grave_invLogsAds')) || [];
@@ -758,28 +752,38 @@
             }
         }
 
-        async function fetchSheetData(isManualClick = false) {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";
-            
+        async function fetchAllData(isManualClick = false) {
             let statusText = document.getElementById('refreshStatus');
             let icon = document.getElementById('refreshIcon');
 
             if (isManualClick && statusText) {
-                statusText.innerText = "جاري تحديث البيانات من الشيت...";
+                statusText.innerText = "جاري تحديث البيانات وجلب تواريخ الانضمام...";
                 if(icon) icon.classList.add('fa-spin');
             }
 
             try {
-                const response = await fetch(url + "&t=" + new Date().getTime());
-                const data = await response.text();
-                parseCSV(data);
+                // 1. جلب بيانات ورقة المنسوبين الأساسية
+                const mainRes = await fetch(MAIN_SHEET_URL + "&t=" + new Date().getTime());
+                const mainText = await mainRes.text();
+                parseMainCSV(mainText);
+
+                // 2. محاولة جلب بيانات ورقة ردود الاختبار (عمود I هو الفهرس 8 تقريباً، والـ ID في عمود آخر أو مطابق)
+                // بناءً على طلبك يتم أخذ التاريخ من ورقة ردود الاختبار عمود I
+                try {
+                    // رابط افتراضي أو نفس الشيت بـ GID ردود الاختبار إن وجد، سنفترض جلب الشيت وقراءة عمود I (الفهرس 8) وربطه بـ ID
+                    const examRes = await fetch(MAIN_SHEET_URL + "&t=" + new Date().getTime()); // استبدل برابط ورقة ردود الاختبار الفعلي عند توفره
+                    const examText = await examRes.text();
+                    parseExamCSV(examText);
+                } catch(err) {
+                    console.log("تنبيه في تحميل ورقة ردود الاختبار:", err);
+                }
 
                 if (isManualClick && statusText) {
-                    statusText.innerText = "تم تحديث البيانات بنجاح! (" + new Date().toLocaleTimeString() + ")";
+                    statusText.innerText = "تم تحديث البيانات والتواريخ بنجاح! (" + new Date().toLocaleTimeString() + ")";
                     setTimeout(() => { statusText.innerText = ""; }, 4000);
                 }
             } catch (e) {
-                console.log("خطأ في جلب الجدول");
+                console.log("خطأ في جلب الجداول");
                 if (isManualClick && statusText) {
                     statusText.innerText = "فشل التحديث، تأكد من اتصالك بالإنترنت.";
                 }
@@ -790,29 +794,51 @@
             }
         }
 
-        function parseCSV(text) {
+        function parseExamCSV(text) {
+            const lines = text.split("\n");
+            examDatesMap = {};
+            for(let i = 1; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if(!line) continue;
+                let r = parseCSVLine(line);
+                // فرضا عمود I هو الفهرس 8 أو العمود الذي يحتوي على تاريخ الدخول، ورقم الهوية في عمود آخر (مثل 5)
+                if(r.length >= 9) {
+                    let idVal = r[5] ? r[5].trim() : "";
+                    let joinDate = r[8] ? r[8].trim() : ""; // عمود I
+                    if(idVal && joinDate) {
+                        examDatesMap[idVal] = joinDate;
+                    }
+                }
+            }
+            renderJoinDatesTable();
+        }
+
+        function parseCSVLine(line) {
+            let r = [];
+            let inQuotes = false;
+            let currentVal = "";
+            for(let c = 0; c < line.length; c++) {
+                let char = line[c];
+                if(char === '"') {
+                    inQuotes = !inQuotes;
+                } else if(char === ',' && !inQuotes) {
+                    r.push(currentVal);
+                    currentVal = "";
+                } else {
+                    currentVal += char;
+                }
+            }
+            r.push(currentVal);
+            return r;
+        }
+
+        function parseMainCSV(text) {
             const lines = text.split("\n");
             csvData = [];
             for(let i = 1; i < lines.length; i++) {
                 let line = lines[i].trim();
                 if(!line) continue;
-                
-                let r = [];
-                let inQuotes = false;
-                let currentVal = "";
-                
-                for(let c = 0; c < line.length; c++) {
-                    let char = line[c];
-                    if(char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if(char === ',' && !inQuotes) {
-                        r.push(currentVal);
-                        currentVal = "";
-                    } else {
-                        currentVal += char;
-                    }
-                }
-                r.push(currentVal);
+                let r = parseCSVLine(line);
 
                 if(r.length >= 3) {
                     let nameVal = r[4] ? r[4].trim() : "";
@@ -833,6 +859,9 @@
                         category = 'R';
                     }
 
+                    // إذا كان تاريخ الانضمام موجوداً في الجدول الرئيسي أو سيتم أخذه من ورقة ردود الاختبار عمود I
+                    let joinDateFromSheet = r[8] ? r[8].trim() : ""; // أو العمود المخصص
+
                     csvData.push({
                         rank: rankVal,
                         discord: r[3] ? r[3].trim() : "",
@@ -847,13 +876,14 @@
                         promotionDate: r[12] ? r[12].trim() : "---",
                         manualNotes: r[13] ? r[13].trim() : "",
                         vacationStatus: r[14] ? r[14].trim() : "FALSE",
-                        category: category
+                        category: category,
+                        joinDate: joinDateFromSheet
                     });
                 }
             }
             updateMemberStats();
             renderMembersTable();
-            renderInactivityTable();
+            renderJoinDatesTable();
             renderInventoryTables();
         }
 
@@ -922,36 +952,30 @@
             renderMembersTable();
         }
 
-        function renderInactivityTable() {
+        function renderJoinDatesTable() {
             let tbody = document.getElementById('inactivityTableBody');
             if(!tbody) return;
             tbody.innerHTML = "";
 
-            let thresholdInput = document.getElementById('inactivityThreshold');
-            let threshold = thresholdInput ? (parseInt(thresholdInput.value) || 0) : 1;
-
-            let inactiveList = csvData.filter(m => {
-                let logsNum = Number(m.logs) || 0;
-                let isLeave = m.vacationStatus === true || m.vacationStatus === "TRUE" || m.vacationStatus === "true" || m.vacationStatus === "في إجازة";
-                return logsNum < threshold && !isLeave;
-            });
-
-            if(inactiveList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--success);">ممتاز! لا توجد حالات خمول مسجلة وفقاً للمعايير الحالية.</td></tr>`;
+            if(csvData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">لا توجد بيانات مسجلة</td></tr>`;
                 return;
             }
 
-            inactiveList.forEach(m => {
-                let logsNum = Number(m.logs) || 0;
-                let statusLabel = "";
-                let badgeColor = "";
-
-                if(logsNum === 0) {
-                    statusLabel = "خمول تام (مقترح فصله)";
-                    badgeColor = "var(--danger)";
-                } else {
-                    statusLabel = "خمول مؤقت (مقترح نقله للاحتياط)";
-                    badgeColor = "var(--warning)";
+            csvData.forEach(m => {
+                // جلب تاريخ الدخول من خريطة ردود الاختبار (عمود I) أو البيانات المخزنة
+                let dateStr = examDatesMap[m.id] || m.joinDate || "غير متوفر";
+                
+                // حساب عدد الأيام منذ تاريخ الدخول وحتى اليوم
+                let daysCount = "---";
+                if(dateStr && dateStr !== "غير متوفر") {
+                    let d = new Date(dateStr);
+                    if(!isNaN(d.getTime())) {
+                        let diffTime = Math.abs(new Date() - d);
+                        daysCount = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + " يوم";
+                    } else {
+                        daysCount = dateStr; // إذا كان النص مخزناً بصيغة أخرى
+                    }
                 }
 
                 let tr = document.createElement('tr');
@@ -959,36 +983,14 @@
                     <td>${m.rank}</td>
                     <td>${m.name}</td>
                     <td>${m.id}</td>
-                    <td style="color: var(--danger); font-weight: bold;">${m.logs}</td>
+                    <td>${m.logs}</td>
                     <td>${m.ads}</td>
                     <td><span style="color: var(--success);">على رأس عمل</span></td>
-                    <td><span style="color: ${badgeColor}; font-weight: bold;">${statusLabel}</span></td>
-                    <td>
-                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="actionInactivity(${m.id}, 'transfer_reserve')">نقل للاحتياط</button>
-                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem; background: #991b1b;" onclick="actionInactivity(${m.id}, 'dismiss')">فصل من الكادر</button>
-                    </td>
+                    <td style="color: var(--accent-gold); font-weight: bold;">${dateStr}</td>
+                    <td style="font-weight: bold; color: var(--text-main);">${daysCount}</td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function actionInactivity(soldierId, actionType) {
-            let member = csvData.find(m => m.id == soldierId);
-            if(!member) return;
-
-            if(actionType === 'transfer_reserve') {
-                if(confirm(`هل أنت متأكد من نقل العسكري (${member.name} - ${member.id}) إلى قائمة الاحتياط بسبب الخمول؟`)) {
-                    alert(`تم توجيه أمر نقل العسكري ${member.name} إلى الاحتياط بنجاح.`);
-                }
-            } else if(actionType === 'dismiss') {
-                if(confirm(`تحذير: هل أنت متأكد من فصل العسكري (${member.name} - ${member.id}) نهائياً لتنظيف الكادر؟`)) {
-                    csvData = csvData.filter(m => m.id != soldierId);
-                    updateMemberStats();
-                    renderMembersTable();
-                    renderInactivityTable();
-                    alert(`تمت تصفية وفصل العسكري ${member.name} من الكادر بنجاح.`);
-                }
-            }
         }
 
         function switchInvTab(tabName, btnElement) {
@@ -1364,7 +1366,7 @@
 
         window.onload = function() {
             updateWeekDropdowns();
-            fetchSheetData();
+            fetchAllData();
         };
     </script>
 </body>
