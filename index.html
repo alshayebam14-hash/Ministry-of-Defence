@@ -361,7 +361,7 @@
         <div id="home" class="page-section">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ضبط لوحة التحكم والحسابات والصلاحيات الثابتة وتفعيل مزامنة التواريخ من ردود الاختبار بنجاح.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ربط تواريخ الدخول للقطاع بـ (طابع زمني) من ورقة ردود الاختبار بنجاح.</p>
                 
                 <button class="btn" onclick="fetchAllData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات والتواريخ
@@ -433,12 +433,12 @@
             </div>
         </div>
 
-        <!-- نظام تواريخ الانضمام ومدة الخدمة -->
+        <!-- تواريخ انضمام المنسوبين ومدة الخدمة -->
         <div id="inactivity_system" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-calendar-days"></i> تواريخ انضمام المنسوبين ومدة الخدمة</h2>
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 20px;">
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">
-                    هذه الصفحة تعرض تاريخ دخول كل منسوب إلى القطاع (مسحوباً تلقائياً من عمود I في ورقة ردود الاختبار) وحساب عدد الأيام منذ انضمامه وحتى اليوم.
+                    يتم جلب تاريخ الدخول إلى القطاع تلقائياً من عمود **طابع زمني (عمود I)** في ورقة ردود الاختبار وحساب مدة الخدمة بالأيام بناءً عليه.
                 </p>
             </div>
 
@@ -458,7 +458,7 @@
                             </tr>
                         </thead>
                         <tbody id="inactivityTableBody">
-                            <tr><td colspan="8" style="text-align: center;">جاري جرب تواريخ الانضمام من ورقة الاختبار...</td></tr>
+                            <tr><td colspan="8" style="text-align: center;">جاري جلب تواريخ الانضمام من ورقة الاختبار...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -616,8 +616,9 @@
 
     <script>
         const MAIN_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";
-        // رابط ورقة ردود الاختبار لجلب تاريخ الدخول (عمود I) برقم الهوية
-        const EXAM_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7tJkS7z1.../pub?output=csv"; // سيتم التعامل مع الرابط الحالي المتاح أو جلب البيانات
+        
+        // رابط ورقة ردود الاختبار (إذا كانت في نفس الشيت لكن بـ GID مختلف لصفحة ردود الاختبار، استبدل الرابط أدناه برابط النشر الخاص بورقة ردود الاختبار)
+        const EXAM_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?output=csv"; 
 
         const accounts = {
             "Ahmed": {
@@ -665,7 +666,7 @@
 
         let currentUser = null;
         let csvData = [];
-        let examDatesMap = {}; // خريطة لتخزين تاريخ الدخول لكل ID من ورقة ردود الاختبار
+        let examDatesMap = {}; // خريطة لتخزين تاريخ الدخول (طابع زمني) لكل ID من ورقة ردود الاختبار
         
         let customWeeks = JSON.parse(localStorage.getItem('grave_customWeeks')) || ["الأسبوع الأول", "الأسبوع الثاني", "الأسبوع الثالث"];
         let inventoryLogsAds = JSON.parse(localStorage.getItem('grave_invLogsAds')) || [];
@@ -767,11 +768,9 @@
                 const mainText = await mainRes.text();
                 parseMainCSV(mainText);
 
-                // 2. محاولة جلب بيانات ورقة ردود الاختبار (عمود I هو الفهرس 8 تقريباً، والـ ID في عمود آخر أو مطابق)
-                // بناءً على طلبك يتم أخذ التاريخ من ورقة ردود الاختبار عمود I
+                // 2. جلب بيانات ورقة ردود الاختبار لربط ID (عمود D) مع طابع زمني (عمود I)
                 try {
-                    // رابط افتراضي أو نفس الشيت بـ GID ردود الاختبار إن وجد، سنفترض جلب الشيت وقراءة عمود I (الفهرس 8) وربطه بـ ID
-                    const examRes = await fetch(MAIN_SHEET_URL + "&t=" + new Date().getTime()); // استبدل برابط ورقة ردود الاختبار الفعلي عند توفره
+                    const examRes = await fetch(EXAM_SHEET_URL + "&t=" + new Date().getTime());
                     const examText = await examRes.text();
                     parseExamCSV(examText);
                 } catch(err) {
@@ -801,12 +800,15 @@
                 let line = lines[i].trim();
                 if(!line) continue;
                 let r = parseCSVLine(line);
-                // فرضا عمود I هو الفهرس 8 أو العمود الذي يحتوي على تاريخ الدخول، ورقم الهوية في عمود آخر (مثل 5)
+                
+                // بناءً على جدول ردود الاختبار الجديد:
+                // عمود D (الفهرس 3) هو آيدي اللعبة
+                // عمود I (الفهرس 8) هو الطابع الزمني (تاريخ الدخول)
                 if(r.length >= 9) {
-                    let idVal = r[5] ? r[5].trim() : "";
-                    let joinDate = r[8] ? r[8].trim() : ""; // عمود I
-                    if(idVal && joinDate) {
-                        examDatesMap[idVal] = joinDate;
+                    let gameId = r[3] ? r[3].trim() : "";
+                    let timestamp = r[8] ? r[8].trim() : ""; // طابع زمني
+                    if(gameId && timestamp) {
+                        examDatesMap[gameId] = timestamp;
                     }
                 }
             }
@@ -859,9 +861,6 @@
                         category = 'R';
                     }
 
-                    // إذا كان تاريخ الانضمام موجوداً في الجدول الرئيسي أو سيتم أخذه من ورقة ردود الاختبار عمود I
-                    let joinDateFromSheet = r[8] ? r[8].trim() : ""; // أو العمود المخصص
-
                     csvData.push({
                         rank: rankVal,
                         discord: r[3] ? r[3].trim() : "",
@@ -876,8 +875,7 @@
                         promotionDate: r[12] ? r[12].trim() : "---",
                         manualNotes: r[13] ? r[13].trim() : "",
                         vacationStatus: r[14] ? r[14].trim() : "FALSE",
-                        category: category,
-                        joinDate: joinDateFromSheet
+                        category: category
                     });
                 }
             }
@@ -963,8 +961,8 @@
             }
 
             csvData.forEach(m => {
-                // جلب تاريخ الدخول من خريطة ردود الاختبار (عمود I) أو البيانات المخزنة
-                let dateStr = examDatesMap[m.id] || m.joinDate || "غير متوفر";
+                // جلب الطابع الزمني من عمود I برقة ردود الاختبار مطبقاً بـ ID العسكري
+                let dateStr = examDatesMap[m.id] || "غير متوفر";
                 
                 // حساب عدد الأيام منذ تاريخ الدخول وحتى اليوم
                 let daysCount = "---";
@@ -974,7 +972,7 @@
                         let diffTime = Math.abs(new Date() - d);
                         daysCount = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + " يوم";
                     } else {
-                        daysCount = dateStr; // إذا كان النص مخزناً بصيغة أخرى
+                        daysCount = dateStr;
                     }
                 }
 
@@ -1007,7 +1005,7 @@
                 alert("الرجاء اختيار الأسبوع أولاً");
                 return;
             }
-            if(confirm(`هل أنت متأكد من تفريغ وحذف جميع بيانات الجرد (السجلات، العمليات، القبول) الخاصة بـ (${currentWeek})؟`)) {
+            if(confirm(`هل أنت متأكد من تفريغ وحذف جميع بيانات الجرد الخاصة بـ (${currentWeek})؟`)) {
                 inventoryLogsAds = inventoryLogsAds.filter(i => i.week !== currentWeek);
                 inventoryOps = inventoryOps.filter(i => i.week !== currentWeek);
                 inventoryAcceptance = inventoryAcceptance.filter(i => i.week !== currentWeek);
