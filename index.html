@@ -313,142 +313,6 @@
         }
         .inv-section { display: none; }
         .inv-section.active { display: block; }
-
-        .courses-top-filter {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .courses-grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        @media(max-width: 900px) {
-            .courses-grid-layout { grid-template-columns: 1fr; }
-        }
-        .course-column-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 250px;
-        }
-        .course-item-card {
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .course-item-card:hover {
-            opacity: 0.85;
-            transform: translateX(-3px);
-        }
-        .course-item-card.obtained {
-            background: rgba(34, 197, 94, 0.08);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: var(--success);
-        }
-        .course-item-card.missing {
-            background: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--danger);
-        }
-
-        .military-note-card {
-            background: #131722;
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 14px;
-            color: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        .military-note-card:hover {
-            border-color: var(--accent-gold);
-        }
-        .card-header-note {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
-        .soldier-info-note {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: var(--accent-gold);
-        }
-        .military-icon {
-            font-size: 1rem;
-        }
-        .card-timestamp {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        .card-body-note {
-            padding: 6px 0;
-            margin-bottom: 12px;
-        }
-        .note-text-content {
-            font-size: 0.9rem;
-            color: #d1d4dc;
-            line-height: 1.6;
-            background: #0b0e14;
-            padding: 12px;
-            border-radius: 6px;
-            border-right: 3px solid var(--accent-gold);
-        }
-        .card-footer-note {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border-subtle);
-            padding-top: 10px;
-            font-size: 0.85rem;
-        }
-        .author-info {
-            color: var(--text-muted);
-        }
-        .author-name {
-            color: #fff;
-            font-weight: 600;
-        }
-        .card-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .btn-action {
-            background: transparent;
-            border: 1px solid var(--border-subtle);
-            padding: 5px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            color: #ccc;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-        }
-        .delete-btn:hover {
-            background: var(--danger);
-            color: #fff;
-            border-color: var(--danger);
-        }
     </style>
 </head>
 <body>
@@ -474,13 +338,9 @@
 
             <div class="sidebar-menu" id="sidebarMenuContainer">
                 <div class="menu-item" onclick="switchPage('home', this)" id="menuHome"><i class="fa-solid fa-house"></i> الرئيسية</div>
-                <div class="menu-item" onclick="switchPage('login_tracker', this)" id="menuLoginTracker"><i class="fa-solid fa-right-to-bracket"></i> متابعة تسجيل الدخول</div>
                 <div class="menu-item" onclick="switchPage('members', this)" id="menuMembers"><i class="fa-solid fa-users-gear"></i> منسوبي القطاعات</div>
                 <div class="menu-item" onclick="switchPage('inactivity_system', this)" id="menuInactivity"><i class="fa-solid fa-user-clock"></i> نظام الخمول والتصفية</div>
-                <div class="menu-item" onclick="switchPage('field_missions', this)" id="menuFieldMissions"><i class="fa-solid fa-flag-checkered"></i> المهام الميدانية</div>
-                <div class="menu-item" onclick="switchPage('courses', this)" id="menuCourses"><i class="fa-solid fa-graduation-cap"></i> دورات القطاع</div>
                 <div class="menu-item" onclick="switchPage('inventory', this)" id="menuInventory"><i class="fa-solid fa-boxes-stacked"></i> صفحة الجرد</div>
-                <div class="menu-item" onclick="switchPage('notes_archive', this)" id="menuNotesArchive"><i class="fa-solid fa-box-archive"></i> أرشيف الملاحظات</div>
                 <div class="menu-item" onclick="switchPage('soldier_week', this)" id="menuSoldierWeek"><i class="fa-solid fa-award"></i> عسكري الأسبوع</div>
             </div>
         </div>
@@ -507,28 +367,6 @@
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات
                 </button>
                 <p id="refreshStatus" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;"></p>
-            </div>
-        </div>
-
-        <!-- متابعة تسجيل الدخول -->
-        <div id="login_tracker" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">إدارة وحالة تسجيل الدخول للمسؤولين</h2>
-            <div class="card">
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم المستخدم</th>
-                                <th>الدور الأساسي</th>
-                                <th>الحالة</th>
-                                <th>مدة الجلسة الحالية</th>
-                                <th>آخر تسجيل خروج</th>
-                                <th>الإجراء (Owner فقط)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sessionsTableBody"></tbody>
-                    </table>
-                </div>
             </div>
         </div>
 
@@ -605,7 +443,6 @@
                 <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
                     <div>
                         <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">فلترة حسب الحد الأدنى للسجلات المطلوبة:</label>
-                        <!-- تم التعديل هنا لتحويل القائمة إلى حقل رقمي -->
                         <input type="number" id="inactivityThreshold" class="login-input" style="margin:0; width: 220px;" value="1" min="0" placeholder="أدخل العدد" oninput="renderInactivityTable()">
                     </div>
                     <div style="margin-top: auto;">
@@ -633,95 +470,6 @@
                             <tr><td colspan="8" style="text-align: center;">جاري تحليل السجلات والنشاط...</td></tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- المهام الميدانية -->
-        <div id="field_missions" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">المهام الميدانية (بوابة رفع الإثباتات)</h2>
-            <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 25px;">
-                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 15px;"><i class="fa-solid fa-cloud-arrow-up"></i> رفع إثبات مهمة ميدانية جديدة</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رقم الهوية ID للعسكري:</label>
-                        <input type="text" id="missionSoldierId" class="login-input" placeholder="مثال: 779" style="margin:0;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رفع صورة أو فيديو الإثبات:</label>
-                        <input type="file" id="missionImageFile" class="login-input" accept="image/*,video/*" style="margin:0; padding: 9px; cursor: pointer;" onchange="previewSelectedImage(event)">
-                    </div>
-                </div>
-                
-                <div id="imagePreviewContainer" style="margin-bottom: 15px; display: none; text-align: center;">
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">معاينة الملف المختار:</p>
-                    <div id="missionMediaPreviewBox"></div>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">تفاصيل ووصف المهمة:</label>
-                    <textarea id="missionDetailsText" class="login-input" rows="3" placeholder="اكتب تفاصيل المهمة الميدانية..." style="resize: vertical;"></textarea>
-                </div>
-                <button class="btn" onclick="submitFieldMission()">إرفع المهمة للسجل</button>
-            </div>
-
-            <div class="card">
-                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 15px;"><i class="fa-solid fa-list-check"></i> سجل إثباتات المهام الميدانية</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID العسكري</th>
-                                <th>الاسم</th>
-                                <th>تفاصيل المهمة</th>
-                                <th>الإثبات (صورة / فيديو)</th>
-                                <th>الحالة</th>
-                                <th id="thMissionActions">الإجراءات الديناميكية</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fieldMissionsTableBody">
-                            <tr><td colspan="6" style="text-align: center;">لا توجد مهام مرفوعة حالياً</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- دورات القطاع والمتطلبات -->
-        <div id="courses" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">دورات القطاع والمتطلبات</h2>
-            
-            <div class="courses-top-filter">
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px; align-items: center;">
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">بحث برقم الهوية ID:</label>
-                        <input type="text" id="courseSearchIdInput" class="login-input" placeholder="اكتب الآيدي..." style="margin:0;" oninput="filterCoursesBySearch()">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">اختر اسم العسكري:</label>
-                        <select id="courseSelectSoldier" class="login-input" style="margin:0;" onchange="onCourseSoldierSelect()"></select>
-                    </div>
-                </div>
-                <div style="margin-top: 15px; display: flex; gap: 20px; font-weight: bold; font-size: 0.95rem; color: var(--accent-gold);">
-                    <span id="courseDisplayRank">رتبة العسكري: ---</span>
-                    <span id="courseDisplayId">رقم الهوية: ---</span>
-                    <span id="courseDisplayName">الاسم: ---</span>
-                </div>
-            </div>
-
-            <div class="courses-grid-layout">
-                <div class="course-column-box">
-                    <h3 style="color: var(--success); font-size: 1.05rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-circle-check"></i> الدورات الحاصل عليها
-                    </h3>
-                    <div id="obtainedCoursesList"></div>
-                </div>
-
-                <div class="course-column-box">
-                    <h3 style="color: var(--danger); font-size: 1.05rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-circle-xmark"></i> الدورات الناقصة
-                    </h3>
-                    <div id="missingCoursesList"></div>
                 </div>
             </div>
         </div>
@@ -828,35 +576,6 @@
             </div>
         </div>
 
-        <!-- أرشيف الملاحظات -->
-        <div id="notes_archive" class="page-section">
-            <h2 style="color: var(--accent-gold); margin-bottom: 15px;">أرشيف الملاحظات وسجلات المنسوبين</h2>
-            <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 20px;">
-                <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> إضافة ملاحظة جديدة للأرشيف</h3>
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">رقم الهوية ID للعسكري:</label>
-                        <input type="text" id="archiveSoldierId" class="login-input" placeholder="مثال: 779" style="margin:0;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">نص الملاحظة أو التدوينة:</label>
-                        <input type="text" id="archiveNoteText" class="login-input" placeholder="اكتب الملاحظة هنا..." style="margin:0;">
-                    </div>
-                </div>
-                <button class="btn" onclick="saveArchiveNote()">حفظ في أرشيف الملاحظات</button>
-            </div>
-
-            <div class="card">
-                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <h3 style="color: var(--accent-gold); font-size: 1rem;"><i class="fa-solid fa-box-archive"></i> قائمة الملاحظات المؤرشفة</h3>
-                    <input type="text" id="archiveSearchInput" class="login-input" placeholder="بحث في الملاحظات..." style="margin:0; max-width: 250px;" oninput="renderNotesArchiveTable()">
-                </div>
-                <div id="notesArchiveContainer">
-                    <p style="color: var(--text-muted); text-align: center; padding: 20px;">لا توجد ملاحظات مؤرشفة حالياً</p>
-                </div>
-            </div>
-        </div>
-
         <!-- عسكري الأسبوع -->
         <div id="soldier_week" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;">منصة عسكري الأسبوع</h2>
@@ -907,46 +626,36 @@
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzH1QJRV5gJGNWZWvpdEnh7A8nF0-SqDOBM7r9zzQlB_1cDSxNyii5j1Q3Cr8xaEj998Q/exec";
 
-            const accounts = {
+        const accounts = {
             "Ahmed": {
                 password: "Owner2010629",
                 role: "Owner",
                 loggedIn: false, 
-                loginTime: null, 
-                lastLogout: "---",
-                permissions: ["home", "login_tracker", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week", "inactivity_system"]
+                permissions: ["home", "members", "inventory", "soldier_week", "inactivity_system"]
             },
             "Ahmed Owner": {
                 password: "Owner@432",
                 role: "Owner",
                 loggedIn: false, 
-                loginTime: null, 
-                lastLogout: "---",
-                permissions: ["home", "login_tracker", "members", "field_missions", "courses", "inventory", "notes_archive", "soldier_week", "inactivity_system"]
+                permissions: ["home", "members", "inventory", "soldier_week", "inactivity_system"]
             },
             "The Minister": {
                 password: "t33m7@200",
                 role: "Minister",
                 loggedIn: false, 
-                loginTime: null, 
-                lastLogout: "---",
-                permissions: ["home", "members", "courses", "inventory", "notes_archive", "soldier_week", "inactivity_system"]
+                permissions: ["home", "members", "inventory", "soldier_week", "inactivity_system"]
             },
             "Leader": {
                 password: "L483D@r200",
                 role: "Leader",
                 loggedIn: false, 
-                loginTime: null, 
-                lastLogout: "---",
                 permissions: ["members", "inactivity_system"]
             },
             "Affairs": {
                 password: "a64@ff76",
                 role: "Affairs",
                 loggedIn: false, 
-                loginTime: null, 
-                lastLogout: "---",
-                permissions: ["members", "notes_archive"]
+                permissions: ["members"]
             }
         };
 
@@ -969,22 +678,8 @@
         let inventoryOps = JSON.parse(localStorage.getItem('grave_invOps')) || [];
         let inventoryAcceptance = JSON.parse(localStorage.getItem('grave_invAcceptance')) || [];
         let soldierOfWeekData = JSON.parse(localStorage.getItem('grave_soldierOfWeekData')) || {};
-        let fieldMissionsList = JSON.parse(localStorage.getItem('grave_fieldMissions')) || [];
-        let soldierCoursesData = JSON.parse(localStorage.getItem('grave_soldierCoursesData')) || {};
-        let notesArchiveList = JSON.parse(localStorage.getItem('grave_notesArchiveList')) || [];
 
         let currentMemberFilter = 'ALL';
-        let uploadedImageBase64 = "";
-
-        let allAvailableCourses = [
-            "فرد أساس",
-            "مركز العمليات",
-            "إسعافات أولية",
-            "تأهيل الضباط",
-            "مظلات مشتركة",
-            "الصاعقة او الضفادع",
-            "الصقور الجوية"
-        ];
 
         function saveToLocalStorage() {
             localStorage.setItem('grave_customWeeks', JSON.stringify(customWeeks));
@@ -992,79 +687,6 @@
             localStorage.setItem('grave_invOps', JSON.stringify(inventoryOps));
             localStorage.setItem('grave_invAcceptance', JSON.stringify(inventoryAcceptance));
             localStorage.setItem('grave_soldierOfWeekData', JSON.stringify(soldierOfWeekData));
-            localStorage.setItem('grave_fieldMissions', JSON.stringify(fieldMissionsList));
-            localStorage.setItem('grave_soldierCoursesData', JSON.stringify(soldierCoursesData));
-            localStorage.setItem('grave_notesArchiveList', JSON.stringify(notesArchiveList));
-        }
-
-        async function loadCloudData() {
-            try {
-                let resNotes = await fetch(WEB_APP_URL + "?sheet=notesArchive");
-                let notesData = await resNotes.json();
-                if(Array.isArray(notesData) && notesData.length > 1) {
-                    let cloudNotes = notesData.slice(1).map(r => ({ date: r[0], id: r[1], name: r[2], note: r[3], author: r[4] }));
-                    cloudNotes.forEach(cn => {
-                        if(!notesArchiveList.some(ln => ln.date === cn.date && ln.id === cn.id && ln.note === cn.note)) {
-                            notesArchiveList.unshift(cn);
-                        }
-                    });
-                    saveToLocalStorage();
-                }
-
-                let resMissions = await fetch(WEB_APP_URL + "?sheet=fieldMissions");
-                let missionsData = await resMissions.json();
-                if(Array.isArray(missionsData) && missionsData.length > 1) {
-                    let cloudMissions = missionsData.slice(1).map(r => ({ id: r[0], name: r[1], details: r[2], image: r[3], status: r[4] }));
-                    cloudMissions.forEach(cm => {
-                        if(!fieldMissionsList.some(lm => lm.id === cm.id && lm.details === cm.details)) {
-                            fieldMissionsList.push(cm);
-                        }
-                    });
-                    saveToLocalStorage();
-                }
-
-                renderNotesArchiveTable();
-                renderFieldMissionsTable();
-            } catch(e) {
-                console.log("خطأ في جلب البيانات السحابية", e);
-            }
-        }
-
-        async function saveCloudRow(sheetName, rowData) {
-            try {
-                await fetch(WEB_APP_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ sheet: sheetName, row: rowData })
-                });
-            } catch(e) {
-                console.log("خطأ في الحفظ السحابي", e);
-            }
-        }
-
-        function previewSelectedImage(event) {
-            let file = event.target.files[0];
-            let previewContainer = document.getElementById('imagePreviewContainer');
-            let previewBox = document.getElementById('missionMediaPreviewBox');
-
-            if (file) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedImageBase64 = e.target.result;
-                    if (file.type.startsWith('video/')) {
-                        previewBox.innerHTML = `<video src="${uploadedImageBase64}" controls style="max-height: 150px; max-width: 100%; border-radius: 8px; border: 1px solid var(--accent-gold);"></video>`;
-                    } else {
-                        previewBox.innerHTML = `<img src="${uploadedImageBase64}" alt="معاينة" style="max-height: 120px; border-radius: 8px; border: 1px solid var(--accent-gold);">`;
-                    }
-                    previewContainer.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            } else {
-                uploadedImageBase64 = "";
-                previewContainer.style.display = 'none';
-                previewBox.innerHTML = "";
-            }
         }
 
         function updateWeekDropdowns() {
@@ -1151,7 +773,6 @@
                 const response = await fetch(url + "&t=" + new Date().getTime());
                 const data = await response.text();
                 parseCSV(data);
-                await loadCloudData();
 
                 if (isManualClick && statusText) {
                     statusText.innerText = "تم تحديث البيانات بنجاح! (" + new Date().toLocaleTimeString() + ")";
@@ -1233,10 +854,7 @@
             updateMemberStats();
             renderMembersTable();
             renderInactivityTable();
-            renderFieldMissionsTable();
             renderInventoryTables();
-            updateCoursesDropdown();
-            renderNotesArchiveTable();
         }
 
         function updateMemberStats() {
@@ -1304,7 +922,6 @@
             renderMembersTable();
         }
 
-        // --- وظائف نظام كشف الخمول وتصفية العناصر ---
         function renderInactivityTable() {
             let tbody = document.getElementById('inactivityTableBody');
             if(!tbody) return;
@@ -1371,446 +988,6 @@
                     renderInactivityTable();
                     alert(`تمت تصفية وفصل العسكري ${member.name} من الكادر بنجاح.`);
                 }
-            }
-        }
-
-        function updateCoursesDropdown() {
-            let select = document.getElementById('courseSelectSoldier');
-            if(!select) return;
-            let searchId = document.getElementById('courseSearchIdInput').value.trim();
-
-            let currentSelectedId = select.value;
-            select.innerHTML = "";
-            let filtered = csvData.filter(m => searchId === "" || m.id.includes(searchId));
-
-            if(filtered.length === 0) {
-                let opt = document.createElement('option');
-                opt.value = "";
-                opt.textContent = "لا توجد نتائج مطابقة";
-                select.appendChild(opt);
-                renderCoursesListsForSelectedSoldier();
-                return;
-            }
-
-            filtered.forEach(m => {
-                let opt = document.createElement('option');
-                opt.value = m.id;
-                opt.textContent = `${m.name} (${m.id}) - ${m.rank}`;
-                select.appendChild(opt);
-            });
-
-            if(filtered.some(m => m.id === currentSelectedId)) {
-                select.value = currentSelectedId;
-            }
-
-            onCourseSoldierSelect();
-        }
-
-        function filterCoursesBySearch() {
-            updateCoursesDropdown();
-        }
-
-        function onCourseSoldierSelect() {
-            let select = document.getElementById('courseSelectSoldier');
-            if(!select || !select.value) {
-                document.getElementById('courseDisplayRank').innerText = "رتبة العسكري: ---";
-                document.getElementById('courseDisplayId').innerText = "رقم الهوية: ---";
-                document.getElementById('courseDisplayName').innerText = "الاسم: ---";
-                renderCoursesListsForSelectedSoldier(null);
-                return;
-            }
-
-            let id = select.value;
-            let member = csvData.find(m => m.id === id);
-            if(!member) return;
-
-            document.getElementById('courseDisplayRank').innerText = `رتبة العسكري: ${member.rank}`;
-            document.getElementById('courseDisplayId').innerText = `رقم الهوية: ${member.id}`;
-            document.getElementById('courseDisplayName').innerText = `الاسم: ${member.name}`;
-
-            renderCoursesListsForSelectedSoldier(id);
-        }
-
-        function renderCoursesListsForSelectedSoldier(soldierId) {
-            let obtainedBox = document.getElementById('obtainedCoursesList');
-            let missingBox = document.getElementById('missingCoursesList');
-            if(!obtainedBox || !missingBox) return;
-
-            if(!soldierId) {
-                obtainedBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">الرجاء اختيار عسكري أولاً</div>`;
-                missingBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">الرجاء اختيار عسكري أولاً</div>`;
-                return;
-            }
-
-            if(!soldierCoursesData[soldierId]) {
-                soldierCoursesData[soldierId] = { obtained: [], missing: [...allAvailableCourses] };
-            }
-
-            let sData = soldierCoursesData[soldierId];
-
-            obtainedBox.innerHTML = "";
-            if(sData.obtained.length === 0) {
-                obtainedBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">لا توجد دورات مسجلة له</div>`;
-            } else {
-                sData.obtained.forEach(course => {
-                    let div = document.createElement('div');
-                    div.className = 'course-item-card obtained';
-                    div.innerHTML = `<span>${course}</span> <i class="fa-solid fa-check"></i>`;
-                    div.onclick = () => toggleCourseForSoldier(soldierId, course, 'to_missing');
-                    obtainedBox.appendChild(div);
-                });
-            }
-
-            missingBox.innerHTML = "";
-            if(sData.missing.length === 0) {
-                missingBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">جميع الدورات مكتملة!</div>`;
-            } else {
-                sData.missing.forEach(course => {
-                    let div = document.createElement('div');
-                    div.className = 'course-item-card missing';
-                    div.innerHTML = `<span>${course}</span> <i class="fa-solid fa-plus"></i>`;
-                    div.onclick = () => toggleCourseForSoldier(soldierId, course, 'to_obtained');
-                    missingBox.appendChild(div);
-                });
-            }
-        }
-
-        function toggleCourseForSoldier(soldierId, courseName, actionType) {
-            if(!soldierCoursesData[soldierId]) {
-                soldierCoursesData[soldierId] = { obtained: [], missing: [...allAvailableCourses] };
-            }
-
-            let sData = soldierCoursesData[soldierId];
-
-            if(actionType === 'to_obtained') {
-                sData.missing = sData.missing.filter(c => c !== courseName);
-                if(!sData.obtained.includes(courseName)) {
-                    sData.obtained.push(courseName);
-                }
-            } else {
-                sData.obtained = sData.obtained.filter(c => c !== courseName);
-                if(!sData.missing.includes(courseName)) {
-                    sData.missing.push(courseName);
-                }
-            }
-
-            saveToLocalStorage();
-            renderCoursesListsForSelectedSoldier(soldierId);
-        }
-
-        async function saveArchiveNote() {
-            let id = document.getElementById('archiveSoldierId').value.trim();
-            let noteText = document.getElementById('archiveNoteText').value.trim();
-
-            if(!id || !noteText) {
-                alert("الرجاء إدخال رقم الهوية (ID) ونص الملاحظة.");
-                return;
-            }
-
-            let member = csvData.find(m => m.id === id);
-            let name = member ? member.name : "عسكري غير معروف";
-            let now = new Date().toLocaleString('ar-SA');
-
-            let newNote = {
-                date: now,
-                id: id,
-                name: name,
-                note: noteText,
-                author: currentUser
-            };
-
-            notesArchiveList.unshift(newNote);
-            saveToLocalStorage();
-            renderNotesArchiveTable();
-
-            await saveCloudRow("notesArchive", [now, id, name, noteText, currentUser]);
-
-            document.getElementById('archiveSoldierId').value = "";
-            document.getElementById('archiveNoteText').value = "";
-            alert("تم حفظ الملاحظة محلياً وسحابياً في الأرشيف بنجاح!");
-        }
-
-        function renderNotesArchiveTable() {
-            let container = document.getElementById('notesArchiveContainer');
-            if(!container) return;
-
-            let searchVal = document.getElementById('archiveSearchInput') ? document.getElementById('archiveSearchInput').value.toLowerCase() : "";
-
-            let filtered = notesArchiveList.filter(item => {
-                return item.name.toLowerCase().includes(searchVal) || item.id.toLowerCase().includes(searchVal) || item.note.toLowerCase().includes(searchVal);
-            });
-
-            if(filtered.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">لا توجد ملاحظات مؤرشفة مطابقة</p>`;
-                return;
-            }
-
-            container.innerHTML = "";
-            filtered.forEach((item) => {
-                let originalIndex = notesArchiveList.indexOf(item);
-                let cardDiv = document.createElement('div');
-                cardDiv.className = 'military-note-card';
-                cardDiv.innerHTML = `
-                    <div class="card-header-note">
-                        <div class="soldier-info-note">
-                            <i class="fas fa-shield-alt military-icon"></i>
-                            <span>[${item.id}] ${item.name}</span>
-                        </div>
-                        <div class="card-timestamp">${item.date}</div>
-                    </div>
-                    <div class="card-body-note">
-                        <p class="note-text-content">${item.note}</p>
-                    </div>
-                    <div class="card-footer-note">
-                        <div class="author-info">
-                            <span>المسؤول: </span>
-                            <span class="author-name">${item.author}</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-action delete-btn" onclick="deleteArchiveNote(${originalIndex})">
-                                <i class="fas fa-trash-alt"></i> حذف
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(cardDiv);
-            });
-        }
-
-        function deleteArchiveNote(index) {
-            if(confirm("هل أنت متأكد من حذف هذه الملاحظة من الأرشيف؟")) {
-                notesArchiveList.splice(index, 1);
-                saveToLocalStorage();
-                renderNotesArchiveTable();
-            }
-        }
-
-        function applyUserPermissions() {
-            let userObj = accounts[currentUser];
-            if(!userObj) return;
-
-            let allowed = userObj.permissions || [];
-            
-            const mapping = {
-                "home": "menuHome",
-                "login_tracker": "menuLoginTracker",
-                "members": "menuMembers",
-                "inactivity_system": "menuInactivity",
-                "field_missions": "menuFieldMissions",
-                "courses": "menuCourses",
-                "inventory": "menuInventory",
-                "notes_archive": "menuNotesArchive",
-                "soldier_week": "menuSoldierWeek"
-            };
-
-            for(let key in mapping) {
-                let menuEl = document.getElementById(mapping[key]);
-                if(menuEl) {
-                    if(allowed.includes(key)) {
-                        menuEl.style.display = "flex";
-                    } else {
-                        menuEl.style.display = "none";
-                    }
-                }
-            }
-
-            let firstAllowedKey = allowed[0] || 'home';
-            switchPage(firstAllowedKey, document.getElementById(mapping[firstAllowedKey]));
-        }
-
-        function switchPage(pageId, element) {
-            let userObj = accounts[currentUser];
-            if(userObj && !userObj.permissions.includes(pageId)) {
-                return;
-            }
-
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => item.classList.remove('active'));
-            
-            let targetSec = document.getElementById(pageId);
-            if(targetSec) targetSec.classList.add('active');
-            if(element) element.classList.add('active');
-        }
-
-        function handleLogin() {
-            let username = document.getElementById('usernameInput').value.trim();
-            let password = document.getElementById('passwordInput').value.trim();
-            let err = document.getElementById('loginError');
-
-            if(checkPermissions(username, password, 'home') || checkPermissions(username, password, 'members')) {
-                currentUser = username;
-                accounts[username].loggedIn = true;
-                accounts[username].loginTime = Date.now();
-                
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('currentRoleDisplay').innerText = username;
-
-                applyUserPermissions();
-                renderSessionsTable();
-                renderFieldMissionsTable();
-            } else {
-                err.style.display = 'block';
-            }
-        }
-
-        function logout() {
-            if(currentUser && accounts[currentUser]) {
-                accounts[currentUser].loggedIn = false;
-                accounts[currentUser].loginTime = null;
-                accounts[currentUser].lastLogout = new Date().toLocaleTimeString();
-            }
-            currentUser = null;
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('usernameInput').value = '';
-            document.getElementById('passwordInput').value = '';
-        }
-
-        function renderSessionsTable() {
-            let tbody = document.getElementById('sessionsTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = "";
-            let isUserOwner = (accounts[currentUser] && accounts[currentUser].role === "Owner");
-
-            for(let acc in accounts) {
-                let data = accounts[acc];
-                let tr = document.createElement('tr');
-                let duration = data.loggedIn ? Math.floor((Date.now() - data.loginTime) / 60000) + " دقيقة" : "---";
-                
-                let actionBtn = '---';
-                if(isUserOwner && acc !== currentUser) {
-                    actionBtn = `<button class="btn btn-danger" onclick="forceLogout('${acc}')">فصل الجلسة</button>`;
-                }
-
-                tr.innerHTML = `
-                    <td>${acc}</td>
-                    <td>${data.role || 'مسؤول فرعي'}</td>
-                    <td style="color: ${data.loggedIn ? 'var(--success)' : 'var(--danger)'};">${data.loggedIn ? 'متصل' : 'غير متصل'}</td>
-                    <td>${duration}</td>
-                    <td>${data.lastLogout}</td>
-                    <td>${actionBtn}</td>
-                `;
-                tbody.appendChild(tr);
-            }
-        }
-
-        function forceLogout(acc) {
-            accounts[acc].loggedIn = false;
-            accounts[acc].loginTime = null;
-            accounts[acc].lastLogout = new Date().toLocaleTimeString();
-            renderSessionsTable();
-        }
-
-        async function submitFieldMission() {
-            let id = document.getElementById('missionSoldierId').value.trim();
-            let details = document.getElementById('missionDetailsText').value.trim();
-
-            if(!id || !details) {
-                alert("الرجاء إدخال رقم الهوية وتفاصيل المهمة على الأقل.");
-                return;
-            }
-
-            let member = csvData.find(m => m.id === id);
-            let name = member ? member.name : "عسكري غير معروف";
-
-            let newMission = {
-                id: id,
-                name: name,
-                details: details,
-                image: uploadedImageBase64 || "",
-                status: "قيد المراجعة"
-            };
-
-            fieldMissionsList.push(newMission);
-            saveToLocalStorage();
-            renderFieldMissionsTable();
-
-            await saveCloudRow("fieldMissions", [id, name, details, uploadedImageBase64 || "", "قيد المراجعة"]);
-
-            document.getElementById('missionSoldierId').value = "";
-            document.getElementById('missionImageFile').value = "";
-            document.getElementById('missionDetailsText').value = "";
-            document.getElementById('imagePreviewContainer').style.display = 'none';
-            document.getElementById('missionMediaPreviewBox').innerHTML = "";
-            uploadedImageBase64 = "";
-
-            alert("تم إرسال المهمة الميدانية محلياً وسحابياً بنجاح إلى السجل!");
-        }
-
-        function renderFieldMissionsTable() {
-            let tbody = document.getElementById('fieldMissionsTableBody');
-            let thActions = document.getElementById('thMissionActions');
-            if(!tbody) return;
-
-            if(thActions) {
-                thActions.style.display = "";
-            }
-
-            if(fieldMissionsList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">لا توجد مهام مرفوعة حالياً</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = "";
-            fieldMissionsList.forEach((item, index) => {
-                let statusColor = "var(--warning)";
-                if(item.status === "مقبولة") statusColor = "var(--success)";
-                if(item.status === "مرفوضة") statusColor = "var(--danger)";
-
-                let mediaHtml = "بدون إثبات";
-                if(item.image) {
-                    if(item.image.startsWith('data:video/')) {
-                        mediaHtml = `<a href="#" onclick="openMediaModal('${item.image}', 'video'); return false;" style="color: var(--accent-gold);">عرض الفيديو المرفوع <i class="fa-solid fa-video"></i></a>`;
-                    } else {
-                        mediaHtml = `<a href="#" onclick="openMediaModal('${item.image}', 'image'); return false;" style="color: var(--accent-gold);">عرض الصورة المرفوعة <i class="fa-solid fa-image"></i></a>`;
-                    }
-                }
-
-                let tr = document.createElement('tr');
-                let rowHTML = `
-                    <td>${item.id}</td>
-                    <td>${item.name}</td>
-                    <td>${item.details}</td>
-                    <td>${mediaHtml}</td>
-                    <td><strong style="color: ${statusColor};">${item.status}</strong></td>
-                    <td>
-                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="updateMissionStatus(${index}, 'مقبولة')">قبول</button>
-                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="updateMissionStatus(${index}, 'مرفوضة')">رفض</button>
-                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem; background: #555;" onclick="deleteMission(${index})">حذف</button>
-                    </td>
-                `;
-                tr.innerHTML = rowHTML;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function openMediaModal(mediaSrc, type) {
-            let modal = document.createElement('div');
-            modal.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:3000;";
-            
-            let contentHtml = type === 'video' 
-                ? `<video src="${mediaSrc}" controls autoplay style="max-width: 100%; max-height: 85vh; border-radius: 10px; border: 2px solid var(--accent-gold);"></video>`
-                : `<img src="${mediaSrc}" style="max-width: 100%; max-height: 85vh; border-radius: 10px; border: 2px solid var(--accent-gold);">`;
-
-            modal.innerHTML = `
-                <div style="position:relative; max-width: 90%; max-height: 90%; text-align: center;">
-                    ${contentHtml}
-                    <button class="btn btn-danger" style="display:block; margin: 15px auto 0 auto;" onclick="this.closest('div').parentElement.remove()">إغلاق المعاينة</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        function updateMissionStatus(index, newStatus) {
-            fieldMissionsList[index].status = newStatus;
-            saveToLocalStorage();
-            renderFieldMissionsTable();
-        }
-
-        function deleteMission(index) {
-            if(confirm("هل أنت متأكد من حذف هذه المهمة؟")) {
-                fieldMissionsList.splice(index, 1);
-                saveToLocalStorage();
-                renderFieldMissionsTable();
             }
         }
 
@@ -2078,31 +1255,6 @@
             let member = csvData.find(m => m.id === id);
             if(!member) return;
             document.getElementById('selectedSoldIdInput').value = id;
-
-            let logEntry = inventoryLogsAds.find(i => i.week === week && i.id === id) || {};
-            let opsEntry = inventoryOps.find(i => i.week === week && i.id === id) || {};
-            let accEntry = inventoryAcceptance.find(i => i.week === week && i.id === id) || {};
-
-            let previewBox = document.getElementById('candidateCardPreview');
-            previewBox.innerHTML = `
-                <div class="paint-soldier-card">
-                    <div class="paint-card-top-right">
-                        <div>وزارة الدفاع - Grave RP</div>
-                        <div style="color: var(--accent-gold);">${week}</div>
-                    </div>
-                    <div class="paint-card-avatar-section">
-                        <div class="paint-card-circle-avatar"><i class="fa-solid fa-award"></i></div>
-                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--accent-gold);">${member.name}</div>
-                        <div style="font-size: 0.9rem; color: var(--text-muted);">${member.rank} | ID: ${member.id}</div>
-                        <div class="paint-card-curved-line" style="margin-top: 15px;"></div>
-                    </div>
-                    <div class="paint-card-bottom-grid">
-                        <div class="paint-metric-item"><div class="paint-metric-title">السجلات</div><div class="paint-metric-val">${logEntry.logs || 0}</div></div>
-                        <div class="paint-metric-item center-total"><div class="paint-metric-title">المجموع الكلي</div><div class="paint-metric-val">${(Number(logEntry.logs||0) + Number(logEntry.ads||0) + Number(opsEntry.ops||0) + Number(accEntry.acceptance||0))}</div></div>
-                        <div class="paint-metric-item"><div class="paint-metric-title">العمليات</div><div class="paint-metric-val">${opsEntry.ops || 0}</div></div>
-                    </div>
-                </div>
-            `;
         }
 
         function saveSoldierOfWeek() {
@@ -2133,9 +1285,81 @@
                 delete soldierOfWeekData[week];
                 saveToLocalStorage();
                 renderSoldierOfWeek();
-                document.getElementById('candidateCardPreview').innerHTML = "";
+                let candidatePreview = document.getElementById('candidateCardPreview');
+                if(candidatePreview) candidatePreview.innerHTML = "";
                 alert("تم الحذف بنجاح!");
             }
+        }
+
+        function applyUserPermissions() {
+            let userObj = accounts[currentUser];
+            if(!userObj) return;
+
+            let allowed = userObj.permissions || [];
+            
+            const mapping = {
+                "home": "menuHome",
+                "members": "menuMembers",
+                "inactivity_system": "menuInactivity",
+                "inventory": "menuInventory",
+                "soldier_week": "menuSoldierWeek"
+            };
+
+            for(let key in mapping) {
+                let menuEl = document.getElementById(mapping[key]);
+                if(menuEl) {
+                    if(allowed.includes(key)) {
+                        menuEl.style.display = "flex";
+                    } else {
+                        menuEl.style.display = "none";
+                    }
+                }
+            }
+
+            let firstAllowedKey = allowed[0] || 'home';
+            switchPage(firstAllowedKey, document.getElementById(mapping[firstAllowedKey]));
+        }
+
+        function switchPage(pageId, element) {
+            let userObj = accounts[currentUser];
+            if(userObj && !userObj.permissions.includes(pageId)) {
+                return;
+            }
+
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => item.classList.remove('active'));
+            
+            let targetSec = document.getElementById(pageId);
+            if(targetSec) targetSec.classList.add('active');
+            if(element) element.classList.add('active');
+        }
+
+        function handleLogin() {
+            let username = document.getElementById('usernameInput').value.trim();
+            let password = document.getElementById('passwordInput').value.trim();
+            let err = document.getElementById('loginError');
+
+            if(checkPermissions(username, password, 'home') || checkPermissions(username, password, 'members')) {
+                currentUser = username;
+                accounts[username].loggedIn = true;
+                
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('currentRoleDisplay').innerText = username;
+
+                applyUserPermissions();
+            } else {
+                err.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            if(currentUser && accounts[currentUser]) {
+                accounts[currentUser].loggedIn = false;
+            }
+            currentUser = null;
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
         }
 
         window.onload = function() {
