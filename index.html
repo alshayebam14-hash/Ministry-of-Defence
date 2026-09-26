@@ -436,10 +436,21 @@
         <!-- تواريخ انضمام المنسوبين ومدة الخدمة -->
         <div id="inactivity_system" class="page-section">
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-calendar-days"></i> تواريخ انضمام المنسوبين ومدة الخدمة</h2>
+            
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">
-                    يتم جلب تاريخ الدخول إلى القطاع (طابع زمني - عمود P) من الورقة الرئيسية وحساب مدة الخدمة بالأيام بناءً عليه[cite: 10].
-                </p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 5px;">فلتر مجموع السجلات (أقل من):</label>
+                        <input type="number" id="filterLogsInput" class="login-input" placeholder="مثال: 30" style="margin:0;" oninput="renderJoinDatesTable()">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 5px;">فلتر تاريخ الانضمام (أكثر من أيام):</label>
+                        <input type="number" id="filterDaysInput" class="login-input" placeholder="مثال: 14" style="margin:0;" oninput="renderJoinDatesTable()">
+                    </div>
+                    <div style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-danger" onclick="resetJoinFilters()" style="height: 45px;"><i class="fa-solid fa-xmark"></i> إعادة ضبط الفلاتر</button>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
@@ -917,6 +928,12 @@
             renderMembersTable();
         }
 
+        function resetJoinFilters() {
+            document.getElementById('filterLogsInput').value = '';
+            document.getElementById('filterDaysInput').value = '';
+            renderJoinDatesTable();
+        }
+
         function renderJoinDatesTable() {
             let tbody = document.getElementById('inactivityTableBody');
             if(!tbody) return;
@@ -927,9 +944,45 @@
                 return;
             }
 
-            csvData.forEach(m => {
-                let dateStr = m.joinDate || "غير متوفر";
+            let logsFilterVal = document.getElementById('filterLogsInput').value;
+            let daysFilterVal = document.getElementById('filterDaysInput').value;
+
+            let limitLogs = logsFilterVal !== "" ? Number(logsFilterVal) : null;
+            let limitDays = daysFilterVal !== "" ? Number(daysFilterVal) : null;
+
+            let filteredData = csvData.filter(m => {
+                let logsNum = Number(m.logs) || 0;
                 
+                // فلتر مجموع السجلات (أقل من القيمة)
+                if(limitLogs !== null && logsNum >= limitLogs) {
+                    return false;
+                }
+
+                // فلتر تاريخ الانضمام (أكثر من عدد الأيام)
+                if(limitDays !== null) {
+                    let dateStr = m.joinDate || "";
+                    if(!dateStr) return false;
+                    let d = new Date(dateStr);
+                    if(isNaN(d.getTime())) return false;
+                    
+                    let diffTime = Math.abs(new Date() - d);
+                    let daysCount = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if(daysCount <= limitDays) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            if(filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">لا توجد نتائج مطابقة لشروط الفلترة</td></tr>`;
+                return;
+            }
+
+            filteredData.forEach(m => {
+                let dateStr = m.joinDate || "غير متوفر";
                 let daysCount = "---";
                 if(dateStr && dateStr !== "غير متوفر") {
                     let d = new Date(dateStr);
