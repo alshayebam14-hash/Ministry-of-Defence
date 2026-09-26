@@ -41,7 +41,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: transparent;
+            background: rgba(7, 10, 18, 0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -953,12 +953,10 @@
             let filteredData = csvData.filter(m => {
                 let logsNum = Number(m.logs) || 0;
                 
-                // فلتر مجموع السجلات (أقل من القيمة)
                 if(limitLogs !== null && logsNum >= limitLogs) {
                     return false;
                 }
 
-                // فلتر تاريخ الانضمام (أكثر من عدد الأيام)
                 if(limitDays !== null) {
                     let dateStr = m.joinDate || "";
                     if(!dateStr) return false;
@@ -1339,6 +1337,7 @@
         }
 
         function switchPage(pageId, element) {
+            if(!currentUser) return;
             let userObj = accounts[currentUser];
             if(userObj && !userObj.permissions.includes(pageId)) {
                 return;
@@ -1357,7 +1356,7 @@
             let password = document.getElementById('passwordInput').value.trim();
             let err = document.getElementById('loginError');
 
-            if(checkPermissions(username, password, 'home') || checkPermissions(username, password, 'members')) {
+            if(checkPermissions(username, password, 'home') || checkPermissions(username, password, 'members') || checkPermissions(username, password, 'inactivity_system')) {
                 currentUser = username;
                 accounts[username].loggedIn = true;
                 
@@ -1371,13 +1370,11 @@
         }
 
         function logout() {
-            if(currentUser && accounts[currentUser]) {
-                accounts[currentUser].loggedIn = false;
-            }
             currentUser = null;
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('usernameInput').value = '';
             document.getElementById('passwordInput').value = '';
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
         }
 
         window.onload = function() {
