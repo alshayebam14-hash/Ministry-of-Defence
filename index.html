@@ -361,7 +361,7 @@
         <div id="home" class="page-section">
             <div class="card" style="text-align: center; padding: 40px;">
                 <h2 style="color: var(--accent-gold); margin-bottom: 10px;">لوحة إدارة وزارة الدفاع - Grave RP</h2>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ربط تواريخ الدخول للقطاع بـ (طابع زمني) من ورقة ردود الاختبار بنجاح.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">تم ربط تواريخ الدخول للقطاع وحساب مدة الخدمة مباشرة من الورقة الرئيسية بنجاح[cite: 10].</p>
                 
                 <button class="btn" onclick="fetchAllData(true)" style="padding: 12px 25px; font-size: 1rem;">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i> حدث البيانات والتواريخ
@@ -438,7 +438,7 @@
             <h2 style="color: var(--accent-gold); margin-bottom: 15px;"><i class="fa-solid fa-calendar-days"></i> تواريخ انضمام المنسوبين ومدة الخدمة</h2>
             <div class="card" style="background: #0b0f19; border: 1px solid var(--border-subtle); margin-bottom: 20px;">
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">
-                    يتم جلب تاريخ الدخول إلى القطاع تلقائياً من عمود **طابع زمني (عمود P)** في ورقة ردود الاختبار وحساب مدة الخدمة بالأيام بناءً عليه[cite: 11].
+                    يتم جلب تاريخ الدخول إلى القطاع (طابع زمني - عمود P) من الورقة الرئيسية وحساب مدة الخدمة بالأيام بناءً عليه[cite: 10].
                 </p>
             </div>
 
@@ -458,7 +458,7 @@
                             </tr>
                         </thead>
                         <tbody id="inactivityTableBody">
-                            <tr><td colspan="8" style="text-align: center;">جاري جلب تواريخ الانضمام من ورقة الاختبار...</td></tr>
+                            <tr><td colspan="8" style="text-align: center;">جاري جلب تواريخ الانضمام من الورقة الرئيسية...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -616,8 +616,6 @@
 
     <script>
         const MAIN_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?gid=2094506019&single=true&output=csv";
-        
-        const EXAM_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5IjG47ogq2fHCI_clfxmoYcs9G-6uoTRfojuRRaj9dc82XFo-ydNNFNYawGBdXIv4kT4BfXkoQvNj/pub?output=csv"; 
 
         const accounts = {
             "Ahmed": {
@@ -665,7 +663,6 @@
 
         let currentUser = null;
         let csvData = [];
-        let examDatesMap = {}; 
         
         let customWeeks = JSON.parse(localStorage.getItem('grave_customWeeks')) || ["الأسبوع الأول", "الأسبوع الثاني", "الأسبوع الثالث"];
         let inventoryLogsAds = JSON.parse(localStorage.getItem('grave_invLogsAds')) || [];
@@ -766,20 +763,12 @@
                 const mainText = await mainRes.text();
                 parseMainCSV(mainText);
 
-                try {
-                    const examRes = await fetch(EXAM_SHEET_URL + "&t=" + new Date().getTime());
-                    const examText = await examRes.text();
-                    parseExamCSV(examText);
-                } catch(err) {
-                    console.log("تنبيه في تحميل ورقة ردود الاختبار:", err);
-                }
-
                 if (isManualClick && statusText) {
                     statusText.innerText = "تم تحديث البيانات والتواريخ بنجاح! (" + new Date().toLocaleTimeString() + ")";
                     setTimeout(() => { statusText.innerText = ""; }, 4000);
                 }
             } catch (e) {
-                console.log("خطأ في جلب الجداول");
+                console.log("خطأ في جلب الجدول");
                 if (isManualClick && statusText) {
                     statusText.innerText = "فشل التحديث، تأكد من اتصالك بالإنترنت.";
                 }
@@ -788,25 +777,6 @@
                     icon.classList.remove('fa-spin');
                 }
             }
-        }
-
-        function parseExamCSV(text) {
-            const lines = text.split("\n");
-            examDatesMap = {};
-            for(let i = 1; i < lines.length; i++) {
-                let line = lines[i].trim();
-                if(!line) continue;
-                let r = parseCSVLine(line);
-                
-                if(r.length >= 16) {
-                    let gameId = r[3] ? r[3].trim() : "";
-                    let timestamp = r[15] ? r[15].trim() : ""; 
-                    if(gameId && timestamp) {
-                        examDatesMap[gameId] = timestamp;
-                    }
-                }
-            }
-            renderJoinDatesTable();
         }
 
         function parseCSVLine(line) {
@@ -855,6 +825,8 @@
                         category = 'R';
                     }
 
+                    let joinDateVal = r[15] ? r[15].trim() : ""; // العمود P (المؤشر 15)
+
                     csvData.push({
                         rank: rankVal,
                         discord: r[3] ? r[3].trim() : "",
@@ -869,6 +841,7 @@
                         promotionDate: r[12] ? r[12].trim() : "---",
                         manualNotes: r[13] ? r[13].trim() : "",
                         vacationStatus: r[14] ? r[14].trim() : "FALSE",
+                        joinDate: joinDateVal,
                         category: category
                     });
                 }
@@ -955,7 +928,7 @@
             }
 
             csvData.forEach(m => {
-                let dateStr = examDatesMap[m.id] || "غير متوفر";
+                let dateStr = m.joinDate || "غير متوفر";
                 
                 let daysCount = "---";
                 if(dateStr && dateStr !== "غير متوفر") {
