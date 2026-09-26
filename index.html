@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-main: #070a12;
+            --bg-main: transparent;
             --bg-sidebar: #0b0f19;
             --bg-card: #0e1422;
             --accent-gold: #d4af37;
@@ -28,7 +28,7 @@
         }
 
         body {
-            background-color: var(--bg-main);
+            background-color: transparent;
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -41,7 +41,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: var(--bg-main);
+            background: transparent;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -825,7 +825,7 @@
                         category = 'R';
                     }
 
-                    let joinDateVal = r[15] ? r[15].trim() : ""; // العمود P (المؤشر 15)
+                    let joinDateVal = r[15] ? r[15].trim() : "";
 
                     csvData.push({
                         rank: rankVal,
